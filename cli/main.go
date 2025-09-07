@@ -6,12 +6,15 @@ import (
 )
 
 func Main() error {
+
 	err := db.InitializeDB()
 	if err != nil {
 		return err
 	}
 
 	home_helpers.GetTimesheet()
+	home_helpers.GetMaxDateFromTimesheet()
+	home_helpers.GetOneWorkDateRecord()
 
 	return nil
 }

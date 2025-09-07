@@ -40,7 +40,7 @@ func InitializeDB() error {
 func createTables(db *sql.DB) error {
 	statements := []string{
 		`CREATE TABLE IF NOT EXISTS timesheet (
-			workdate TEXT UNIQUE,
+			workdate TEXT UNIQUE NOT NULL,
 			start_time TEXT,
 			end_time TEXT,
 			lunch_duration INT,
