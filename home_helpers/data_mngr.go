@@ -86,14 +86,13 @@ func GetTimesheet() {
 		}
 		timesheet = append(timesheet, *workDateRecord)
 	}
-	for idx := len(timesheet) - 1; idx >= 0; idx-- {
+	/*	for idx := len(timesheet) - 1; idx >= 0; idx-- {
 		fmt.Println(timesheet[idx])
-	}
+	}*/
 }
 
-func GetOneWorkDateRecord() {
+func GetOneWorkDateRecord(queryDate string) (workdateRecord WorkDateRecord, err error) {
 	query := "SELECT * FROM timesheet WHERE workdate = ?"
-	queryDate := "2024-12-04"
 
 	response, err := db.GetOneRecord(query, queryDate)
 	if err != nil {
@@ -116,20 +115,22 @@ func GetOneWorkDateRecord() {
 		&workDateRecord.DayLength,
 	)
 	if err != nil {
-		fmt.Println(err)
+		return *workDateRecord, fmt.Errorf("failed to serialize query response to struct%v", err)
 	}
 
-	fmt.Println(workDateRecord)
-	fmt.Println(workDateRecord.MovingBalance.Float64)
+	/*fmt.Println(workDateRecord)
+	fmt.Println(workDateRecord.MovingBalance.Float64)*/
+
+	return *workDateRecord, nil
 
 }
 
-func GetMaxDateFromTimesheet() {
-	query := "SELECT MAX(workdate) FROM timesheet;"
+func GetMaxCompletedDate() (string, error) {
+	query := "SELECT MAX(workdate) FROM timesheet WHERE end_time IS NOT NULL;"
 	maxDate, err := db.GetOneValue(query, nil)
 	if err != nil {
-		fmt.Println(err)
+		return "", fmt.Errorf("failed to query maxDate %v", err)
 	}
 
-	fmt.Println(maxDate)
+	return maxDate, nil
 }
