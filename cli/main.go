@@ -3,18 +3,19 @@ package cli
 import (
 	"fTime/db"
 	"fTime/home_helpers"
+	"fmt"
 )
 
 func Main() error {
 
 	err := db.InitializeDB()
 	if err != nil {
-		return err
+		return fmt.Errorf("error initializing database: %v", err)
 	}
 
-	home_helpers.GetTimesheet()
-	home_helpers.GetMaxDateFromTimesheet()
-	home_helpers.GetOneWorkDateRecord()
+	home_helpers.InitClearFunctions()
+
+	home()
 
 	return nil
 }
