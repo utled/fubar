@@ -11,15 +11,7 @@ func PrintHeader(withSupportText bool, selectedDate string) {
 		"                   ━┗━━┛━━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━━┛\n" +
 		"                   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
 		"                   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
-
-	/*	fmt.Print("\n ▄▄▄▄▄▄▄ ▄▄▄ ▄▄▄ ▄▄▄ ▄▄▄ ▄▄▄ ▄▄▄ ▄▄▄ ▄▄▄ ▄▄▄ ▄▄▄ ▄▄▄ ▄▄▄ ▄▄▄ ▄▄▄ ▄▄▄ ▄▄▄ ▄▄▄ ▄▄▄ ▄▄▄ ▄▄▄▄▄▄  \n" +
-		"█       █   █   █   █   █   █   █   █   █   █   █   █   █   █   █   █   █   █   █   █      █ \n" +
-		"█▄     ▄█   █   █   █   █   █   █   █   █   █   █   █   █   █   █   █   █   █   █   █  ▄    █\n" +
-		"  █   █ █   █   █   █   █   █   █   █   █   █   █   █   █   █   █   █   █   █   █   █ █ █   █\n" +
-		"  █   █ █   █   █   █   █   █   █   █   █   █   █   █   █   █   █   █   █   █   █   █ █▄█   █\n" +
-		"  █   █ █   █   █   █   █   █   █   █   █   █   █   █   █   █   █   █   █   █   █   █       █\n" +
-		"  █▄▄▄█ █▄▄▄█▄▄▄█▄▄▄█▄▄▄█▄▄▄█▄▄▄█▄▄▄█▄▄▄█▄▄▄█▄▄▄█▄▄▄█▄▄▄█▄▄▄█▄▄▄█▄▄▄█▄▄▄█▄▄▄█▄▄▄█▄▄▄█▄▄▄▄▄▄█ \n\n")*/
-
+	
 	if withSupportText {
 		fmt.Print("                   cmd -> Display available commands           Ctrl+C -> Close program\n\n")
 	}
@@ -27,11 +19,16 @@ func PrintHeader(withSupportText bool, selectedDate string) {
 
 }
 
-func PrintSelectedDate() {
-	fmt.Println("not implemented...")
+func PrintSelectedDate(selectedDateRecord *WorkDateRecord) {
+	fmt.Println(selectedDateRecord)
 }
 
-func PrintCommands() {
+func PrintCommands(selectedDate string) {
+	err := ClearTerminal()
+	if err != nil {
+		fmt.Println(err)
+	}
+	PrintHeader(false, selectedDate)
 	availableCommands := []string{
 		"\n_____DISPLAY_____________________________________________________________________________________________",
 		"today                                     -> Display current date",

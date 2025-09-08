@@ -2,7 +2,10 @@ package main
 
 import (
 	"fTime/cli"
+	"fTime/db"
+	"fTime/helpers"
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -18,9 +21,13 @@ func main() {
 		os.Exit(0)
 	}()
 
-	err := cli.Main()
+	err := db.InitializeDB()
 	if err != nil {
-		fmt.Printf("Error: %s\n", err)
+		log.Fatalf("error initializing database: %v", err)
 	}
+
+	helpers.InitClearFunctions()
+
+	cli.Main()
 
 }
