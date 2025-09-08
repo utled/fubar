@@ -1,10 +1,17 @@
-package home_helpers
+package helpers
 
 import (
 	"database/sql"
 	"fTime/db"
 	"fmt"
 )
+
+type StatusProvider interface {
+	GetReportUpToDate() bool
+	GetMaxCompletedDate() string
+	GetSelectedDate() string
+	GetSelectedRecord() WorkDateRecord
+}
 
 type WorkDateRecord struct {
 	WorkDate       string
@@ -19,41 +26,6 @@ type WorkDateRecord struct {
 	SickDay        sql.NullBool
 	DayLength      sql.NullString
 }
-
-/*func GetTimesheetToDF() {
-	timesheetData, err := db.GetTimesheetData()
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	var timesheet []map[string]interface{}
-	columns, _ := timesheetData.Columns()
-
-	for timesheetData.Next() {
-		values := make([]interface{}, len(columns))
-		pointers := make([]interface{}, len(columns))
-		for val := range values {
-			pointers[val] = &values[val]
-		}
-
-		if err := timesheetData.Scan(pointers...); err != nil {
-			fmt.Println("failed to scan values", err)
-		}
-
-		row := make(map[string]interface{})
-		for i, colName := range columns {
-			val := values[i]
-			if val != nil {
-				row[colName] = val
-			}
-		}
-		timesheet = append(timesheet, row)
-
-	}
-	timesheetDF := dataframe.LoadMaps(timesheet)
-	timesheetDF = timesheetDF.Arrange(dataframe.RevSort("workdate"))
-	fmt.Println(timesheetDF)
-}*/
 
 func GetTimesheet() {
 	query := "SELECT * FROM timesheet WHERE workdate between ? AND ?;"
@@ -125,9 +97,19 @@ func GetOneWorkDateRecord(queryDate string) (workdateRecord WorkDateRecord, err 
 
 }
 
-func GetMaxCompletedDate() (string, error) {
+func GetMaxCompletedDate() (maxCompletedDate string, err error) {
 	query := "SELECT MAX(workdate) FROM timesheet WHERE end_time IS NOT NULL;"
-	maxDate, err := db.GetOneValue(query, nil)
+	maxCompletedDate, err = db.GetOneValue(query, nil)
+	if err != nil {
+		return "", fmt.Errorf("failed to query maxCompletedDate %v", err)
+	}
+
+	return maxCompletedDate, nil
+}
+
+func GetMaxDate() (maxDate string, err error) {
+	query := "SELECT MAX(workdate) FROM timesheet;"
+	maxDate, err = db.GetOneValue(query, nil)
 	if err != nil {
 		return "", fmt.Errorf("failed to query maxDate %v", err)
 	}

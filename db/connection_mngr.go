@@ -3,12 +3,19 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"runtime"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 func createConnection() (db *sql.DB, err error) {
-	db, err = sql.Open("sqlite3", "/home/utled/GolandProjects/fTime/db/fTime.db")
+	var dbPath string
+	if runtime.GOOS == "windows" {
+		dbPath = `C:\Users\utled\GolandProjects\fTime\db\fTime.db`
+	} else {
+		dbPath = "/home/utled/GolandProjects/fTime/db/fTime.db"
+	}
+	db, err = sql.Open("sqlite3", dbPath)
 	if err != nil {
 		return db, fmt.Errorf("failed to connect to db: %v", err)
 	}

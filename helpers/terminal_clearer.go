@@ -1,4 +1,4 @@
-package home_helpers
+package helpers
 
 import (
 	"fmt"

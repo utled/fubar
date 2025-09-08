@@ -1,8 +1,10 @@
-package home_helpers
+package helpers
 
-import "fmt"
+import (
+	"fmt"
+)
 
-func PrintHeader(withSupportText bool, selectedDate string) {
+func PrintHeader(withSupportText bool, status StatusProvider) {
 	fmt.Print("\n                   ┏━━━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━━┓\n" +
 		"                   ┃┏┓┏┓┃┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┓┏┓┃\n" +
 		"                   ┗┛┃┃┗┛┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃┃┃\n" +
@@ -11,24 +13,33 @@ func PrintHeader(withSupportText bool, selectedDate string) {
 		"                   ━┗━━┛━━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━━┛\n" +
 		"                   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
 		"                   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
-	
+
 	if withSupportText {
 		fmt.Print("                   cmd -> Display available commands           Ctrl+C -> Close program\n\n")
 	}
-	fmt.Print("\n                   Date:", selectedDate, "\n\n")
+	if !status.GetReportUpToDate() {
+		fmt.Println("                   There are missing regitrations.\n"+
+			"                   Last completed date:", status.GetMaxCompletedDate())
+	}
+	fmt.Print("\n                   Selected date:", status.GetSelectedDate(), "\n\n")
 
 }
 
-func PrintSelectedDate(selectedDateRecord *WorkDateRecord) {
-	fmt.Println(selectedDateRecord)
-}
-
-func PrintCommands(selectedDate string) {
+func PrintSelectedDate(status StatusProvider) {
 	err := ClearTerminal()
 	if err != nil {
 		fmt.Println(err)
 	}
-	PrintHeader(false, selectedDate)
+	PrintHeader(true, status)
+	fmt.Println(status.GetSelectedRecord())
+}
+
+func PrintCommands(status StatusProvider) {
+	err := ClearTerminal()
+	if err != nil {
+		fmt.Println(err)
+	}
+	PrintHeader(false, status)
 	availableCommands := []string{
 		"\n_____DISPLAY_____________________________________________________________________________________________",
 		"today                                     -> Display current date",
