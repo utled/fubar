@@ -1,7 +1,10 @@
 package helpers
 
 import (
+	"fTime/utils"
 	"fmt"
+	"strconv"
+	"time"
 )
 
 func FormatValidDateString(dateString string) (formattedDateString string, err error) {
@@ -21,4 +24,45 @@ func FormatValidDateString(dateString string) (formattedDateString string, err e
 	formattedDateString = year + "-" + month + "-" + day
 
 	return formattedDateString, nil
+}
+
+func FormatValidTimeString(timeString string) (formattedTimeString string, err error) {
+	if len(timeString) != 4 {
+		return "", fmt.Errorf("input must in format <HHMM>")
+	}
+	hour, err := strconv.Atoi(timeString[0:2])
+	if err != nil {
+		return "", fmt.Errorf("input contains non-numerical characters")
+	}
+	if hour >= 24 {
+		return "", fmt.Errorf("hour must be less than 24")
+	}
+	minute, err := strconv.Atoi(timeString[2:4])
+	if err != nil {
+		return "", fmt.Errorf("input contains non-numerical characters")
+	}
+	if minute >= 60 {
+		return "", fmt.Errorf("minute must be less than 60")
+	}
+
+	formattedTimeString = timeString[0:2] + ":" + timeString[2:4] + ":" + "00"
+
+	return formattedTimeString, nil
+}
+
+func ParseTimeObject(timeString string) (time.Time, error) {
+	dummyDate, err := time.Parse(utils.DateLayout, utils.NonsenseDate)
+	if err != nil {
+		return time.Time{}, fmt.Errorf("failed to parse dummy date %v", err)
+	}
+	registeredTime, err := time.Parse(utils.TimeLayout, timeString)
+	if err != nil {
+		return time.Time{}, fmt.Errorf("failed to parse registered time %v", err)
+	}
+
+	year, month, day := dummyDate.Date()
+	hour, minute, second := registeredTime.Clock()
+	timeObject := time.Date(year, month, day, hour, minute, second, 0, time.Local)
+
+	return timeObject, nil
 }

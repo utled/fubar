@@ -3,6 +3,7 @@ package cli
 import (
 	"bufio"
 	"fTime/helpers"
+	"fTime/utils"
 	"fmt"
 	"os"
 	"strings"
@@ -103,9 +104,37 @@ func Main() {
 				fmt.Println("Invalid argument")
 			}
 		case "start":
-			fmt.Println("not implemented...")
+			if len(arguments) == 2 {
+				formattedTimeString, err := helpers.FormatValidTimeString(arguments[1])
+				if err != nil {
+					fmt.Println(err)
+				}
+				fmt.Println(formattedTimeString)
+				registeredTime, err := helpers.ParseTimeObject(formattedTimeString)
+				if err != nil {
+					fmt.Println(err)
+				}
+				fmt.Println(registeredTime)
+				fmt.Println(registeredTime.Format(utils.DateLayout))
+				fmt.Println(registeredTime.Format(utils.TimeLayout))
+			} else {
+				fmt.Println("Invalid argument")
+			}
 		case "end":
-			fmt.Println("not implemented...")
+			if len(arguments) == 2 {
+				formattedTimeString, err := helpers.FormatValidTimeString(arguments[1])
+				if err != nil {
+					fmt.Println(err)
+				}
+				fmt.Println(formattedTimeString)
+				registeredTime, err := helpers.ParseTimeObject(formattedTimeString)
+				if err != nil {
+					fmt.Println(err)
+				}
+				fmt.Println(registeredTime)
+			} else {
+				fmt.Println("Invalid argument")
+			}
 		case "ot":
 			fmt.Println("not implemented...")
 		case "-ot":
