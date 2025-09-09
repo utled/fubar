@@ -3,32 +3,33 @@ package cli
 import (
 	"bufio"
 	"fTime/helpers"
+	"fTime/logic"
 	"fTime/utils"
 	"fmt"
 	"os"
 	"strings"
 )
 
-type reportStatus struct {
+type reportState struct {
 	reportUpToDate   bool
 	maxCompletedDate string
 	selectedDate     string
 	selectedRecord   helpers.WorkDateRecord
 }
 
-func (ws *reportStatus) GetReportUpToDate() bool {
+func (ws *reportState) GetReportUpToDate() bool {
 	return ws.reportUpToDate
 }
 
-func (ws *reportStatus) GetMaxCompletedDate() string {
+func (ws *reportState) GetMaxCompletedDate() string {
 	return ws.maxCompletedDate
 }
 
-func (ws *reportStatus) GetSelectedDate() string {
+func (ws *reportState) GetSelectedDate() string {
 	return ws.selectedDate
 }
 
-func (ws *reportStatus) GetSelectedRecord() helpers.WorkDateRecord {
+func (ws *reportState) GetSelectedRecord() helpers.WorkDateRecord {
 	return ws.selectedRecord
 }
 
@@ -41,7 +42,7 @@ func Main() {
 	//selectedDate := time.Now().Format("2006-01-02")
 	selectedDate := "2024-12-08"
 
-	recordExists, err := helpers.CheckIfDateExists(selectedDate)
+	recordExists, err := logic.CheckIfDateExists(selectedDate)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -58,19 +59,19 @@ func Main() {
 		}
 	}
 
-	previousCompleted, maxCompletedDate, err := helpers.CheckPreviousCompletion()
+	previousCompleted, maxCompletedDate, err := logic.CheckPreviousCompletion()
 	if err != nil {
 		return
 	}
 
-	workingStatus := reportStatus{
+	currentState := reportState{
 		reportUpToDate:   previousCompleted,
 		maxCompletedDate: maxCompletedDate,
 		selectedDate:     selectedDate,
 		selectedRecord:   selectedDateRecord,
 	}
 
-	helpers.PrintHeader(true, &workingStatus)
+	helpers.PrintHeader(true, &currentState)
 
 	for {
 		reader := bufio.NewReader(os.Stdin)
@@ -79,7 +80,7 @@ func Main() {
 		switch arguments[0] {
 		case "today":
 			if len(arguments) == 1 {
-				helpers.PrintSelectedDate(&workingStatus)
+				helpers.PrintSelectedDate(&currentState)
 			} else {
 				fmt.Println("Invalid argument")
 			}
@@ -92,14 +93,14 @@ func Main() {
 					fmt.Println(err)
 					break
 				}
-				workingStatus.selectedDate = selectedDate
+				currentState.selectedDate = selectedDate
 				selectedDateRecord, err = helpers.GetOneWorkDateRecord(selectedDate)
 				if err != nil {
 					fmt.Println(err)
 				}
-				workingStatus.selectedRecord = selectedDateRecord
+				currentState.selectedRecord = selectedDateRecord
 
-				helpers.PrintSelectedDate(&workingStatus)
+				helpers.PrintSelectedDate(&currentState)
 			} else {
 				fmt.Println("Invalid argument")
 			}
@@ -158,7 +159,7 @@ func Main() {
 		case "conflength":
 			fmt.Println("not implemented...")
 		case "cmd":
-			helpers.PrintCommands(&workingStatus)
+			helpers.PrintCommands(&currentState)
 		default:
 			err := helpers.ClearTerminal()
 			if err != nil {

@@ -1,6 +1,7 @@
-package helpers
+package logic
 
 import (
+	"fTime/helpers"
 	"fmt"
 	"time"
 )
@@ -12,7 +13,7 @@ func CheckPreviousCompletion() (isCompleted bool, maxCompletedString string, err
 		return false, "", fmt.Errorf("failed to parse todays date%v", err)
 	}
 
-	maxCompletedString, err = GetMaxCompletedDate()
+	maxCompletedString, err = helpers.GetMaxCompletedDate()
 	if err != nil {
 		return false, "", err
 	}
@@ -37,7 +38,7 @@ func CheckIfDateExists(dateString string) (dateExists bool, err error) {
 	if err != nil {
 		return false, fmt.Errorf("failed to parse date %v", err)
 	}
-	maxDateString, err := GetMaxDate()
+	maxDateString, err := helpers.GetMaxDate()
 	if err != nil {
 		fmt.Println("GetMaxDate Error:", err)
 	}
