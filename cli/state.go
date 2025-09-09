@@ -7,29 +7,40 @@ import (
 
 type reportState struct {
 	reportUpToDate   bool
+	maxDate          string
 	maxCompletedDate string
 	selectedDate     string
 	selectedRecord   helpers.WorkDateRecord
 }
 
-func (ws *reportState) GetReportUpToDate() bool {
-	return ws.reportUpToDate
+func (rs *reportState) GetReportUpToDate() bool {
+	return rs.reportUpToDate
 }
 
-func (ws *reportState) GetMaxCompletedDate() string {
-	return ws.maxCompletedDate
+func (rs *reportState) GetMaxDate() string { return rs.maxDate }
+
+func (rs *reportState) GetMaxCompletedDate() string { return rs.maxCompletedDate }
+
+func (rs *reportState) GetSelectedDate() string {
+	return rs.selectedDate
 }
 
-func (ws *reportState) GetSelectedDate() string {
-	return ws.selectedDate
-}
-
-func (ws *reportState) GetSelectedRecord() helpers.WorkDateRecord {
-	return ws.selectedRecord
+func (rs *reportState) GetSelectedRecord() helpers.WorkDateRecord {
+	return rs.selectedRecord
 }
 
 func setNewState(selectedDate string) (reportState, error) {
-	recordExists, err := logic.CheckIfDateExists(selectedDate)
+	maxCompletedDate, maxDate, err := helpers.GetMaxDates()
+	if err != nil {
+		return reportState{}, err
+	}
+
+	previousCompleted, err := logic.CheckPreviousCompletion(selectedDate, maxCompletedDate)
+	if err != nil {
+		return reportState{}, err
+	}
+
+	recordExists, err := logic.CheckIfDateExists(selectedDate, maxDate)
 	if err != nil {
 		return reportState{}, err
 	}
@@ -46,13 +57,9 @@ func setNewState(selectedDate string) (reportState, error) {
 		}
 	}
 
-	previousCompleted, maxCompletedDate, err := logic.CheckPreviousCompletion(selectedDate)
-	if err != nil {
-		return reportState{}, err
-	}
-
 	currentState := reportState{
 		reportUpToDate:   previousCompleted,
+		maxDate:          maxDate,
 		maxCompletedDate: maxCompletedDate,
 		selectedDate:     selectedDate,
 		selectedRecord:   selectedDateRecord,

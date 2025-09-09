@@ -8,6 +8,7 @@ import (
 
 type StatusProvider interface {
 	GetReportUpToDate() bool
+	GetMaxDate() string
 	GetMaxCompletedDate() string
 	GetSelectedDate() string
 	GetSelectedRecord() WorkDateRecord
@@ -97,22 +98,18 @@ func GetOneWorkDateRecord(queryDate string) (workdateRecord WorkDateRecord, err 
 
 }
 
-func GetMaxCompletedDate() (maxCompletedDate string, err error) {
+func GetMaxDates() (maxCompletedDate string, maxDate string, err error) {
 	query := "SELECT MAX(workdate) FROM timesheet WHERE end_time IS NOT NULL;"
 	maxCompletedDate, err = db.GetOneValue(query, nil)
 	if err != nil {
-		return "", fmt.Errorf("failed to query maxCompletedDate %v", err)
+		return "", "", fmt.Errorf("failed to query maxCompletedDate %v", err)
 	}
 
-	return maxCompletedDate, nil
-}
-
-func GetMaxDate() (maxDate string, err error) {
-	query := "SELECT MAX(workdate) FROM timesheet;"
+	query = "SELECT MAX(workdate) FROM timesheet;"
 	maxDate, err = db.GetOneValue(query, nil)
 	if err != nil {
-		return "", fmt.Errorf("failed to query maxDate %v", err)
+		return "", "", fmt.Errorf("failed to query maxDate %v", err)
 	}
 
-	return maxDate, nil
+	return maxCompletedDate, maxDate, nil
 }

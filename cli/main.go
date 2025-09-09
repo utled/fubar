@@ -45,18 +45,20 @@ func Main() {
 					fmt.Println(err)
 					break
 				}
-				currentState.selectedDate = selectedDate
-				selectedDateRecord, err := helpers.GetOneWorkDateRecord(currentState.selectedDate)
+				currentState, err = setNewState(selectedDate)
 				if err != nil {
-					fmt.Println(err)
+					return
 				}
-				currentState.selectedRecord = selectedDateRecord
 
 				helpers.PrintSelectedDate(&currentState)
 			} else {
 				fmt.Println("Invalid argument")
 			}
 		case "start":
+			if !currentState.reportUpToDate {
+				fmt.Println("Can't start selected date.\nAll previous dates must be up to date.")
+				break
+			}
 			if len(arguments) == 2 {
 				formattedTimeString, err := helpers.FormatValidTimeString(arguments[1])
 				if err != nil {
