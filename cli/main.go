@@ -3,35 +3,11 @@ package cli
 import (
 	"bufio"
 	"fTime/helpers"
-	"fTime/logic"
 	"fTime/utils"
 	"fmt"
 	"os"
 	"strings"
 )
-
-type reportState struct {
-	reportUpToDate   bool
-	maxCompletedDate string
-	selectedDate     string
-	selectedRecord   helpers.WorkDateRecord
-}
-
-func (ws *reportState) GetReportUpToDate() bool {
-	return ws.reportUpToDate
-}
-
-func (ws *reportState) GetMaxCompletedDate() string {
-	return ws.maxCompletedDate
-}
-
-func (ws *reportState) GetSelectedDate() string {
-	return ws.selectedDate
-}
-
-func (ws *reportState) GetSelectedRecord() helpers.WorkDateRecord {
-	return ws.selectedRecord
-}
 
 func Main() {
 	err := helpers.ClearTerminal()
@@ -42,33 +18,9 @@ func Main() {
 	//selectedDate := time.Now().Format("2006-01-02")
 	selectedDate := "2024-12-08"
 
-	recordExists, err := logic.CheckIfDateExists(selectedDate)
+	currentState, err := setNewState(selectedDate)
 	if err != nil {
 		fmt.Println(err)
-	}
-
-	var selectedDateRecord helpers.WorkDateRecord
-	if recordExists {
-		selectedDateRecord, err = helpers.GetOneWorkDateRecord(selectedDate)
-		if err != nil {
-			fmt.Println(err)
-		}
-	} else {
-		selectedDateRecord = helpers.WorkDateRecord{
-			WorkDate: selectedDate,
-		}
-	}
-
-	previousCompleted, maxCompletedDate, err := logic.CheckPreviousCompletion()
-	if err != nil {
-		return
-	}
-
-	currentState := reportState{
-		reportUpToDate:   previousCompleted,
-		maxCompletedDate: maxCompletedDate,
-		selectedDate:     selectedDate,
-		selectedRecord:   selectedDateRecord,
 	}
 
 	helpers.PrintHeader(true, &currentState)
@@ -94,7 +46,7 @@ func Main() {
 					break
 				}
 				currentState.selectedDate = selectedDate
-				selectedDateRecord, err = helpers.GetOneWorkDateRecord(selectedDate)
+				selectedDateRecord, err := helpers.GetOneWorkDateRecord(currentState.selectedDate)
 				if err != nil {
 					fmt.Println(err)
 				}
