@@ -8,7 +8,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func createConnection() (db *sql.DB, err error) {
+func CreateConnection() (db *sql.DB, err error) {
 	var dbPath string
 	if runtime.GOOS == "windows" {
 		dbPath = `C:\Users\utled\GolandProjects\fTime\db\fTime.db`
@@ -23,7 +23,7 @@ func createConnection() (db *sql.DB, err error) {
 	return db, nil
 }
 
-func closeConnection(db *sql.DB) error {
+func CloseConnection(db *sql.DB) error {
 	err := db.Close()
 	if err != nil {
 		return fmt.Errorf("faIled to close db connection: %v", err)

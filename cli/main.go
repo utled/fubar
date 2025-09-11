@@ -3,7 +3,7 @@ package cli
 import (
 	"bufio"
 	"fTime/helpers"
-	"fTime/utils"
+	"fTime/logic"
 	"fmt"
 	"os"
 	"strings"
@@ -14,6 +14,12 @@ func Main() {
 	if err != nil {
 		fmt.Println(err)
 	}
+
+	userConfig, err := helpers.GetUserConfig()
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(userConfig)
 
 	//selectedDate := time.Now().Format("2006-01-02")
 	selectedDate := "2024-12-08"
@@ -40,7 +46,7 @@ func Main() {
 			fmt.Println("not implemented...")
 		case "switch":
 			if len(arguments) == 2 {
-				selectedDate, err := helpers.FormatValidDateString(arguments[1])
+				selectedDate, err = helpers.FormatValidDateString(arguments[1])
 				if err != nil {
 					fmt.Println(err)
 					break
@@ -55,23 +61,11 @@ func Main() {
 				fmt.Println("Invalid argument")
 			}
 		case "start":
-			if !currentState.reportUpToDate {
-				fmt.Println("Can't start selected date.\nAll previous dates must be up to date.")
-				break
-			}
 			if len(arguments) == 2 {
-				formattedTimeString, err := helpers.FormatValidTimeString(arguments[1])
+				err = logic.RegisterStart(arguments[1], &currentState)
 				if err != nil {
 					fmt.Println(err)
 				}
-				fmt.Println(formattedTimeString)
-				registeredTime, err := helpers.ParseTimeObject(formattedTimeString)
-				if err != nil {
-					fmt.Println(err)
-				}
-				fmt.Println(registeredTime)
-				fmt.Println(registeredTime.Format(utils.DateLayout))
-				fmt.Println(registeredTime.Format(utils.TimeLayout))
 			} else {
 				fmt.Println("Invalid argument")
 			}
@@ -114,6 +108,35 @@ func Main() {
 			fmt.Println("not implemented...")
 		case "cmd":
 			helpers.PrintCommands(&currentState)
+		case "test":
+			currentState.selectedRecord.StartTime.String = "08:00:00"
+			currentState.selectedRecord.EndTime.String = "10:00:00"
+			currentState.selectedRecord.LunchDuration.Int16 = 30
+			currentState.selectedRecord.AdditionalTime.Int16 = 20
+			currentState.selectedRecord.DayTotal.String = "08:30:00"
+			currentState.selectedRecord.DayLength.String = "08:00:00"
+			currentState.selectedRecord.LunchDuration.Int16 = 30
+
+			dayTotal, err := helpers.CalcDayTotal(&currentState.selectedRecord)
+			if err != nil {
+				fmt.Println(err)
+			}
+			fmt.Println(dayTotal)
+
+			dayBalance, err := helpers.CalcDayBalance(&currentState.selectedRecord)
+			if err != nil {
+				fmt.Println(err)
+			}
+			currentState.selectedRecord.DayBalance.Float64 = dayBalance
+			currentState.selectedRecord.DayBalance.Valid = true
+
+			totalBalance := helpers.CalcTotalBalance(&currentState.selectedRecord, -0.2)
+			currentState.selectedRecord.MovingBalance.Float64 = totalBalance
+			currentState.selectedRecord.MovingBalance.Valid = true
+
+			projectedEnd := helpers.CalcProjectedEnd(&currentState.selectedRecord, &userConfig)
+			currentState.projectedEnd = projectedEnd
+
 		default:
 			err := helpers.ClearTerminal()
 			if err != nil {

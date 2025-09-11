@@ -11,6 +11,7 @@ type reportState struct {
 	maxCompletedDate string
 	selectedDate     string
 	selectedRecord   helpers.WorkDateRecord
+	projectedEnd     string
 }
 
 func (rs *reportState) GetReportUpToDate() bool {
@@ -27,6 +28,10 @@ func (rs *reportState) GetSelectedDate() string {
 
 func (rs *reportState) GetSelectedRecord() helpers.WorkDateRecord {
 	return rs.selectedRecord
+}
+
+func (rs *reportState) GetProjectedEnd() string {
+	return rs.projectedEnd
 }
 
 func setNewState(selectedDate string) (reportState, error) {

@@ -3,7 +3,9 @@ package helpers
 import (
 	"database/sql"
 	"fTime/db"
+	"fTime/utils"
 	"fmt"
+	"time"
 )
 
 type StatusProvider interface {
@@ -12,6 +14,7 @@ type StatusProvider interface {
 	GetMaxCompletedDate() string
 	GetSelectedDate() string
 	GetSelectedRecord() WorkDateRecord
+	GetProjectedEnd() string
 }
 
 type WorkDateRecord struct {
@@ -28,13 +31,40 @@ type WorkDateRecord struct {
 	DayLength      sql.NullString
 }
 
-func GetTimesheet() {
+type UserConfig struct {
+	DefaultLunch     sql.NullInt16
+	DefaultDayLength sql.NullString
+	VacationStart    sql.NullString
+	VacationEnd      sql.NullString
+}
+
+func openDBConnection() (conn *sql.DB, err error) {
+	con, err := db.CreateConnection()
+	if err != nil {
+		return nil, err
+	}
+	defer func(con *sql.DB) {
+		err := db.CloseConnection(con)
+		if err != nil {
+			fmt.Println("failed to close connection:", err)
+		}
+	}(con)
+
+	return con, nil
+}
+
+func GetTimesheetRange() error {
+	con, err := openDBConnection()
+	if err != nil {
+		return err
+	}
+
 	query := "SELECT * FROM timesheet WHERE workdate between ? AND ?;"
 	startDate := "2024-02-01"
 	endDate := "2024-02-01"
-	response, err := db.GetMultiRecords(query, startDate, endDate)
+	response, err := con.Query(query, startDate, endDate)
 	if err != nil {
-		fmt.Println(err)
+		return fmt.Errorf("failed to execute query: %v", err)
 	}
 
 	var timesheet []WorkDateRecord
@@ -55,22 +85,25 @@ func GetTimesheet() {
 			&workDateRecord.DayLength,
 		)
 		if err != nil {
-			fmt.Println(err)
+			return fmt.Errorf("failed to serialize range of records to struct: %v", err)
 		}
 		timesheet = append(timesheet, *workDateRecord)
 	}
 	/*	for idx := len(timesheet) - 1; idx >= 0; idx-- {
 		fmt.Println(timesheet[idx])
 	}*/
+
+	return nil
 }
 
-func GetOneWorkDateRecord(queryDate string) (workdateRecord WorkDateRecord, err error) {
-	query := "SELECT * FROM timesheet WHERE workdate = ?"
-
-	response, err := db.GetOneRecord(query, queryDate)
+func GetOneWorkDateRecord(queryDate string) (record WorkDateRecord, err error) {
+	con, err := openDBConnection()
 	if err != nil {
-		fmt.Println(err)
+		return WorkDateRecord{}, err
 	}
+
+	query := "SELECT * FROM timesheet WHERE workdate = ?"
+	response := con.QueryRow(query, queryDate)
 
 	workDateRecord := &WorkDateRecord{}
 
@@ -88,28 +121,92 @@ func GetOneWorkDateRecord(queryDate string) (workdateRecord WorkDateRecord, err 
 		&workDateRecord.DayLength,
 	)
 	if err != nil {
-		return *workDateRecord, fmt.Errorf("failed to serialize query response to struct%v", err)
+		return WorkDateRecord{}, fmt.Errorf("failed to serialize record to struct%v", err)
 	}
-
-	/*fmt.Println(workDateRecord)
-	fmt.Println(workDateRecord.MovingBalance.Float64)*/
 
 	return *workDateRecord, nil
 
 }
 
 func GetMaxDates() (maxCompletedDate string, maxDate string, err error) {
-	query := "SELECT MAX(workdate) FROM timesheet WHERE end_time IS NOT NULL;"
-	maxCompletedDate, err = db.GetOneValue(query, nil)
+	con, err := openDBConnection()
 	if err != nil {
-		return "", "", fmt.Errorf("failed to query maxCompletedDate %v", err)
+		return "", "", err
+	}
+
+	query := "SELECT MAX(workdate) FROM timesheet WHERE end_time IS NOT NULL;"
+	response := con.QueryRow(query)
+	err = response.Scan(&maxCompletedDate)
+	if err != nil {
+		return "", "", fmt.Errorf("failed to read max completed date: %v", err)
 	}
 
 	query = "SELECT MAX(workdate) FROM timesheet;"
-	maxDate, err = db.GetOneValue(query, nil)
+	response = con.QueryRow(query)
+	err = response.Scan(&maxDate)
 	if err != nil {
-		return "", "", fmt.Errorf("failed to query maxDate %v", err)
+		return "", "", fmt.Errorf("failed to read max date: %v", err)
 	}
 
 	return maxCompletedDate, maxDate, nil
+}
+
+func GetUserConfig() (config UserConfig, err error) {
+	con, err := openDBConnection()
+	if err != nil {
+		return UserConfig{}, err
+	}
+
+	query := "SELECT * FROM userconfig WHERE ROWID = ?;"
+	response := con.QueryRow(query, 1)
+
+	userConfig := &UserConfig{}
+
+	err = response.Scan(
+		&userConfig.DefaultLunch,
+		&userConfig.DefaultDayLength,
+		&userConfig.VacationStart,
+		&userConfig.VacationEnd,
+	)
+	if err != nil {
+		return UserConfig{}, fmt.Errorf("failed to serialize user config to struct%v", err)
+	}
+
+	return *userConfig, nil
+}
+
+func GetPreviousBalance(selectedDate time.Time) (previousBalance float64, err error) {
+	con, err := openDBConnection()
+	if err != nil {
+		return 0.0, err
+	}
+
+	previousDate := selectedDate.AddDate(0, 0, -1)
+	previousDateString := previousDate.Format(utils.DateLayout)
+	query := "SELECT moving_balance FROM timesheet WHERE workdate = ?;"
+	response := con.QueryRow(query, previousDateString)
+	err = response.Scan(&previousBalance)
+	if err != nil {
+		return 0.0, fmt.Errorf("failed to read moving balance: %v", err)
+	}
+
+	return previousBalance, nil
+}
+
+func WriteNewBalance(selectedDate string, dayTotal string, dayBalance float64, totalBalance float64) error {
+	con, err := openDBConnection()
+	if err != nil {
+		return err
+	}
+
+	query := "UPDATE timesheet " +
+		"SET day_total = ?, day_balance = ?, moving_balance = ?" +
+		"WHERE workdate = ?"
+
+	_, err = con.Exec(query, dayTotal, dayBalance, totalBalance, selectedDate)
+	if err != nil {
+		return fmt.Errorf("failed to write new balance data: %v", err)
+	}
+
+	return nil
 }
