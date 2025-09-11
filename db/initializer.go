@@ -13,12 +13,12 @@ type DefaultConfig struct {
 }
 
 func InitializeDB() error {
-	db, err := createConnection()
+	db, err := CreateConnection()
 	if err != nil {
 		return err
 	}
 	defer func(db *sql.DB) {
-		err := closeConnection(db)
+		err := CloseConnection(db)
 		if err != nil {
 			fmt.Println(err)
 		}
