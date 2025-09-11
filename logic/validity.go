@@ -31,9 +31,12 @@ func CheckPreviousCompletion(selectedDate string, maxCompletedDateString string)
 func CheckIfDateExists(dateString string, maxDateString string) (dateExists bool, err error) {
 	dateToCheck, err := time.Parse(utils.DateLayout, dateString)
 	if err != nil {
-		return false, fmt.Errorf("failed to parse date %v", err)
+		return false, fmt.Errorf("failed to parse selected date %v", err)
 	}
-	maxDate, err := time.Parse("2006-01-02", maxDateString)
+	maxDate, err := time.Parse(utils.DateLayout, maxDateString)
+	if err != nil {
+		return false, fmt.Errorf("failed to parse max date %v", err)
+	}
 	dateDiff := dateToCheck.Sub(maxDate)
 
 	return dateDiff.Hours() < 0, nil

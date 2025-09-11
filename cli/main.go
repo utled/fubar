@@ -19,7 +19,6 @@ func Main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(userConfig)
 
 	//selectedDate := time.Now().Format("2006-01-02")
 	selectedDate := "2024-12-08"

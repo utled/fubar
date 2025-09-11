@@ -43,12 +43,6 @@ func openDBConnection() (conn *sql.DB, err error) {
 	if err != nil {
 		return nil, err
 	}
-	defer func(con *sql.DB) {
-		err := db.CloseConnection(con)
-		if err != nil {
-			fmt.Println("failed to close connection:", err)
-		}
-	}(con)
 
 	return con, nil
 }
@@ -101,6 +95,12 @@ func GetOneWorkDateRecord(queryDate string) (record WorkDateRecord, err error) {
 	if err != nil {
 		return WorkDateRecord{}, err
 	}
+	defer func(con *sql.DB) {
+		err = db.CloseConnection(con)
+		if err != nil {
+			fmt.Println("failed to close connection:", err)
+		}
+	}(con)
 
 	query := "SELECT * FROM timesheet WHERE workdate = ?"
 	response := con.QueryRow(query, queryDate)
@@ -133,6 +133,12 @@ func GetMaxDates() (maxCompletedDate string, maxDate string, err error) {
 	if err != nil {
 		return "", "", err
 	}
+	defer func(con *sql.DB) {
+		err = db.CloseConnection(con)
+		if err != nil {
+			fmt.Println("failed to close connection:", err)
+		}
+	}(con)
 
 	query := "SELECT MAX(workdate) FROM timesheet WHERE end_time IS NOT NULL;"
 	response := con.QueryRow(query)
@@ -156,9 +162,15 @@ func GetUserConfig() (config UserConfig, err error) {
 	if err != nil {
 		return UserConfig{}, err
 	}
+	defer func(con *sql.DB) {
+		err = db.CloseConnection(con)
+		if err != nil {
+			fmt.Println("failed to close connection:", err)
+		}
+	}(con)
 
 	query := "SELECT * FROM userconfig WHERE ROWID = ?;"
-	response := con.QueryRow(query, 1)
+	response := con.QueryRow(query, 0)
 
 	userConfig := &UserConfig{}
 
@@ -180,6 +192,12 @@ func GetPreviousBalance(selectedDate time.Time) (previousBalance float64, err er
 	if err != nil {
 		return 0.0, err
 	}
+	defer func(con *sql.DB) {
+		err = db.CloseConnection(con)
+		if err != nil {
+			fmt.Println("failed to close connection:", err)
+		}
+	}(con)
 
 	previousDate := selectedDate.AddDate(0, 0, -1)
 	previousDateString := previousDate.Format(utils.DateLayout)
@@ -193,11 +211,38 @@ func GetPreviousBalance(selectedDate time.Time) (previousBalance float64, err er
 	return previousBalance, nil
 }
 
+func WriteStart(selectedDate string, registeredTime string) error {
+	con, err := openDBConnection()
+	if err != nil {
+		return err
+	}
+	defer func(con *sql.DB) {
+		err = db.CloseConnection(con)
+		if err != nil {
+			fmt.Println("failed to close connection:", err)
+		}
+	}(con)
+
+	query := "INSERT INTO timesheet(workdate, start_time) VALUES (?, ?)"
+	_, err = con.Exec(query, selectedDate, registeredTime)
+	if err != nil {
+		return fmt.Errorf("failed to write start time to %s: %v", selectedDate, err)
+	}
+
+	return nil
+}
+
 func WriteNewBalance(selectedDate string, dayTotal string, dayBalance float64, totalBalance float64) error {
 	con, err := openDBConnection()
 	if err != nil {
 		return err
 	}
+	defer func(con *sql.DB) {
+		err = db.CloseConnection(con)
+		if err != nil {
+			fmt.Println("failed to close connection:", err)
+		}
+	}(con)
 
 	query := "UPDATE timesheet " +
 		"SET day_total = ?, day_balance = ?, moving_balance = ?" +
@@ -206,6 +251,27 @@ func WriteNewBalance(selectedDate string, dayTotal string, dayBalance float64, t
 	_, err = con.Exec(query, dayTotal, dayBalance, totalBalance, selectedDate)
 	if err != nil {
 		return fmt.Errorf("failed to write new balance data: %v", err)
+	}
+
+	return nil
+}
+
+func UpdateStart(selectedDate string, registeredTime string) error {
+	con, err := openDBConnection()
+	if err != nil {
+		return err
+	}
+	defer func(con *sql.DB) {
+		err = db.CloseConnection(con)
+		if err != nil {
+			fmt.Println("failed to close connection:", err)
+		}
+	}(con)
+
+	query := "UPDATE timesheet SET start_time = ? WHERE workdate = ?"
+	_, err = con.Exec(query, registeredTime, selectedDate)
+	if err != nil {
+		return fmt.Errorf("failed to update start time%v", err)
 	}
 
 	return nil

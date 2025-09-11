@@ -22,13 +22,19 @@ func RegisterStart(startTime string, status helpers.StatusProvider) error {
 	}
 
 	dateRecord := status.GetSelectedRecord()
-	dateRecord.StartTime.String = registeredTime.Format(utils.TimeLayout)
-	dateRecord.StartTime.Valid = true
+
+	if dateRecord.StartTime.Valid {
+		err = helpers.UpdateStart(dateRecord.WorkDate, registeredTime.Format(utils.TimeLayout))
+	} else {
+		err = helpers.WriteStart(dateRecord.WorkDate, registeredTime.Format(utils.TimeLayout))
+		if err != nil {
+			return err
+		}
+		dateRecord.StartTime.String = registeredTime.Format(utils.TimeLayout)
+		dateRecord.StartTime.Valid = true
+	}
 
 	if !dateRecord.EndTime.Valid {
-		query := "UPDATE timesheet SET start_time = ? WHERE workdate = ?"
-		fmt.Println(query)
-		//Execute DB update
 		return nil
 	}
 
@@ -74,6 +80,7 @@ func RegisterStart(startTime string, status helpers.StatusProvider) error {
 	if err != nil {
 		return fmt.Errorf("failed to parse maxDate.%v", err)
 	}
+
 	if selectedDate.Before(maxDate) {
 		rebalanceSucceedingDates()
 	}
