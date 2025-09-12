@@ -1,1 +1,65 @@
 package actions
+
+import (
+	"fTime/helpers"
+	"fTime/utils"
+	"fmt"
+	"time"
+)
+
+func RegisterEnd(endTime string, state *helpers.ReportState, userConfig *helpers.UserConfig) error {
+	if !state.SelectedRecord.StartTime.Valid {
+		return fmt.Errorf("can't end selected date.\nstart time must be registered first.")
+	}
+
+	formattedTime, err := helpers.FormatValidTimeString(endTime)
+	if err != nil {
+		return fmt.Errorf("failed to format end time.%v", err)
+	}
+	registeredTime, err := helpers.ParseTimeObject(formattedTime)
+	if err != nil {
+		return fmt.Errorf("failed to parse end time: %v", err)
+	}
+
+	var lunchDuration int16
+	if state.SelectedRecord.LunchDuration.Valid {
+		lunchDuration = state.SelectedRecord.LunchDuration.Int16
+	} else {
+		lunchDuration = userConfig.DefaultLunch.Int16
+	}
+
+	err = helpers.UpdateEnd(
+		state.SelectedDate,
+		registeredTime.Format(utils.TimeLayout),
+		state.SelectedRecord.Overtime.Bool,
+		lunchDuration,
+	)
+	if err != nil {
+		return err
+	}
+	state.SelectedRecord.EndTime.String = registeredTime.Format(utils.TimeLayout)
+
+	err = RegisterTotals(state)
+	if err != nil {
+		return err
+	}
+
+	if state.SelectedDate == state.MaxDate {
+		parsedDate, err := time.Parse(utils.DateLayout, state.SelectedDate)
+		if err != nil {
+			return fmt.Errorf("failed to parse selected date.%v", err)
+		}
+		/*
+			!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			TODO: ADD LOGIC FOR SCHEDULED PERIODS
+			!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			/
+		*/
+		if parsedDate.Weekday().String() == "Friday" {
+			RegisterWeekend(state.SelectedRecord)
+		}
+
+	}
+
+	return nil
+}

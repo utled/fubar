@@ -169,8 +169,8 @@ func GetUserConfig() (config UserConfig, err error) {
 		}
 	}(con)
 
-	query := "SELECT * FROM userconfig WHERE ROWID = ?;"
-	response := con.QueryRow(query, 0)
+	query := "SELECT * FROM userconfig limit 1;"
+	response := con.QueryRow(query)
 
 	userConfig := &UserConfig{}
 
@@ -211,7 +211,7 @@ func GetPreviousBalance(selectedDate time.Time) (previousBalance float64, err er
 	return previousBalance, nil
 }
 
-func WriteStart(selectedDate string, registeredTime string) error {
+func WriteStart(selectedDate string, registeredTime string, dayLength string) error {
 	con, err := openDBConnection()
 	if err != nil {
 		return err
@@ -223,8 +223,8 @@ func WriteStart(selectedDate string, registeredTime string) error {
 		}
 	}(con)
 
-	query := "INSERT INTO timesheet(workdate, start_time) VALUES (?, ?)"
-	_, err = con.Exec(query, selectedDate, registeredTime)
+	query := "INSERT INTO timesheet(workdate, start_time, day_length) VALUES (?, ?, ?)"
+	_, err = con.Exec(query, selectedDate, registeredTime, dayLength)
 	if err != nil {
 		return fmt.Errorf("failed to write start time to %s: %v", selectedDate, err)
 	}
@@ -277,7 +277,7 @@ func UpdateStart(selectedDate string, registeredTime string) error {
 	return nil
 }
 
-func UpdateEnd(selectedDate string, registeredTime string) error {
+func UpdateEnd(selectedDate string, registeredTime string, overtime bool, lunchDuration int16) error {
 	con, err := openDBConnection()
 	if err != nil {
 		return err
@@ -289,8 +289,8 @@ func UpdateEnd(selectedDate string, registeredTime string) error {
 		}
 	}(con)
 
-	query := "UPDATE timesheet SET end_time = ? WHERE workdate = ?"
-	_, err = con.Exec(query, registeredTime, selectedDate)
+	query := "UPDATE timesheet SET end_time = ?, overtime = ?, lunch_duration = ? WHERE workdate = ?"
+	_, err = con.Exec(query, registeredTime, overtime, lunchDuration, selectedDate)
 	if err != nil {
 		return fmt.Errorf("failed to update end time%v", err)
 	}

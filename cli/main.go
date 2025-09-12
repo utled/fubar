@@ -62,7 +62,7 @@ func Main() {
 			}
 		case "start":
 			if len(arguments) == 2 {
-				err = actions.RegisterStart(arguments[1], &currentState)
+				err = actions.RegisterStart(arguments[1], &currentState, &userConfig)
 				if err != nil {
 					fmt.Println(err)
 					break
@@ -77,7 +77,7 @@ func Main() {
 			}
 		case "end":
 			if len(arguments) == 2 {
-				err = actions.RegisterEnd(arguments[1], false, &currentState)
+				err = actions.RegisterEnd(arguments[1], &currentState, &userConfig)
 				if err != nil {
 					fmt.Println(err)
 					break
@@ -87,8 +87,16 @@ func Main() {
 					fmt.Println(err)
 				}
 				helpers.PrintSelectedDate(&currentState)
-			} else if len(arguments) == 3 && arguments[2] == "ot" {
-				err = actions.RegisterEnd(arguments[1], true, &currentState)
+			} else if len(arguments) == 3 {
+				if arguments[2] == "ot" {
+					currentState.SelectedRecord.Overtime.Bool = true
+				} else if arguments[2] == "-ot" {
+					currentState.SelectedRecord.Overtime.Bool = false
+				} else {
+					fmt.Println("Invalid argument")
+					break
+				}
+				err = actions.RegisterEnd(arguments[1], &currentState, &userConfig)
 				if err != nil {
 					fmt.Println(err)
 					break
