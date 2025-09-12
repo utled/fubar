@@ -36,6 +36,7 @@ type UserConfig struct {
 	DefaultDayLength sql.NullString
 	OffStart         sql.NullString
 	OffEnd           sql.NullString
+	OffType          sql.NullString
 }
 
 func openDBConnection() (conn *sql.DB, err error) {
@@ -177,8 +178,9 @@ func GetUserConfig() (config UserConfig, err error) {
 	err = response.Scan(
 		&userConfig.DefaultLunch,
 		&userConfig.DefaultDayLength,
-		&userConfig.VacationStart,
-		&userConfig.VacationEnd,
+		&userConfig.OffStart,
+		&userConfig.OffEnd,
+		&userConfig.OffType,
 	)
 	if err != nil {
 		return UserConfig{}, fmt.Errorf("failed to serialize user config to struct%v", err)
@@ -295,9 +297,9 @@ func UpdateEnd(
 		}
 	}(con)
 
-	query := "UPDATE timesheet " +
-		"SET end_time = ?, overtime = ?, lunch_duration = ?, additional_time = ? " +
-		"WHERE workdate = ?"
+	query := `UPDATE timesheet 
+SET end_time = ?, overtime = ?, lunch_duration = ?, additional_time = ? 
+WHERE workdate = ?`
 	_, err = con.Exec(query, registeredTime, overtime, lunchDuration, additionalTime, selectedDate)
 	if err != nil {
 		return fmt.Errorf("failed to update end time%v", err)
@@ -385,6 +387,29 @@ func UpdateDefaultLength(dayLength int16) error {
 	_, err = con.Exec(query, dayLength)
 	if err != nil {
 		return fmt.Errorf("failed to update default lunch%v", err)
+	}
+
+	return nil
+}
+
+func UpdateScheduledOff(offStart string, offEnd string, offType string) error {
+	con, err := openDBConnection()
+	if err != nil {
+		return err
+	}
+	defer func(con *sql.DB) {
+		err = db.CloseConnection(con)
+		if err != nil {
+			fmt.Println("failed to close connection:", err)
+		}
+	}(con)
+
+	query := `UPDATE userconfig 
+SET scheduled_off_start = ?, scheduled_off_end = ?, scheduled_off_type = ? 
+WHERE ROWID = 1`
+	_, err = con.Exec(query, offStart, offEnd, offType)
+	if err != nil {
+		return fmt.Errorf("failed to update scheduled off period: %v", err)
 	}
 
 	return nil

@@ -151,7 +151,31 @@ func Main() {
 		case "sic":
 			fmt.Println("not implemented...")
 		case "sched":
-			fmt.Println("not implemented...")
+			if len(arguments) == 2 && arguments[1] == "remove" {
+				err = actions.RemoveScheduledOffPeriod()
+				if err != nil {
+					fmt.Println(err)
+					break
+				}
+				userConfig, err = helpers.GetUserConfig()
+				if err != nil {
+					fmt.Println(err)
+				}
+				helpers.PrintSelectedDate(&currentState)
+			} else if len(arguments) == 4 {
+				err = actions.ScheduleOffPeriod(arguments[1], arguments[2], arguments[3], &userConfig)
+				if err != nil {
+					fmt.Println(err)
+					break
+				}
+				userConfig, err = helpers.GetUserConfig()
+				if err != nil {
+					fmt.Println(err)
+				}
+				helpers.PrintSelectedDate(&currentState)
+			} else {
+				fmt.Println("Invalid argument")
+			}
 		case "back":
 			fmt.Println("not implemented...")
 		case "conflunch":

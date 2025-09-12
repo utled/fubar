@@ -43,3 +43,26 @@ func CheckIfDateExists(dateString string, maxDateString string) (dateExists bool
 
 	return dateExists, nil
 }
+
+func CheckDateInFuture(dateString string) (dateInFuture bool, err error) {
+	dateToCheck, err := time.Parse(utils.DateLayout, dateString)
+	if err != nil {
+		return false, fmt.Errorf("failed to parse selected date %v", err)
+	}
+	dateInFuture = time.Now().Before(dateToCheck)
+	return dateInFuture, err
+}
+
+func CheckDateBefore(startDate string, endDate string) (dateBefore bool, err error) {
+	parsedStart, err := time.Parse(utils.DateLayout, startDate)
+	if err != nil {
+		return false, fmt.Errorf("failed to parse start date %v", err)
+	}
+	parsedEnd, err := time.Parse(utils.DateLayout, endDate)
+	if err != nil {
+		return false, fmt.Errorf("failed to parse end date %v", err)
+	}
+	dateBefore = parsedStart.Before(parsedEnd)
+
+	return dateBefore, err
+}

@@ -54,6 +54,7 @@ func PrintCommands(state *ReportState) {
 		"off/vac/sic                               -> Flag displayed date as non working day",
 		"\n_____SCHEDULING__________________________________________________________________________________________",
 		"sched <YYYY-MM-DD YYYY-MM-DD off/vac/sic> -> Schedule date period for coming off time",
+		"sched remove                              -> Remove scheduled period",
 		"back <off/vac/sic>                        -> Backfill all non registered days back to last completed date",
 		"\n_____DEFAULT CONFIGURATIONS______________________________________________________________________________",
 		"conflunch <INT(minutes)>                  -> Update default lunch duration",
