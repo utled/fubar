@@ -64,7 +64,9 @@ func Main() {
 				err = logic.RegisterStart(arguments[1], &currentState)
 				if err != nil {
 					fmt.Println(err)
+					break
 				}
+				helpers.PrintSelectedDate(&currentState)
 			} else {
 				fmt.Println("Invalid argument")
 			}
