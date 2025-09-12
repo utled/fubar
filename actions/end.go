@@ -28,11 +28,19 @@ func RegisterEnd(endTime string, state *helpers.ReportState, userConfig *helpers
 		lunchDuration = userConfig.DefaultLunch.Int16
 	}
 
+	var additionalTime int16
+	if state.SelectedRecord.AdditionalTime.Valid {
+		additionalTime = state.SelectedRecord.AdditionalTime.Int16
+	} else {
+		additionalTime = 0
+	}
+
 	err = helpers.UpdateEnd(
 		state.SelectedDate,
 		registeredTime.Format(utils.TimeLayout),
 		state.SelectedRecord.Overtime.Bool,
 		lunchDuration,
+		additionalTime,
 	)
 	if err != nil {
 		return err

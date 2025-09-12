@@ -115,17 +115,36 @@ func Main() {
 		case "-ot":
 			fmt.Println("not implemented...")
 		case "lunch":
-			err = actions.RegisterLunch(arguments[1], &currentState)
-			if err != nil {
-				fmt.Println(err)
+			if len(arguments) == 2 {
+				err = actions.RegisterLunch(arguments[1], &currentState)
+				if err != nil {
+					fmt.Println(err)
+					break
+				}
+				currentState, err = setNewState(selectedDate, &userConfig)
+				if err != nil {
+					fmt.Println(err)
+				}
+				helpers.PrintSelectedDate(&currentState)
+			} else {
+				fmt.Println("Invalid argument")
 			}
-			currentState, err = setNewState(selectedDate, &userConfig)
-			if err != nil {
-				fmt.Println(err)
-			}
-			helpers.PrintSelectedDate(&currentState)
+
 		case "addit":
-			fmt.Println("not implemented...")
+			if len(arguments) == 2 {
+				err = actions.RegisterAdditionalTime(arguments[1], &currentState)
+				if err != nil {
+					fmt.Println(err)
+					break
+				}
+				currentState, err = setNewState(selectedDate, &userConfig)
+				if err != nil {
+					fmt.Println(err)
+				}
+				helpers.PrintSelectedDate(&currentState)
+			} else {
+				fmt.Println("Invalid argument")
+			}
 		case "off":
 			fmt.Println("not implemented...")
 		case "vac":

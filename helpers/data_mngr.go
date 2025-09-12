@@ -277,7 +277,13 @@ func UpdateStart(selectedDate string, registeredTime string) error {
 	return nil
 }
 
-func UpdateEnd(selectedDate string, registeredTime string, overtime bool, lunchDuration int16) error {
+func UpdateEnd(
+	selectedDate string,
+	registeredTime string,
+	overtime bool,
+	lunchDuration int16,
+	additionalTime int16,
+) error {
 	con, err := openDBConnection()
 	if err != nil {
 		return err
@@ -289,8 +295,10 @@ func UpdateEnd(selectedDate string, registeredTime string, overtime bool, lunchD
 		}
 	}(con)
 
-	query := "UPDATE timesheet SET end_time = ?, overtime = ?, lunch_duration = ? WHERE workdate = ?"
-	_, err = con.Exec(query, registeredTime, overtime, lunchDuration, selectedDate)
+	query := "UPDATE timesheet " +
+		"SET end_time = ?, overtime = ?, lunch_duration = ?, additional_time = ? " +
+		"WHERE workdate = ?"
+	_, err = con.Exec(query, registeredTime, overtime, lunchDuration, additionalTime, selectedDate)
 	if err != nil {
 		return fmt.Errorf("failed to update end time%v", err)
 	}
@@ -314,6 +322,27 @@ func UpdateLunch(selectedDate string, lunchDuration int16) error {
 	_, err = con.Exec(query, lunchDuration, selectedDate)
 	if err != nil {
 		return fmt.Errorf("failed to update lunch duration%v", err)
+	}
+
+	return nil
+}
+
+func UpdateAdditionalTime(selectedDate string, additionalTime int16) error {
+	con, err := openDBConnection()
+	if err != nil {
+		return err
+	}
+	defer func(con *sql.DB) {
+		err = db.CloseConnection(con)
+		if err != nil {
+			fmt.Println("failed to close connection:", err)
+		}
+	}(con)
+
+	query := "UPDATE timesheet SET additional_time = ? WHERE workdate = ?"
+	_, err = con.Exec(query, additionalTime, selectedDate)
+	if err != nil {
+		return fmt.Errorf("failed to update additional time%v", err)
 	}
 
 	return nil

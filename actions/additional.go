@@ -1,1 +1,32 @@
 package actions
+
+import (
+	"fTime/helpers"
+	"fmt"
+	"strconv"
+)
+
+func RegisterAdditionalTime(additionalTimeString string, state *helpers.ReportState) error {
+	additionalTimeInt, err := strconv.Atoi(additionalTimeString)
+	if err != nil {
+		return fmt.Errorf("failed to convert input to numeric value.\nInput format must be <MM>")
+	}
+	additionalTime := int16(additionalTimeInt)
+	if additionalTime < 0 {
+		return fmt.Errorf("additionalTime can't be a negative value")
+	}
+
+	err = helpers.UpdateAdditionalTime(state.SelectedDate, additionalTime)
+	if err != nil {
+		return err
+	}
+
+	state.SelectedRecord.AdditionalTime.Int16 = additionalTime
+
+	err = RegisterTotals(state)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
