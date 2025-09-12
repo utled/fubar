@@ -34,8 +34,8 @@ type WorkDateRecord struct {
 type UserConfig struct {
 	DefaultLunch     sql.NullInt16
 	DefaultDayLength sql.NullString
-	VacationStart    sql.NullString
-	VacationEnd      sql.NullString
+	OffStart         sql.NullString
+	OffEnd           sql.NullString
 }
 
 func openDBConnection() (conn *sql.DB, err error) {
