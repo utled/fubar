@@ -4,7 +4,6 @@ import (
 	"fTime/helpers"
 	"fTime/utils"
 	"fmt"
-	"time"
 )
 
 func RegisterStart(startTime string, state *helpers.ReportState) error {
@@ -36,51 +35,9 @@ func RegisterStart(startTime string, state *helpers.ReportState) error {
 		return nil
 	}
 
-	dayTotal, err := helpers.CalcDayTotal(state.SelectedRecord)
+	err = RegisterTotals(state)
 	if err != nil {
 		return err
-	}
-	state.SelectedRecord.DayTotal.String = dayTotal
-	state.SelectedRecord.DayTotal.Valid = true
-
-	dayBalance, err := helpers.CalcDayBalance(state.SelectedRecord)
-	if err != nil {
-		return err
-	}
-	state.SelectedRecord.DayBalance.Float64 = dayBalance
-	state.SelectedRecord.DayBalance.Valid = true
-
-	selectedDate, err := time.Parse(utils.DateLayout, state.SelectedDate)
-	if err != nil {
-		return fmt.Errorf("failed to parse selectedDate.%v", err)
-	}
-	previousBalance, err := helpers.GetPreviousBalance(selectedDate)
-	if err != nil {
-		return err
-	}
-
-	var totalBalance float64
-	if state.SelectedRecord.Overtime.Bool {
-		totalBalance = previousBalance
-	} else {
-		totalBalance = helpers.CalcTotalBalance(state.SelectedRecord, previousBalance)
-	}
-	state.SelectedRecord.MovingBalance.Float64 = totalBalance
-	state.SelectedRecord.MovingBalance.Valid = true
-
-	err = helpers.WriteNewBalance(selectedDate.Format(utils.DateLayout), dayTotal, dayBalance, totalBalance)
-	if err != nil {
-		return err
-	}
-
-	maxDateString := state.MaxDate
-	maxDate, err := time.Parse(utils.DateLayout, maxDateString)
-	if err != nil {
-		return fmt.Errorf("failed to parse maxDate.%v", err)
-	}
-
-	if selectedDate.Before(maxDate) {
-		rebalanceSucceedingDates()
 	}
 
 	return nil
