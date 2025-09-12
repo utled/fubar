@@ -39,5 +39,7 @@ func CheckIfDateExists(dateString string, maxDateString string) (dateExists bool
 	}
 	dateDiff := dateToCheck.Sub(maxDate)
 
-	return dateDiff.Hours() < 0, nil
+	dateExists = dateDiff.Hours() <= 0
+
+	return dateExists, nil
 }
