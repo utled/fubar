@@ -115,7 +115,15 @@ func Main() {
 		case "-ot":
 			fmt.Println("not implemented...")
 		case "lunch":
-			fmt.Println("not implemented...")
+			err = actions.RegisterLunch(arguments[1], &currentState)
+			if err != nil {
+				fmt.Println(err)
+			}
+			currentState, err = setNewState(selectedDate, &userConfig)
+			if err != nil {
+				fmt.Println(err)
+			}
+			helpers.PrintSelectedDate(&currentState)
 		case "addit":
 			fmt.Println("not implemented...")
 		case "off":

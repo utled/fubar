@@ -36,7 +36,6 @@ func CalcDayBalance(dateRecord *WorkDateRecord) (float64, error) {
 	if err != nil {
 		return 0.0, fmt.Errorf("failed to parse day total time")
 	}
-	fmt.Println(totalTime)
 
 	defaultDayLength, err := ParseTimeObject(dateRecord.DayLength.String)
 	if err != nil {

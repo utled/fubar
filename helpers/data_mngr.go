@@ -297,3 +297,24 @@ func UpdateEnd(selectedDate string, registeredTime string, overtime bool, lunchD
 
 	return nil
 }
+
+func UpdateLunch(selectedDate string, lunchDuration int16) error {
+	con, err := openDBConnection()
+	if err != nil {
+		return err
+	}
+	defer func(con *sql.DB) {
+		err = db.CloseConnection(con)
+		if err != nil {
+			fmt.Println("failed to close connection:", err)
+		}
+	}(con)
+
+	query := "UPDATE timesheet SET lunch_duration = ? WHERE workdate = ?"
+	_, err = con.Exec(query, lunchDuration, selectedDate)
+	if err != nil {
+		return fmt.Errorf("failed to update lunch duration%v", err)
+	}
+
+	return nil
+}
