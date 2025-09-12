@@ -7,8 +7,8 @@ import (
 	"time"
 )
 
-func RegisterStart(startTime string, status helpers.StatusProvider) error {
-	if !status.GetReportUpToDate() {
+func RegisterStart(startTime string, state *helpers.ReportState) error {
+	if !state.ReportUpToDate {
 		return fmt.Errorf("can't start selected date.\nAll previous dates must be up to date.")
 	}
 
@@ -21,38 +21,36 @@ func RegisterStart(startTime string, status helpers.StatusProvider) error {
 		return fmt.Errorf("failed to parse start time.%v", err)
 	}
 
-	dateRecord := status.GetSelectedRecord()
-
-	if dateRecord.StartTime.Valid {
-		err = helpers.UpdateStart(dateRecord.WorkDate, registeredTime.Format(utils.TimeLayout))
+	if state.SelectedRecord.StartTime.Valid {
+		err = helpers.UpdateStart(state.SelectedRecord.WorkDate, registeredTime.Format(utils.TimeLayout))
 	} else {
-		err = helpers.WriteStart(dateRecord.WorkDate, registeredTime.Format(utils.TimeLayout))
+		err = helpers.WriteStart(state.SelectedRecord.WorkDate, registeredTime.Format(utils.TimeLayout))
 		if err != nil {
 			return err
 		}
-		dateRecord.StartTime.String = registeredTime.Format(utils.TimeLayout)
-		dateRecord.StartTime.Valid = true
+		state.SelectedRecord.StartTime.String = registeredTime.Format(utils.TimeLayout)
+		state.SelectedRecord.StartTime.Valid = true
 	}
 
-	if !dateRecord.EndTime.Valid {
+	if !state.SelectedRecord.EndTime.Valid {
 		return nil
 	}
 
-	dayTotal, err := helpers.CalcDayTotal(&dateRecord)
+	dayTotal, err := helpers.CalcDayTotal(state.SelectedRecord)
 	if err != nil {
 		return err
 	}
-	dateRecord.DayTotal.String = dayTotal
-	dateRecord.DayTotal.Valid = true
+	state.SelectedRecord.DayTotal.String = dayTotal
+	state.SelectedRecord.DayTotal.Valid = true
 
-	dayBalance, err := helpers.CalcDayBalance(&dateRecord)
+	dayBalance, err := helpers.CalcDayBalance(state.SelectedRecord)
 	if err != nil {
 		return err
 	}
-	dateRecord.DayBalance.Float64 = dayBalance
-	dateRecord.DayBalance.Valid = true
+	state.SelectedRecord.DayBalance.Float64 = dayBalance
+	state.SelectedRecord.DayBalance.Valid = true
 
-	selectedDate, err := time.Parse(utils.DateLayout, status.GetSelectedDate())
+	selectedDate, err := time.Parse(utils.DateLayout, state.SelectedDate)
 	if err != nil {
 		return fmt.Errorf("failed to parse selectedDate.%v", err)
 	}
@@ -62,20 +60,20 @@ func RegisterStart(startTime string, status helpers.StatusProvider) error {
 	}
 
 	var totalBalance float64
-	if dateRecord.Overtime.Bool {
+	if state.SelectedRecord.Overtime.Bool {
 		totalBalance = previousBalance
 	} else {
-		totalBalance = helpers.CalcTotalBalance(&dateRecord, previousBalance)
+		totalBalance = helpers.CalcTotalBalance(state.SelectedRecord, previousBalance)
 	}
-	dateRecord.MovingBalance.Float64 = totalBalance
-	dateRecord.MovingBalance.Valid = true
+	state.SelectedRecord.MovingBalance.Float64 = totalBalance
+	state.SelectedRecord.MovingBalance.Valid = true
 
 	err = helpers.WriteNewBalance(selectedDate.Format(utils.DateLayout), dayTotal, dayBalance, totalBalance)
 	if err != nil {
 		return err
 	}
 
-	maxDateString := status.GetMaxDate()
+	maxDateString := state.MaxDate
 	maxDate, err := time.Parse(utils.DateLayout, maxDateString)
 	if err != nil {
 		return fmt.Errorf("failed to parse maxDate.%v", err)

@@ -19,6 +19,7 @@ func Main() {
 	if err != nil {
 		fmt.Println(err)
 	}
+	fmt.Println("User Config:", userConfig)
 
 	//selectedDate := time.Now().Format("2006-01-02")
 	selectedDate := "2024-12-08"
@@ -66,25 +67,31 @@ func Main() {
 					fmt.Println(err)
 					break
 				}
+				currentState, err = setNewState(selectedDate)
+				if err != nil {
+					fmt.Println(err)
+				}
 				helpers.PrintSelectedDate(&currentState)
 			} else {
 				fmt.Println("Invalid argument")
 			}
 		case "end":
-			if len(arguments) == 2 {
-				formattedTimeString, err := helpers.FormatValidTimeString(arguments[1])
+			/*if len(arguments) == 2 {
+				err = actions.RegisterEnd(arguments[1], false, &currentState)
 				if err != nil {
 					fmt.Println(err)
+					break
 				}
-				fmt.Println(formattedTimeString)
-				registeredTime, err := helpers.ParseTimeObject(formattedTimeString)
+			} else if len(arguments) == 3 && arguments[2] == "ot" {
+				err = actions.RegisterEnd(arguments[1], true, &currentState)
 				if err != nil {
 					fmt.Println(err)
+					break
 				}
-				fmt.Println(registeredTime)
 			} else {
 				fmt.Println("Invalid argument")
-			}
+			}*/
+
 		case "ot":
 			fmt.Println("not implemented...")
 		case "-ot":
@@ -110,33 +117,6 @@ func Main() {
 		case "cmd":
 			helpers.PrintCommands(&currentState)
 		case "test":
-			currentState.selectedRecord.StartTime.String = "08:00:00"
-			currentState.selectedRecord.EndTime.String = "10:00:00"
-			currentState.selectedRecord.LunchDuration.Int16 = 30
-			currentState.selectedRecord.AdditionalTime.Int16 = 20
-			currentState.selectedRecord.DayTotal.String = "08:30:00"
-			currentState.selectedRecord.DayLength.String = "08:00:00"
-			currentState.selectedRecord.LunchDuration.Int16 = 30
-
-			dayTotal, err := helpers.CalcDayTotal(&currentState.selectedRecord)
-			if err != nil {
-				fmt.Println(err)
-			}
-			fmt.Println(dayTotal)
-
-			dayBalance, err := helpers.CalcDayBalance(&currentState.selectedRecord)
-			if err != nil {
-				fmt.Println(err)
-			}
-			currentState.selectedRecord.DayBalance.Float64 = dayBalance
-			currentState.selectedRecord.DayBalance.Valid = true
-
-			totalBalance := helpers.CalcTotalBalance(&currentState.selectedRecord, -0.2)
-			currentState.selectedRecord.MovingBalance.Float64 = totalBalance
-			currentState.selectedRecord.MovingBalance.Valid = true
-
-			projectedEnd := helpers.CalcProjectedEnd(&currentState.selectedRecord, &userConfig)
-			currentState.projectedEnd = projectedEnd
 
 		default:
 			err := helpers.ClearTerminal()

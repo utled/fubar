@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-func PrintHeader(withSupportText bool, status StatusProvider) {
+func PrintHeader(withSupportText bool, state *ReportState) {
 	fmt.Print("\n                   ┏━━━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━━┓\n" +
 		"                   ┃┏┓┏┓┃┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┓┏┓┃\n" +
 		"                   ┗┛┃┃┗┛┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃┃┃\n" +
@@ -17,29 +17,29 @@ func PrintHeader(withSupportText bool, status StatusProvider) {
 	if withSupportText {
 		fmt.Print("                   cmd -> Display available commands           Ctrl+C -> Close program\n\n")
 	}
-	if !status.GetReportUpToDate() {
+	if !state.ReportUpToDate {
 		fmt.Println("                   There are missing regitrations.\n"+
-			"                   Last completed date:", status.GetMaxCompletedDate())
+			"                   Last completed date:", state.MaxCompletedDate)
 	}
-	fmt.Print("\n                   Selected date:", status.GetSelectedDate(), "\n\n")
+	fmt.Print("\n                   Selected date:", state.SelectedDate, "\n\n")
 
 }
 
-func PrintSelectedDate(status StatusProvider) {
+func PrintSelectedDate(state *ReportState) {
 	err := ClearTerminal()
 	if err != nil {
 		fmt.Println(err)
 	}
-	PrintHeader(true, status)
-	fmt.Println(status.GetSelectedRecord())
+	PrintHeader(true, state)
+	fmt.Println(state.SelectedRecord)
 }
 
-func PrintCommands(status StatusProvider) {
+func PrintCommands(state *ReportState) {
 	err := ClearTerminal()
 	if err != nil {
 		fmt.Println(err)
 	}
-	PrintHeader(false, status)
+	PrintHeader(false, state)
 	availableCommands := []string{
 		"\n_____DISPLAY_____________________________________________________________________________________________",
 		"today                                     -> Display current date",

@@ -8,13 +8,13 @@ import (
 	"time"
 )
 
-type StatusProvider interface {
-	GetReportUpToDate() bool
-	GetMaxDate() string
-	GetMaxCompletedDate() string
-	GetSelectedDate() string
-	GetSelectedRecord() WorkDateRecord
-	GetProjectedEnd() string
+type ReportState struct {
+	ReportUpToDate   bool
+	MaxDate          string
+	MaxCompletedDate string
+	SelectedDate     string
+	SelectedRecord   *WorkDateRecord
+	ProjectedEnd     string
 }
 
 type WorkDateRecord struct {
@@ -272,6 +272,27 @@ func UpdateStart(selectedDate string, registeredTime string) error {
 	_, err = con.Exec(query, registeredTime, selectedDate)
 	if err != nil {
 		return fmt.Errorf("failed to update start time%v", err)
+	}
+
+	return nil
+}
+
+func UpdateEnd(selectedDate string, registeredTime string) error {
+	con, err := openDBConnection()
+	if err != nil {
+		return err
+	}
+	defer func(con *sql.DB) {
+		err = db.CloseConnection(con)
+		if err != nil {
+			fmt.Println("failed to close connection:", err)
+		}
+	}(con)
+
+	query := "UPDATE timesheet SET end_time = ? WHERE workdate = ?"
+	_, err = con.Exec(query, registeredTime, selectedDate)
+	if err != nil {
+		return fmt.Errorf("failed to update end time%v", err)
 	}
 
 	return nil
