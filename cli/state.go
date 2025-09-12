@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"fTime/actions"
 	"fTime/helpers"
 )
 
@@ -11,12 +10,12 @@ func setNewState(selectedDate string, userConfig *helpers.UserConfig) (helpers.R
 		return helpers.ReportState{}, err
 	}
 
-	previousCompleted, err := actions.CheckPreviousCompletion(selectedDate, maxCompletedDate)
+	previousCompleted, err := helpers.CheckPreviousCompletion(selectedDate, maxCompletedDate)
 	if err != nil {
 		return helpers.ReportState{}, err
 	}
 
-	recordExists, err := actions.CheckIfDateExists(selectedDate, maxDate)
+	recordExists, err := helpers.CheckIfDateExists(selectedDate, maxDate)
 	if err != nil {
 		return helpers.ReportState{}, err
 	}
