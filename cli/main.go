@@ -19,7 +19,6 @@ func Main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println("User Config:", userConfig)
 
 	//selectedDate := time.Now().Format("2006-01-02")
 	selectedDate := "2024-12-08"
@@ -156,9 +155,35 @@ func Main() {
 		case "back":
 			fmt.Println("not implemented...")
 		case "conflunch":
-			fmt.Println("not implemented...")
+			if len(arguments) == 2 {
+				err = actions.UpdateDefaultLunch(arguments[1])
+				if err != nil {
+					fmt.Println(err)
+					break
+				}
+				userConfig, err = helpers.GetUserConfig()
+				if err != nil {
+					fmt.Println(err)
+				}
+				helpers.PrintSelectedDate(&currentState)
+			} else {
+				fmt.Println("Invalid argument")
+			}
 		case "conflength":
-			fmt.Println("not implemented...")
+			if len(arguments) == 2 {
+				err = actions.UpdateDefaultLength(arguments[1])
+				if err != nil {
+					fmt.Println(err)
+					break
+				}
+				userConfig, err = helpers.GetUserConfig()
+				if err != nil {
+					fmt.Println(err)
+				}
+				helpers.PrintSelectedDate(&currentState)
+			} else {
+				fmt.Println("Invalid argument")
+			}
 		case "cmd":
 			helpers.PrintCommands(&currentState)
 		case "test":

@@ -347,3 +347,45 @@ func UpdateAdditionalTime(selectedDate string, additionalTime int16) error {
 
 	return nil
 }
+
+func UpdateDefaultLunch(lunchDuration int16) error {
+	con, err := openDBConnection()
+	if err != nil {
+		return err
+	}
+	defer func(con *sql.DB) {
+		err = db.CloseConnection(con)
+		if err != nil {
+			fmt.Println("failed to close connection:", err)
+		}
+	}(con)
+
+	query := "UPDATE userconfig SET lunch_duration = ? WHERE ROWID = 1"
+	_, err = con.Exec(query, lunchDuration)
+	if err != nil {
+		return fmt.Errorf("failed to update default lunch%v", err)
+	}
+
+	return nil
+}
+
+func UpdateDefaultLength(dayLength int16) error {
+	con, err := openDBConnection()
+	if err != nil {
+		return err
+	}
+	defer func(con *sql.DB) {
+		err = db.CloseConnection(con)
+		if err != nil {
+			fmt.Println("failed to close connection:", err)
+		}
+	}(con)
+
+	query := "UPDATE userconfig SET length_of_day = ? WHERE ROWID = 1"
+	_, err = con.Exec(query, dayLength)
+	if err != nil {
+		return fmt.Errorf("failed to update default lunch%v", err)
+	}
+
+	return nil
+}
