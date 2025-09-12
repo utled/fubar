@@ -23,9 +23,11 @@ func RegisterLunch(lunchString string, state *helpers.ReportState) error {
 
 	state.SelectedRecord.LunchDuration.Int16 = lunchDuration
 
-	err = RegisterTotals(state)
-	if err != nil {
-		return err
+	if state.SelectedRecord.EndTime.Valid {
+		err = RegisterTotals(state)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
