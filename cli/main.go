@@ -217,6 +217,7 @@ func Main() {
 			if err != nil {
 				fmt.Println(err)
 			}
+			helpers.PrintSelectedDate(&currentState)
 			fmt.Println("Invalid command")
 		}
 	}

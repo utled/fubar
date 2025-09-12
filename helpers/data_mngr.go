@@ -27,8 +27,8 @@ type WorkDateRecord struct {
 	Overtime       sql.NullBool
 	MovingBalance  sql.NullFloat64
 	AdditionalTime sql.NullInt16
-	SickDay        sql.NullBool
 	DayLength      sql.NullString
+	DayType        sql.NullString
 }
 
 type UserConfig struct {
@@ -76,8 +76,8 @@ func GetTimesheetRange() error {
 			&workDateRecord.Overtime,
 			&workDateRecord.MovingBalance,
 			&workDateRecord.AdditionalTime,
-			&workDateRecord.SickDay,
 			&workDateRecord.DayLength,
+			&workDateRecord.DayType,
 		)
 		if err != nil {
 			return fmt.Errorf("failed to serialize range of records to struct: %v", err)
@@ -118,8 +118,8 @@ func GetOneWorkDateRecord(queryDate string) (record WorkDateRecord, err error) {
 		&workDateRecord.Overtime,
 		&workDateRecord.MovingBalance,
 		&workDateRecord.AdditionalTime,
-		&workDateRecord.SickDay,
 		&workDateRecord.DayLength,
+		&workDateRecord.DayType,
 	)
 	if err != nil {
 		return WorkDateRecord{}, fmt.Errorf("failed to serialize record to struct%v", err)
@@ -253,6 +253,51 @@ func WriteNewBalance(selectedDate string, dayTotal string, dayBalance float64, t
 	_, err = con.Exec(query, dayTotal, dayBalance, totalBalance, selectedDate)
 	if err != nil {
 		return fmt.Errorf("failed to write new balance data: %v", err)
+	}
+
+	return nil
+}
+
+func WriteWeekend(dateToWrite string, totalBalance float64, defaultDayLength string) error {
+	con, err := openDBConnection()
+	if err != nil {
+		return err
+	}
+	defer func(con *sql.DB) {
+		err = db.CloseConnection(con)
+		if err != nil {
+			fmt.Println("failed to close connection:", err)
+		}
+	}(con)
+
+	query := `INSERT INTO timesheet(
+                      workdate, 
+                      start_time,
+                      end_time,
+                      lunch_duration,
+                      day_total,
+                      day_balance,
+                      overtime,
+                      moving_balance,
+                      additional_time,
+                      day_length,
+                      day_type)
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+	_, err = con.Exec(
+		query,
+		dateToWrite,
+		"00:00:00",
+		"00:00:00",
+		0,
+		"00:00:00",
+		0.0,
+		false,
+		totalBalance,
+		0,
+		defaultDayLength,
+		"wknd")
+	if err != nil {
+		return fmt.Errorf("failed to write weekend: %v", err)
 	}
 
 	return nil

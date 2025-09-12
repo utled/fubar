@@ -64,7 +64,10 @@ func RegisterEnd(endTime string, state *helpers.ReportState, userConfig *helpers
 			/
 		*/
 		if parsedDate.Weekday().String() == "Friday" {
-			RegisterWeekend(state.SelectedRecord)
+			err = RegisterWeekend(state.SelectedRecord.WorkDate, userConfig)
+			if err != nil {
+				return err
+			}
 		}
 
 	}
