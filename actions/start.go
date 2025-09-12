@@ -1,4 +1,4 @@
-package logic
+package actions
 
 import (
 	"fTime/helpers"

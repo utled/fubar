@@ -2,8 +2,8 @@ package cli
 
 import (
 	"bufio"
+	"fTime/actions"
 	"fTime/helpers"
-	"fTime/logic"
 	"fmt"
 	"os"
 	"strings"
@@ -61,7 +61,7 @@ func Main() {
 			}
 		case "start":
 			if len(arguments) == 2 {
-				err = logic.RegisterStart(arguments[1], &currentState)
+				err = actions.RegisterStart(arguments[1], &currentState)
 				if err != nil {
 					fmt.Println(err)
 					break

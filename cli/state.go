@@ -1,8 +1,8 @@
 package cli
 
 import (
+	"fTime/actions"
 	"fTime/helpers"
-	"fTime/logic"
 )
 
 type reportState struct {
@@ -40,12 +40,12 @@ func setNewState(selectedDate string) (reportState, error) {
 		return reportState{}, err
 	}
 
-	previousCompleted, err := logic.CheckPreviousCompletion(selectedDate, maxCompletedDate)
+	previousCompleted, err := actions.CheckPreviousCompletion(selectedDate, maxCompletedDate)
 	if err != nil {
 		return reportState{}, err
 	}
 
-	recordExists, err := logic.CheckIfDateExists(selectedDate, maxDate)
+	recordExists, err := actions.CheckIfDateExists(selectedDate, maxDate)
 	if err != nil {
 		return reportState{}, err
 	}

@@ -1,3 +1,3 @@
-package logic
+package actions
 
 func rebalanceSucceedingDates() {}
