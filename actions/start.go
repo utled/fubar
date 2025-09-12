@@ -35,7 +35,6 @@ func RegisterStart(startTime string, state *helpers.ReportState, userConfig *hel
 			return err
 		}
 		state.SelectedRecord.StartTime.String = registeredTime.Format(utils.TimeLayout)
-		state.SelectedRecord.StartTime.Valid = true
 	}
 
 	if !state.SelectedRecord.EndTime.Valid {
