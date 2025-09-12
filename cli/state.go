@@ -5,7 +5,7 @@ import (
 	"fTime/helpers"
 )
 
-func setNewState(selectedDate string) (helpers.ReportState, error) {
+func setNewState(selectedDate string, userConfig *helpers.UserConfig) (helpers.ReportState, error) {
 	maxCompletedDate, maxDate, err := helpers.GetMaxDates()
 	if err != nil {
 		return helpers.ReportState{}, err
@@ -33,12 +33,15 @@ func setNewState(selectedDate string) (helpers.ReportState, error) {
 		}
 	}
 
+	projectedEnd := helpers.CalcProjectedEnd(&selectedDateRecord, userConfig)
+
 	currentState := helpers.ReportState{
 		ReportUpToDate:   previousCompleted,
 		MaxDate:          maxDate,
 		MaxCompletedDate: maxCompletedDate,
 		SelectedDate:     selectedDate,
 		SelectedRecord:   &selectedDateRecord,
+		ProjectedEnd:     projectedEnd,
 	}
 
 	return currentState, nil

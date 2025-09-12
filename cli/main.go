@@ -24,7 +24,7 @@ func Main() {
 	//selectedDate := time.Now().Format("2006-01-02")
 	selectedDate := "2024-12-08"
 
-	currentState, err := setNewState(selectedDate)
+	currentState, err := setNewState(selectedDate, &userConfig)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -51,7 +51,7 @@ func Main() {
 					fmt.Println(err)
 					break
 				}
-				currentState, err = setNewState(selectedDate)
+				currentState, err = setNewState(selectedDate, &userConfig)
 				if err != nil {
 					return
 				}
@@ -67,7 +67,7 @@ func Main() {
 					fmt.Println(err)
 					break
 				}
-				currentState, err = setNewState(selectedDate)
+				currentState, err = setNewState(selectedDate, &userConfig)
 				if err != nil {
 					fmt.Println(err)
 				}
@@ -76,21 +76,31 @@ func Main() {
 				fmt.Println("Invalid argument")
 			}
 		case "end":
-			/*if len(arguments) == 2 {
+			if len(arguments) == 2 {
 				err = actions.RegisterEnd(arguments[1], false, &currentState)
 				if err != nil {
 					fmt.Println(err)
 					break
 				}
+				currentState, err = setNewState(selectedDate, &userConfig)
+				if err != nil {
+					fmt.Println(err)
+				}
+				helpers.PrintSelectedDate(&currentState)
 			} else if len(arguments) == 3 && arguments[2] == "ot" {
 				err = actions.RegisterEnd(arguments[1], true, &currentState)
 				if err != nil {
 					fmt.Println(err)
 					break
 				}
+				currentState, err = setNewState(selectedDate, &userConfig)
+				if err != nil {
+					fmt.Println(err)
+				}
+				helpers.PrintSelectedDate(&currentState)
 			} else {
 				fmt.Println("Invalid argument")
-			}*/
+			}
 
 		case "ot":
 			fmt.Println("not implemented...")
