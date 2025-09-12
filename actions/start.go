@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-func RegisterStart(startTime string, state *helpers.ReportState) error {
+func RegisterStart(startTime string, state *helpers.ReportState, userConfig *helpers.UserConfig) error {
 	if !state.ReportUpToDate {
 		return fmt.Errorf("can't start selected date.\nAll previous dates must be up to date.")
 	}
@@ -21,9 +21,16 @@ func RegisterStart(startTime string, state *helpers.ReportState) error {
 	}
 
 	if state.SelectedRecord.StartTime.Valid {
-		err = helpers.UpdateStart(state.SelectedRecord.WorkDate, registeredTime.Format(utils.TimeLayout))
+		err = helpers.UpdateStart(
+			state.SelectedRecord.WorkDate,
+			registeredTime.Format(utils.TimeLayout),
+		)
 	} else {
-		err = helpers.WriteStart(state.SelectedRecord.WorkDate, registeredTime.Format(utils.TimeLayout))
+		err = helpers.WriteStart(
+			state.SelectedRecord.WorkDate,
+			registeredTime.Format(utils.TimeLayout),
+			userConfig.DefaultDayLength.String,
+		)
 		if err != nil {
 			return err
 		}
