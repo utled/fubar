@@ -144,10 +144,21 @@ func Main() {
 			} else {
 				fmt.Println("Invalid argument")
 			}
-		case "off":
-			fmt.Println("not implemented...")
-		case "vac":
-			fmt.Println("not implemented...")
+		case "off", "vac":
+			if len(arguments) == 1 {
+				err = actions.RegisterOffDay(&userConfig, &currentState, arguments[0])
+				if err != nil {
+					fmt.Println(err)
+					break
+				}
+				currentState, err = setNewState(selectedDate, &userConfig)
+				if err != nil {
+					fmt.Println(err)
+				}
+				helpers.PrintSelectedDate(&currentState)
+			} else {
+				fmt.Println("Invalid argument")
+			}
 		case "sic":
 			fmt.Println("not implemented...")
 		case "sched":
