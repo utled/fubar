@@ -57,14 +57,21 @@ func RegisterEnd(endTime string, state *helpers.ReportState, userConfig *helpers
 		if err != nil {
 			return fmt.Errorf("failed to parse selected date.%v", err)
 		}
-		/*
-			!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			TODO: ADD LOGIC FOR SCHEDULED PERIODS
-			!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			/
-		*/
-		if parsedDate.Weekday().String() == "Friday" {
-			err = RegisterWeekend(state.SelectedRecord.WorkDate, userConfig)
+		nextDay := parsedDate.AddDate(0, 0, 1)
+		if userConfig.OffStart.String != "" {
+			parsedScheduledStart, err := time.Parse(utils.DateLayout, userConfig.OffStart.String)
+			if err != nil {
+				return fmt.Errorf("failed to parse scheduled start date.%v", err)
+			}
+			if nextDay == parsedScheduledStart {
+				err = RegisterOffPeriod(nextDay, userConfig, state)
+				if err != nil {
+					return err
+				}
+			}
+		}
+		if nextDay.Weekday() == time.Saturday {
+			err = RegisterWeekend(nextDay, userConfig, state)
 			if err != nil {
 				return err
 			}

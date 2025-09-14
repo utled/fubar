@@ -8,6 +8,11 @@ import (
 	"time"
 )
 
+type OffDay struct {
+	OffDate string
+	OffType string
+}
+
 type ReportState struct {
 	ReportUpToDate   bool
 	MaxDate          string
@@ -258,7 +263,7 @@ func WriteNewBalance(selectedDate string, dayTotal string, dayBalance float64, t
 	return nil
 }
 
-func WriteWeekend(dateToWrite string, totalBalance float64, defaultDayLength string) error {
+func WriteOffDays(offPeriod *[]OffDay, totalBalance float64, defaultDayLength string) error {
 	con, err := openDBConnection()
 	if err != nil {
 		return err
@@ -283,21 +288,24 @@ func WriteWeekend(dateToWrite string, totalBalance float64, defaultDayLength str
                       day_length,
                       day_type)
                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-	_, err = con.Exec(
-		query,
-		dateToWrite,
-		"00:00:00",
-		"00:00:00",
-		0,
-		"00:00:00",
-		0.0,
-		false,
-		totalBalance,
-		0,
-		defaultDayLength,
-		"wknd")
-	if err != nil {
-		return fmt.Errorf("failed to write weekend: %v", err)
+
+	for _, day := range *offPeriod {
+		_, err = con.Exec(
+			query,
+			day.OffDate,
+			"00:00:00",
+			"00:00:00",
+			0,
+			"00:00:00",
+			0.0,
+			false,
+			totalBalance,
+			0,
+			defaultDayLength,
+			day.OffType)
+		if err != nil {
+			return fmt.Errorf("failed to write weekend: %v", err)
+		}
 	}
 
 	return nil
