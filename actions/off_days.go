@@ -101,7 +101,10 @@ func RegisterOffDay(userConfig *helpers.UserConfig, state *helpers.ReportState, 
 			return err
 		}
 		state.SelectedRecord.MovingBalance.Float64 = previousBalance
-		rebalanceSucceedingDates()
+		err = rebalanceSucceedingDates(state)
+		if err != nil {
+			return err
+		}
 	} else {
 		err = helpers.WriteOffDays(&offDay, previousBalance, userConfig.DefaultDayLength.String)
 		if err != nil {

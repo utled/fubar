@@ -34,8 +34,8 @@ func RegisterStart(startTime string, state *helpers.ReportState, userConfig *hel
 		if err != nil {
 			return err
 		}
-		state.SelectedRecord.StartTime.String = registeredTime.Format(utils.TimeLayout)
 	}
+	state.SelectedRecord.StartTime.String = registeredTime.Format(utils.TimeLayout)
 
 	if !state.SelectedRecord.EndTime.Valid {
 		return nil
@@ -44,6 +44,18 @@ func RegisterStart(startTime string, state *helpers.ReportState, userConfig *hel
 	err = RegisterTotals(state)
 	if err != nil {
 		return err
+	}
+
+	selectedBeforeMax, err := helpers.CheckDateBefore(state.SelectedDate, state.MaxCompletedDate)
+	if err != nil {
+		return err
+	}
+
+	if selectedBeforeMax {
+		err = rebalanceSucceedingDates(state)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

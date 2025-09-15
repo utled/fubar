@@ -514,3 +514,26 @@ func UpdateOffDay(offPeriod *[]OffDay, totalBalance float64, defaultDayLength st
 
 	return nil
 }
+
+func UpdateTotalBalance(dateRange *[]string, previousBalance float64) error {
+	con, err := openDBConnection()
+	if err != nil {
+		return err
+	}
+	defer func(con *sql.DB) {
+		err = db.CloseConnection(con)
+		if err != nil {
+			fmt.Println("failed to close connection:", err)
+		}
+	}(con)
+
+	query := `UPDATE timesheet SET moving_balance = day_balance + ? WHERE workdate = ?`
+	for _, day := range *dateRange {
+		_, err = con.Exec(query, previousBalance, day)
+		if err != nil {
+			return fmt.Errorf("failed to update balance: %v", err)
+		}
+	}
+
+	return nil
+}

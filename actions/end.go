@@ -76,7 +76,8 @@ func RegisterEnd(endTime string, state *helpers.ReportState, userConfig *helpers
 				return err
 			}
 		}
-
+	} else {
+		err = rebalanceSucceedingDates(state)
 	}
 
 	return nil
