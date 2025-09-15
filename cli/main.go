@@ -187,7 +187,15 @@ func Main() {
 				fmt.Println("Invalid argument")
 			}
 		case "back":
-			fmt.Println("not implemented...")
+			if len(arguments) == 1 {
+				err = registration.RegisterBackflush(&currentState, arguments[1])
+				if err != nil {
+					fmt.Println(err)
+				}
+			} else {
+				fmt.Println("Invalid argument")
+			}
+
 		case "conflunch":
 			if len(arguments) == 2 {
 				err = registration.UpdateDefaultLunch(arguments[1])

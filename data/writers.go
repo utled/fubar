@@ -99,6 +99,54 @@ func WriteOffDays(offPeriod *[]OffDay, totalBalance float64, defaultDayLength st
 	return nil
 }
 
+func WriteBackflush(backflushRange *[]WorkDateRecord) error {
+	con, err := openDBConnection()
+	if err != nil {
+		return err
+	}
+	defer func(con *sql.DB) {
+		err = db.CloseConnection(con)
+		if err != nil {
+			fmt.Println("failed to close connection:", err)
+		}
+	}(con)
+
+	query := `INSERT INTO timesheet(
+                      workdate, 
+                      start_time,
+                      end_time,
+                      lunch_duration,
+                      day_total,
+                      day_balance,
+                      overtime,
+                      moving_balance,
+                      additional_time,
+                      day_length,
+                      day_type)
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+
+	for _, day := range *backflushRange {
+		_, err = con.Exec(
+			query,
+			day.WorkDate,
+			day.StartTime,
+			day.EndTime,
+			day.LunchDuration,
+			day.DayTotal,
+			day.DayBalance,
+			day.Overtime,
+			day.MovingBalance,
+			day.AdditionalTime,
+			day.DayLength,
+			day.DayType)
+		if err != nil {
+			return fmt.Errorf("failed to write backflush records: %v", err)
+		}
+	}
+
+	return nil
+}
+
 func UpdateStart(selectedDate string, registeredTime string) error {
 	con, err := openDBConnection()
 	if err != nil {
