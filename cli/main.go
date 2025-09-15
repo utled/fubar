@@ -191,7 +191,13 @@ func Main() {
 				err = registration.RegisterBackflush(&currentState, arguments[1])
 				if err != nil {
 					fmt.Println(err)
+					break
 				}
+				currentState, err = setNewState(selectedDate, &userConfig)
+				if err != nil {
+					fmt.Println(err)
+				}
+				helpers.PrintSelectedDate(&currentState)
 			} else {
 				fmt.Println("Invalid argument")
 			}
