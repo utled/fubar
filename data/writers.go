@@ -256,7 +256,7 @@ WHERE ROWID = 1`
 	return nil
 }
 
-func UpdateOffDay(offPeriod *[]OffDay, totalBalance float64, defaultDayLength string) error {
+func UpdateFullOffDay(offPeriod *[]OffDay, totalBalance float64, defaultDayLength string) error {
 	con, err := openDBConnection()
 	if err != nil {
 		return err
@@ -303,6 +303,37 @@ func UpdateOffDay(offPeriod *[]OffDay, totalBalance float64, defaultDayLength st
 	return nil
 }
 
+func UpdatePartialOffDay(offPeriod *[]OffDay, totalBalance float64) error {
+	con, err := openDBConnection()
+	if err != nil {
+		return err
+	}
+	defer func(con *sql.DB) {
+		err = db.CloseConnection(con)
+		if err != nil {
+			fmt.Println("failed to close connection:", err)
+		}
+	}(con)
+
+	query := `UPDATE timesheet
+    SET moving_balance = ?,
+        day_type = ?
+    WHERE workdate = ?`
+
+	for _, day := range *offPeriod {
+		_, err = con.Exec(
+			query,
+			totalBalance,
+			day.OffType,
+			day.OffDate)
+		if err != nil {
+			return fmt.Errorf("failed to write weekend: %v", err)
+		}
+	}
+
+	return nil
+}
+
 func UpdateTotalBalance(dateRange *[]string, previousBalance float64) error {
 	con, err := openDBConnection()
 	if err != nil {
@@ -321,6 +352,27 @@ func UpdateTotalBalance(dateRange *[]string, previousBalance float64) error {
 		if err != nil {
 			return fmt.Errorf("failed to update balance: %v", err)
 		}
+	}
+
+	return nil
+}
+
+func DeleteRecord(selectedDate string) error {
+	con, err := openDBConnection()
+	if err != nil {
+		return err
+	}
+	defer func(con *sql.DB) {
+		err = db.CloseConnection(con)
+		if err != nil {
+			fmt.Println("failed to close connection:", err)
+		}
+	}(con)
+
+	query := "DELETE FROM timesheet WHERE workdate = ?"
+	_, err = con.Exec(query, selectedDate)
+	if err != nil {
+		return fmt.Errorf("failed to delete record: %v", err)
 	}
 
 	return nil

@@ -76,11 +76,7 @@ func RegisterOffPeriod(nextDay time.Time, userConfig *data.UserConfig, state *da
 	return nil
 }
 
-func RegisterOffDay(userConfig *data.UserConfig, state *data.ReportState, offType string) error {
-	if !state.ReportUpToDate {
-		return fmt.Errorf("can't register selected date.\nAll previous dates must be up to date.")
-	}
-
+func registerFullOffDay(userConfig *data.UserConfig, state *data.ReportState, offType string) error {
 	parsedDate, err := time.Parse(utils.DateLayout, state.SelectedDate)
 	if err != nil {
 		return fmt.Errorf("failed to parse selected date day: %v", err)
@@ -97,7 +93,7 @@ func RegisterOffDay(userConfig *data.UserConfig, state *data.ReportState, offTyp
 	}
 
 	if selectedBeforeMax {
-		err = data.UpdateOffDay(&offDay, previousBalance, userConfig.DefaultDayLength.String)
+		err = data.UpdateFullOffDay(&offDay, previousBalance, userConfig.DefaultDayLength.String)
 		if err != nil {
 			return err
 		}
@@ -131,6 +127,51 @@ func RegisterOffDay(userConfig *data.UserConfig, state *data.ReportState, offTyp
 				return err
 			}
 		}
+	}
+
+	return nil
+}
+
+func registerPartialOffDay(state *data.ReportState, offType string) error {
+	parsedDate, err := time.Parse(utils.DateLayout, state.SelectedDate)
+	if err != nil {
+		return fmt.Errorf("failed to parse selected date day: %v", err)
+	}
+	previousBalance, err := data.GetPreviousBalance(parsedDate)
+	if err != nil {
+		return err
+	}
+	offDay := []data.OffDay{{OffDate: state.SelectedDate, OffType: offType}}
+
+	err = data.UpdatePartialOffDay(&offDay, previousBalance)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func RegisterOffDay(userConfig *data.UserConfig, state *data.ReportState, offType string) error {
+	if !state.ReportUpToDate {
+		return fmt.Errorf("can't register selected date.\nAll previous dates must be up to date.")
+	}
+
+	if state.SelectedRecord.EndTime.Valid {
+		err := registerPartialOffDay(state, offType)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+
+	if state.SelectedRecord.StartTime.Valid {
+		return fmt.Errorf("registered date must not be started, or must be ended.\n" +
+			"use <delete> to remove date before or add an end time.")
+	}
+
+	err := registerFullOffDay(userConfig, state, offType)
+	if err != nil {
+		return err
 	}
 
 	return nil

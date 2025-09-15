@@ -145,7 +145,7 @@ func Main() {
 			} else {
 				fmt.Println("Invalid argument")
 			}
-		case "off", "vac":
+		case "off", "vac", "sic":
 			if len(arguments) == 1 {
 				err = registration.RegisterOffDay(&userConfig, &currentState, arguments[0])
 				if err != nil {
@@ -160,8 +160,6 @@ func Main() {
 			} else {
 				fmt.Println("Invalid argument")
 			}
-		case "sic":
-			fmt.Println("not implemented...")
 		case "sched":
 			if len(arguments) == 2 && arguments[1] == "remove" {
 				err = registration.RemoveScheduledOffPeriod()
@@ -222,8 +220,12 @@ func Main() {
 			}
 		case "cmd":
 			helpers.PrintCommands(&currentState)
-		case "test":
-
+		case "delete":
+			if len(arguments) == 1 {
+				err = registration.DeleteDate(&currentState)
+			} else {
+				fmt.Println("Invalid argument")
+			}
 		default:
 			err := helpers.ClearTerminal()
 			if err != nil {

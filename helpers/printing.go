@@ -66,6 +66,8 @@ func PrintCommands(state *data.ReportState) {
 		"\n_____GENERAL_____________________________________________________________________________________________",
 		"cmd                                       -> Display available commands",
 		"Ctrl+C                                    -> Close program",
+		"\n_____GENERAL_____________________________________________________________________________________________",
+		"delete                                    -> Delete selected date (can only delete last registered date)",
 	}
 
 	for _, command := range availableCommands {
