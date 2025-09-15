@@ -1,13 +1,13 @@
 package registration
 
 import (
-	"fTime/helpers"
+	"fTime/data"
 	"fTime/utils"
 	"fmt"
 	"time"
 )
 
-func rebalanceSucceedingDates(state *helpers.ReportState) error {
+func rebalanceSucceedingDates(state *data.ReportState) error {
 	selectedDate, err := time.Parse(utils.DateLayout, state.SelectedDate)
 	if err != nil {
 		return fmt.Errorf("failed to parse selected date: %v", err)
@@ -24,7 +24,7 @@ func rebalanceSucceedingDates(state *helpers.ReportState) error {
 		succeedingDates = append(succeedingDates, currentDate.Format(utils.DateLayout))
 	}
 
-	err = helpers.UpdateTotalBalance(&succeedingDates, state.SelectedRecord.MovingBalance.Float64)
+	err = data.UpdateTotalBalance(&succeedingDates, state.SelectedRecord.MovingBalance.Float64)
 	if err != nil {
 		return err
 	}

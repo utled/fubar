@@ -1,40 +1,41 @@
 package cli
 
 import (
+	"fTime/data"
 	"fTime/helpers"
 )
 
-func setNewState(selectedDate string, userConfig *helpers.UserConfig) (helpers.ReportState, error) {
-	maxCompletedDate, maxDate, err := helpers.GetMaxDates()
+func setNewState(selectedDate string, userConfig *data.UserConfig) (data.ReportState, error) {
+	maxCompletedDate, maxDate, err := data.GetMaxDates()
 	if err != nil {
-		return helpers.ReportState{}, err
+		return data.ReportState{}, err
 	}
 
 	previousCompleted, err := helpers.CheckPreviousCompletion(selectedDate, maxCompletedDate)
 	if err != nil {
-		return helpers.ReportState{}, err
+		return data.ReportState{}, err
 	}
 
 	recordExists, err := helpers.CheckIfDateExists(selectedDate, maxDate)
 	if err != nil {
-		return helpers.ReportState{}, err
+		return data.ReportState{}, err
 	}
 
-	var selectedDateRecord helpers.WorkDateRecord
+	var selectedDateRecord data.WorkDateRecord
 	if recordExists {
-		selectedDateRecord, err = helpers.GetOneWorkDateRecord(selectedDate)
+		selectedDateRecord, err = data.GetOneWorkDateRecord(selectedDate)
 		if err != nil {
-			return helpers.ReportState{}, err
+			return data.ReportState{}, err
 		}
 	} else {
-		selectedDateRecord = helpers.WorkDateRecord{
+		selectedDateRecord = data.WorkDateRecord{
 			WorkDate: selectedDate,
 		}
 	}
 
 	projectedEnd := helpers.CalcProjectedEnd(&selectedDateRecord, userConfig)
 
-	currentState := helpers.ReportState{
+	currentState := data.ReportState{
 		ReportUpToDate:   previousCompleted,
 		MaxDate:          maxDate,
 		MaxCompletedDate: maxCompletedDate,

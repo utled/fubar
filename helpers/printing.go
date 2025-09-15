@@ -1,13 +1,14 @@
 package helpers
 
 import (
+	"fTime/data"
 	"fmt"
 	"os"
 	"os/exec"
 	"runtime"
 )
 
-func PrintHeader(withSupportText bool, state *ReportState) {
+func PrintHeader(withSupportText bool, state *data.ReportState) {
 	fmt.Print("\n                   ┏━━━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━━┓\n" +
 		"                   ┃┏┓┏┓┃┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┓┏┓┃\n" +
 		"                   ┗┛┃┃┗┛┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃━┃┃┃┃\n" +
@@ -28,7 +29,7 @@ func PrintHeader(withSupportText bool, state *ReportState) {
 
 }
 
-func PrintSelectedDate(state *ReportState) {
+func PrintSelectedDate(state *data.ReportState) {
 	err := ClearTerminal()
 	if err != nil {
 		fmt.Println(err)
@@ -37,7 +38,7 @@ func PrintSelectedDate(state *ReportState) {
 	fmt.Println(state.SelectedRecord)
 }
 
-func PrintCommands(state *ReportState) {
+func PrintCommands(state *data.ReportState) {
 	err := ClearTerminal()
 	if err != nil {
 		fmt.Println(err)

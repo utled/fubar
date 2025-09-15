@@ -1,13 +1,14 @@
 package registration
 
 import (
+	"fTime/data"
 	"fTime/helpers"
 	"fTime/utils"
 	"fmt"
 	"time"
 )
 
-func RegisterTotals(state *helpers.ReportState) error {
+func RegisterTotals(state *data.ReportState) error {
 	dayTotal, err := helpers.CalcDayTotal(state.SelectedRecord)
 	if err != nil {
 		return err
@@ -24,7 +25,7 @@ func RegisterTotals(state *helpers.ReportState) error {
 	if err != nil {
 		return fmt.Errorf("failed to parse selectedDate.%v", err)
 	}
-	previousBalance, err := helpers.GetPreviousBalance(selectedDate)
+	previousBalance, err := data.GetPreviousBalance(selectedDate)
 	if err != nil {
 		return err
 	}
@@ -36,7 +37,7 @@ func RegisterTotals(state *helpers.ReportState) error {
 	}
 	state.SelectedRecord.MovingBalance.Float64 = totalBalance
 
-	err = helpers.WriteNewBalance(selectedDate.Format(utils.DateLayout), dayTotal, dayBalance, totalBalance)
+	err = data.WriteNewBalance(selectedDate.Format(utils.DateLayout), dayTotal, dayBalance, totalBalance)
 	if err != nil {
 		return err
 	}

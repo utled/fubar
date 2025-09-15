@@ -2,6 +2,7 @@ package cli
 
 import (
 	"bufio"
+	"fTime/data"
 	"fTime/helpers"
 	"fTime/registration"
 	"fmt"
@@ -15,7 +16,7 @@ func Main() {
 		fmt.Println(err)
 	}
 
-	userConfig, err := helpers.GetUserConfig()
+	userConfig, err := data.GetUserConfig()
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -168,7 +169,7 @@ func Main() {
 					fmt.Println(err)
 					break
 				}
-				userConfig, err = helpers.GetUserConfig()
+				userConfig, err = data.GetUserConfig()
 				if err != nil {
 					fmt.Println(err)
 				}
@@ -179,7 +180,7 @@ func Main() {
 					fmt.Println(err)
 					break
 				}
-				userConfig, err = helpers.GetUserConfig()
+				userConfig, err = data.GetUserConfig()
 				if err != nil {
 					fmt.Println(err)
 				}
@@ -196,7 +197,7 @@ func Main() {
 					fmt.Println(err)
 					break
 				}
-				userConfig, err = helpers.GetUserConfig()
+				userConfig, err = data.GetUserConfig()
 				if err != nil {
 					fmt.Println(err)
 				}
@@ -211,7 +212,7 @@ func Main() {
 					fmt.Println(err)
 					break
 				}
-				userConfig, err = helpers.GetUserConfig()
+				userConfig, err = data.GetUserConfig()
 				if err != nil {
 					fmt.Println(err)
 				}

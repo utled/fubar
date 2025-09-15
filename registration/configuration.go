@@ -1,6 +1,7 @@
 package registration
 
 import (
+	"fTime/data"
 	"fTime/helpers"
 	"fmt"
 	"strconv"
@@ -16,7 +17,7 @@ func UpdateDefaultLunch(lunchDurationString string) error {
 		return fmt.Errorf("lunchDuration can't be a negative value")
 	}
 
-	err = helpers.UpdateDefaultLunch(lunchDuration)
+	err = data.UpdateDefaultLunch(lunchDuration)
 	if err != nil {
 		return err
 	}
@@ -34,7 +35,7 @@ func UpdateDefaultLength(dayLengthString string) error {
 		return fmt.Errorf("lunchDuration can't be a negative value")
 	}
 
-	err = helpers.UpdateDefaultLength(dayLength)
+	err = data.UpdateDefaultLength(dayLength)
 	if err != nil {
 		return err
 	}
@@ -46,7 +47,7 @@ func ScheduleOffPeriod(
 	offStart string,
 	offEnd string,
 	offType string,
-	config *helpers.UserConfig,
+	config *data.UserConfig,
 ) error {
 	if config.OffStart.String != "" {
 		return fmt.Errorf("scheduled off period already exists.\nuse <sched remove> to remove existing period")
@@ -82,7 +83,7 @@ func ScheduleOffPeriod(
 		return fmt.Errorf("start date must be before end date")
 	}
 
-	err = helpers.UpdateScheduledOff(offStartFormatted, offEndFormatted, offType)
+	err = data.UpdateScheduledOff(offStartFormatted, offEndFormatted, offType)
 	if err != nil {
 		return err
 	}
@@ -91,7 +92,7 @@ func ScheduleOffPeriod(
 }
 
 func RemoveScheduledOffPeriod() error {
-	err := helpers.UpdateScheduledOff("", "", "")
+	err := data.UpdateScheduledOff("", "", "")
 	if err != nil {
 		return err
 	}

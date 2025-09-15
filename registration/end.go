@@ -1,13 +1,14 @@
 package registration
 
 import (
+	"fTime/data"
 	"fTime/helpers"
 	"fTime/utils"
 	"fmt"
 	"time"
 )
 
-func RegisterEnd(endTime string, state *helpers.ReportState, userConfig *helpers.UserConfig) error {
+func RegisterEnd(endTime string, state *data.ReportState, userConfig *data.UserConfig) error {
 	if !state.SelectedRecord.StartTime.Valid {
 		return fmt.Errorf("can't end selected date.\nstart time must be registered first.")
 	}
@@ -35,7 +36,7 @@ func RegisterEnd(endTime string, state *helpers.ReportState, userConfig *helpers
 		additionalTime = 0
 	}
 
-	err = helpers.UpdateEnd(
+	err = data.UpdateEnd(
 		state.SelectedDate,
 		registeredTime.Format(utils.TimeLayout),
 		state.SelectedRecord.Overtime.Bool,

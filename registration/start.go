@@ -1,12 +1,13 @@
 package registration
 
 import (
+	"fTime/data"
 	"fTime/helpers"
 	"fTime/utils"
 	"fmt"
 )
 
-func RegisterStart(startTime string, state *helpers.ReportState, userConfig *helpers.UserConfig) error {
+func RegisterStart(startTime string, state *data.ReportState, userConfig *data.UserConfig) error {
 	if !state.ReportUpToDate {
 		return fmt.Errorf("can't start selected date.\nAll previous dates must be up to date.")
 	}
@@ -21,12 +22,12 @@ func RegisterStart(startTime string, state *helpers.ReportState, userConfig *hel
 	}
 
 	if state.SelectedRecord.StartTime.Valid {
-		err = helpers.UpdateStart(
+		err = data.UpdateStart(
 			state.SelectedRecord.WorkDate,
 			registeredTime.Format(utils.TimeLayout),
 		)
 	} else {
-		err = helpers.WriteStart(
+		err = data.WriteStart(
 			state.SelectedRecord.WorkDate,
 			registeredTime.Format(utils.TimeLayout),
 			userConfig.DefaultDayLength.String,

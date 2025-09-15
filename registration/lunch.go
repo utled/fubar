@@ -1,12 +1,12 @@
 package registration
 
 import (
-	"fTime/helpers"
+	"fTime/data"
 	"fmt"
 	"strconv"
 )
 
-func RegisterLunch(lunchString string, state *helpers.ReportState) error {
+func RegisterLunch(lunchString string, state *data.ReportState) error {
 	lunchDurationInt, err := strconv.Atoi(lunchString)
 	if err != nil {
 		return fmt.Errorf("failed to convert lunch duration to numeric value.\nInput format must be <MM>")
@@ -16,7 +16,7 @@ func RegisterLunch(lunchString string, state *helpers.ReportState) error {
 		return fmt.Errorf("lunch duration must be between 1 and 59 in format <MM>")
 	}
 
-	err = helpers.UpdateLunch(state.SelectedDate, lunchDuration)
+	err = data.UpdateLunch(state.SelectedDate, lunchDuration)
 	if err != nil {
 		return err
 	}

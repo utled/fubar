@@ -1,12 +1,13 @@
 package helpers
 
 import (
+	"fTime/data"
 	"fTime/utils"
 	"fmt"
 	"time"
 )
 
-func CalcDayTotal(dateRecord *WorkDateRecord) (string, error) {
+func CalcDayTotal(dateRecord *data.WorkDateRecord) (string, error) {
 	startTime, err := ParseTimeObject(dateRecord.StartTime.String)
 	if err != nil {
 		return "", fmt.Errorf("failed to parse start time")
@@ -31,7 +32,7 @@ func CalcDayTotal(dateRecord *WorkDateRecord) (string, error) {
 	return dayTotalString, nil
 }
 
-func CalcDayBalance(dateRecord *WorkDateRecord) (float64, error) {
+func CalcDayBalance(dateRecord *data.WorkDateRecord) (float64, error) {
 	totalTime, err := ParseTimeObject(dateRecord.DayTotal.String)
 	if err != nil {
 		return 0.0, fmt.Errorf("failed to parse day total time")
@@ -47,7 +48,7 @@ func CalcDayBalance(dateRecord *WorkDateRecord) (float64, error) {
 	return timeDiff.Hours(), nil
 }
 
-func CalcTotalBalance(dateRecord *WorkDateRecord, previousTotal float64) float64 {
+func CalcTotalBalance(dateRecord *data.WorkDateRecord, previousTotal float64) float64 {
 	if dateRecord.Overtime.Bool {
 		return previousTotal
 	}
@@ -57,7 +58,7 @@ func CalcTotalBalance(dateRecord *WorkDateRecord, previousTotal float64) float64
 	return newTotalBalance
 }
 
-func CalcProjectedEnd(dateRecord *WorkDateRecord, userConfig *UserConfig) string {
+func CalcProjectedEnd(dateRecord *data.WorkDateRecord, userConfig *data.UserConfig) string {
 	startTime, err := ParseTimeObject(dateRecord.StartTime.String)
 	if err != nil {
 		return ""
