@@ -2,8 +2,8 @@ package cli
 
 import (
 	"bufio"
-	"fTime/actions"
 	"fTime/helpers"
+	"fTime/registration"
 	"fmt"
 	"os"
 	"strings"
@@ -61,7 +61,7 @@ func Main() {
 			}
 		case "start":
 			if len(arguments) == 2 {
-				err = actions.RegisterStart(arguments[1], &currentState, &userConfig)
+				err = registration.RegisterStart(arguments[1], &currentState, &userConfig)
 				if err != nil {
 					fmt.Println(err)
 					break
@@ -76,7 +76,7 @@ func Main() {
 			}
 		case "end":
 			if len(arguments) == 2 {
-				err = actions.RegisterEnd(arguments[1], &currentState, &userConfig)
+				err = registration.RegisterEnd(arguments[1], &currentState, &userConfig)
 				if err != nil {
 					fmt.Println(err)
 					break
@@ -95,7 +95,7 @@ func Main() {
 					fmt.Println("Invalid argument")
 					break
 				}
-				err = actions.RegisterEnd(arguments[1], &currentState, &userConfig)
+				err = registration.RegisterEnd(arguments[1], &currentState, &userConfig)
 				if err != nil {
 					fmt.Println(err)
 					break
@@ -115,7 +115,7 @@ func Main() {
 			fmt.Println("not implemented...")
 		case "lunch":
 			if len(arguments) == 2 {
-				err = actions.RegisterLunch(arguments[1], &currentState)
+				err = registration.RegisterLunch(arguments[1], &currentState)
 				if err != nil {
 					fmt.Println(err)
 					break
@@ -131,7 +131,7 @@ func Main() {
 
 		case "addit":
 			if len(arguments) == 2 {
-				err = actions.RegisterAdditionalTime(arguments[1], &currentState)
+				err = registration.RegisterAdditionalTime(arguments[1], &currentState)
 				if err != nil {
 					fmt.Println(err)
 					break
@@ -146,7 +146,7 @@ func Main() {
 			}
 		case "off", "vac":
 			if len(arguments) == 1 {
-				err = actions.RegisterOffDay(&userConfig, &currentState, arguments[0])
+				err = registration.RegisterOffDay(&userConfig, &currentState, arguments[0])
 				if err != nil {
 					fmt.Println(err)
 					break
@@ -163,7 +163,7 @@ func Main() {
 			fmt.Println("not implemented...")
 		case "sched":
 			if len(arguments) == 2 && arguments[1] == "remove" {
-				err = actions.RemoveScheduledOffPeriod()
+				err = registration.RemoveScheduledOffPeriod()
 				if err != nil {
 					fmt.Println(err)
 					break
@@ -174,7 +174,7 @@ func Main() {
 				}
 				helpers.PrintSelectedDate(&currentState)
 			} else if len(arguments) == 4 {
-				err = actions.ScheduleOffPeriod(arguments[1], arguments[2], arguments[3], &userConfig)
+				err = registration.ScheduleOffPeriod(arguments[1], arguments[2], arguments[3], &userConfig)
 				if err != nil {
 					fmt.Println(err)
 					break
@@ -191,7 +191,7 @@ func Main() {
 			fmt.Println("not implemented...")
 		case "conflunch":
 			if len(arguments) == 2 {
-				err = actions.UpdateDefaultLunch(arguments[1])
+				err = registration.UpdateDefaultLunch(arguments[1])
 				if err != nil {
 					fmt.Println(err)
 					break
@@ -206,7 +206,7 @@ func Main() {
 			}
 		case "conflength":
 			if len(arguments) == 2 {
-				err = actions.UpdateDefaultLength(arguments[1])
+				err = registration.UpdateDefaultLength(arguments[1])
 				if err != nil {
 					fmt.Println(err)
 					break
