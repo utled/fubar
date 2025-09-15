@@ -467,3 +467,50 @@ WHERE ROWID = 1`
 
 	return nil
 }
+
+func UpdateOffDay(offPeriod *[]OffDay, totalBalance float64, defaultDayLength string) error {
+	con, err := openDBConnection()
+	if err != nil {
+		return err
+	}
+	defer func(con *sql.DB) {
+		err = db.CloseConnection(con)
+		if err != nil {
+			fmt.Println("failed to close connection:", err)
+		}
+	}(con)
+
+	query := `UPDATE timesheet
+    SET start_time = ?, 
+        end_time = ?, 
+        lunch_duration = ?, 
+        day_total = ?, 
+        day_balance = ?, 
+        overtime = ?, 
+        moving_balance = ?, 
+        additional_time = ?, 
+        day_length = ?, 
+        day_type = ?
+    WHERE workdate = ?`
+
+	for _, day := range *offPeriod {
+		_, err = con.Exec(
+			query,
+			"00:00:00",
+			"00:00:00",
+			0,
+			"00:00:00",
+			0.0,
+			false,
+			totalBalance,
+			0,
+			defaultDayLength,
+			day.OffType,
+			day.OffDate)
+		if err != nil {
+			return fmt.Errorf("failed to write weekend: %v", err)
+		}
+	}
+
+	return nil
+}

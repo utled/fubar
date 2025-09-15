@@ -76,9 +76,9 @@ func RegisterOffPeriod(nextDay time.Time, userConfig *helpers.UserConfig, state 
 }
 
 func RegisterOffDay(userConfig *helpers.UserConfig, state *helpers.ReportState, offType string) error {
-	/*
-		TODO: NEED TO ADD CHECK AGAINST REPORTUPTODATE ET.C TO ALLOW REGISTRATION
-	*/
+	if !state.ReportUpToDate {
+		return fmt.Errorf("can't register selected date.\nAll previous dates must be up to date.")
+	}
 
 	parsedDate, err := time.Parse(utils.DateLayout, state.SelectedDate)
 	if err != nil {
@@ -90,35 +90,42 @@ func RegisterOffDay(userConfig *helpers.UserConfig, state *helpers.ReportState, 
 	}
 	offDay := []helpers.OffDay{{OffDate: state.SelectedDate, OffType: offType}}
 
-	err = helpers.WriteOffDays(&offDay, previousBalance, userConfig.DefaultDayLength.String)
+	selectedBeforeMax, err := helpers.CheckDateBefore(state.SelectedDate, state.MaxCompletedDate)
 	if err != nil {
 		return err
 	}
 
-	if state.SelectedDate != state.MaxDate {
+	if selectedBeforeMax {
+		err = helpers.UpdateOffDay(&offDay, previousBalance, userConfig.DefaultDayLength.String)
+		if err != nil {
+			return err
+		}
+		state.SelectedRecord.MovingBalance.Float64 = previousBalance
 		rebalanceSucceedingDates()
 	} else {
-		if state.SelectedDate == state.MaxDate {
-			nextDay := parsedDate.AddDate(0, 0, 1)
-			if userConfig.OffStart.String != "" {
-				parsedScheduledStart, err := time.Parse(utils.DateLayout, userConfig.OffStart.String)
-				if err != nil {
-					return fmt.Errorf("failed to parse scheduled start date.%v", err)
-				}
-				if nextDay == parsedScheduledStart {
-					err = RegisterOffPeriod(nextDay, userConfig, state)
-					if err != nil {
-						return err
-					}
-				}
+		err = helpers.WriteOffDays(&offDay, previousBalance, userConfig.DefaultDayLength.String)
+		if err != nil {
+			return err
+		}
+		state.SelectedRecord.MovingBalance.Float64 = previousBalance
+		nextDay := parsedDate.AddDate(0, 0, 1)
+		if userConfig.OffStart.String != "" {
+			parsedScheduledStart, err := time.Parse(utils.DateLayout, userConfig.OffStart.String)
+			if err != nil {
+				return fmt.Errorf("failed to parse scheduled start date.%v", err)
 			}
-			if nextDay.Weekday() == time.Saturday {
-				err = RegisterWeekend(nextDay, userConfig, state)
+			if nextDay == parsedScheduledStart {
+				err = RegisterOffPeriod(nextDay, userConfig, state)
 				if err != nil {
 					return err
 				}
 			}
-
+		}
+		if nextDay.Weekday() == time.Saturday {
+			err = RegisterWeekend(nextDay, userConfig, state)
+			if err != nil {
+				return err
+			}
 		}
 	}
 

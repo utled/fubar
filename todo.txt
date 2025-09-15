@@ -1,0 +1,3 @@
+when going from an off day to a normal day, need to think through how to manage other registrations for that date as to not fuck up balances et.c.
+
+need top add day type writing on end registration (and for updated start)
