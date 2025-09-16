@@ -40,7 +40,7 @@ func Main() {
 			if len(arguments) == 1 {
 				helpers.PrintSelectedDate(&currentState)
 			} else {
-				fmt.Println("Invalid argument")
+				fmt.Println("Invalid argument.\nExpects: 'today'")
 			}
 		case "range":
 			fmt.Println("not implemented...")
@@ -58,7 +58,7 @@ func Main() {
 
 				helpers.PrintSelectedDate(&currentState)
 			} else {
-				fmt.Println("Invalid argument")
+				fmt.Println("Invalid argument.\nExpects: 'switch <YYYYMMDD>'")
 			}
 		case "start":
 			if len(arguments) == 2 {
@@ -73,7 +73,7 @@ func Main() {
 				}
 				helpers.PrintSelectedDate(&currentState)
 			} else {
-				fmt.Println("Invalid argument")
+				fmt.Println("Invalid argument.\nExpects: 'start <YYYYMMDD>'")
 			}
 		case "end":
 			if len(arguments) == 2 {
@@ -93,7 +93,7 @@ func Main() {
 				} else if arguments[2] == "-ot" {
 					currentState.SelectedRecord.Overtime.Bool = false
 				} else {
-					fmt.Println("Invalid argument")
+					fmt.Println("Invalid argument.\nExpects: 'end <MMSS [optional]ot/-ot'")
 					break
 				}
 				err = registration.RegisterEnd(arguments[1], &currentState, &userConfig)
@@ -107,7 +107,7 @@ func Main() {
 				}
 				helpers.PrintSelectedDate(&currentState)
 			} else {
-				fmt.Println("Invalid argument")
+				fmt.Println("Invalid argument.\nExpects: 'end <MMSS> [optional]<ot/-ot>'")
 			}
 
 		case "ot":
@@ -127,7 +127,7 @@ func Main() {
 				}
 				helpers.PrintSelectedDate(&currentState)
 			} else {
-				fmt.Println("Invalid argument")
+				fmt.Println("Invalid argument.\nExpects: lunch '<INT(minutes)>'")
 			}
 
 		case "addit":
@@ -143,7 +143,7 @@ func Main() {
 				}
 				helpers.PrintSelectedDate(&currentState)
 			} else {
-				fmt.Println("Invalid argument")
+				fmt.Println("Invalid argument.\nExpects: 'addit <INT(minutes)>'")
 			}
 		case "off", "vac", "sic":
 			if len(arguments) == 1 {
@@ -158,7 +158,7 @@ func Main() {
 				}
 				helpers.PrintSelectedDate(&currentState)
 			} else {
-				fmt.Println("Invalid argument")
+				fmt.Println("Invalid argument.\nExpects: 'off/vac/sic' only")
 			}
 		case "sched":
 			if len(arguments) == 2 && arguments[1] == "remove" {
@@ -184,10 +184,11 @@ func Main() {
 				}
 				helpers.PrintSelectedDate(&currentState)
 			} else {
-				fmt.Println("Invalid argument")
+				fmt.Println("Invalid argument.\n" +
+					"Expects: 'sched <YYYYMMDD> <YYYYMMDD> <off/vac/sic>' or 'sched remove'")
 			}
 		case "back":
-			if len(arguments) == 1 {
+			if len(arguments) == 2 {
 				err = registration.RegisterBackflush(&currentState, arguments[1])
 				if err != nil {
 					fmt.Println(err)
@@ -199,7 +200,7 @@ func Main() {
 				}
 				helpers.PrintSelectedDate(&currentState)
 			} else {
-				fmt.Println("Invalid argument")
+				fmt.Println("Invalid argument.\nExpects: 'back <norm/off/vac/sic>'")
 			}
 
 		case "conflunch":
@@ -215,7 +216,7 @@ func Main() {
 				}
 				helpers.PrintSelectedDate(&currentState)
 			} else {
-				fmt.Println("Invalid argument")
+				fmt.Println("Invalid argument.\nExpects: 'conflunch '<INT(minutes)>'")
 			}
 		case "conflength":
 			if len(arguments) == 2 {
@@ -230,7 +231,7 @@ func Main() {
 				}
 				helpers.PrintSelectedDate(&currentState)
 			} else {
-				fmt.Println("Invalid argument")
+				fmt.Println("Invalid argument.\nExpects: 'conflength <MMSS>'")
 			}
 		case "cmd":
 			helpers.PrintCommands(&currentState)
@@ -238,7 +239,7 @@ func Main() {
 			if len(arguments) == 1 {
 				err = registration.DeleteDate(&currentState)
 			} else {
-				fmt.Println("Invalid argument")
+				fmt.Println("Invalid argument.\nExpects: 'delete' only")
 			}
 		default:
 			err := helpers.ClearTerminal()
@@ -246,7 +247,7 @@ func Main() {
 				fmt.Println(err)
 			}
 			helpers.PrintSelectedDate(&currentState)
-			fmt.Println("Invalid command")
+			fmt.Println("Invalid command.\nRun 'cmd' to display available commands.")
 		}
 	}
 }
