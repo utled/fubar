@@ -24,6 +24,9 @@ func PrintHeader(withSupportText bool, state *data.ReportState) {
 	if !state.ReportUpToDate {
 		fmt.Println("                   There are missing regitrations.\n"+
 			"                   Last completed date:", state.MaxCompletedDate)
+	} else {
+		fmt.Println("                   Registrations are up to date.")
+		fmt.Println()
 	}
 	fmt.Print("\n                   Selected date:", state.SelectedDate, "\n\n")
 

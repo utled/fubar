@@ -25,12 +25,16 @@ func Main() {
 
 	selectedDate := time.Now().Format(utils.DateLayout)
 
-	currentState, err := setNewState(selectedDate, &userConfig)
+	currentState := data.ReportState{}
+	setNewState(selectedDate, &currentState, &userConfig)
+
+	/*currentState, err := setNewState(selectedDate, &userConfig)
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	helpers.PrintHeader(true, &currentState)
+	*/
 
 	for {
 		reader := bufio.NewReader(os.Stdin)
@@ -40,10 +44,7 @@ func Main() {
 		case "today":
 			if len(arguments) == 1 {
 				selectedDate = time.Now().Format(utils.DateLayout)
-				currentState, err = setNewState(selectedDate, &userConfig)
-				if err != nil {
-					return
-				}
+				setNewState(selectedDate, &currentState, &userConfig)
 				helpers.PrintSelectedDate(&currentState)
 			} else {
 				fmt.Println("Invalid argument.\nExpects: 'today'")
@@ -57,12 +58,7 @@ func Main() {
 					fmt.Println(err)
 					break
 				}
-				currentState, err = setNewState(selectedDate, &userConfig)
-				if err != nil {
-					return
-				}
-
-				helpers.PrintSelectedDate(&currentState)
+				setNewState(selectedDate, &currentState, &userConfig)
 			} else {
 				fmt.Println("Invalid argument.\nExpects: 'switch <YYYYMMDD>'")
 			}
@@ -73,11 +69,7 @@ func Main() {
 					fmt.Println(err)
 					break
 				}
-				currentState, err = setNewState(selectedDate, &userConfig)
-				if err != nil {
-					fmt.Println(err)
-				}
-				helpers.PrintSelectedDate(&currentState)
+				setNewState(selectedDate, &currentState, &userConfig)
 			} else {
 				fmt.Println("Invalid argument.\nExpects: 'start <YYYYMMDD>'")
 			}
@@ -88,11 +80,7 @@ func Main() {
 					fmt.Println(err)
 					break
 				}
-				currentState, err = setNewState(selectedDate, &userConfig)
-				if err != nil {
-					fmt.Println(err)
-				}
-				helpers.PrintSelectedDate(&currentState)
+				setNewState(selectedDate, &currentState, &userConfig)
 			} else if len(arguments) == 3 {
 				if arguments[2] == "ot" {
 					currentState.SelectedRecord.Overtime.Bool = true
@@ -107,11 +95,7 @@ func Main() {
 					fmt.Println(err)
 					break
 				}
-				currentState, err = setNewState(selectedDate, &userConfig)
-				if err != nil {
-					fmt.Println(err)
-				}
-				helpers.PrintSelectedDate(&currentState)
+				setNewState(selectedDate, &currentState, &userConfig)
 			} else {
 				fmt.Println("Invalid argument.\nExpects: 'end <MMSS> [optional]<ot/-ot>'")
 			}
@@ -127,11 +111,7 @@ func Main() {
 					fmt.Println(err)
 					break
 				}
-				currentState, err = setNewState(selectedDate, &userConfig)
-				if err != nil {
-					fmt.Println(err)
-				}
-				helpers.PrintSelectedDate(&currentState)
+				setNewState(selectedDate, &currentState, &userConfig)
 			} else {
 				fmt.Println("Invalid argument.\nExpects: lunch '<INT(minutes)>'")
 			}
@@ -143,11 +123,7 @@ func Main() {
 					fmt.Println(err)
 					break
 				}
-				currentState, err = setNewState(selectedDate, &userConfig)
-				if err != nil {
-					fmt.Println(err)
-				}
-				helpers.PrintSelectedDate(&currentState)
+				setNewState(selectedDate, &currentState, &userConfig)
 			} else {
 				fmt.Println("Invalid argument.\nExpects: 'addit <INT(minutes)>'")
 			}
@@ -158,11 +134,7 @@ func Main() {
 					fmt.Println(err)
 					break
 				}
-				currentState, err = setNewState(selectedDate, &userConfig)
-				if err != nil {
-					fmt.Println(err)
-				}
-				helpers.PrintSelectedDate(&currentState)
+				setNewState(selectedDate, &currentState, &userConfig)
 			} else {
 				fmt.Println("Invalid argument.\nExpects: 'off/vac/sic' only")
 			}
@@ -177,7 +149,7 @@ func Main() {
 				if err != nil {
 					fmt.Println(err)
 				}
-				helpers.PrintSelectedDate(&currentState)
+				setNewState(selectedDate, &currentState, &userConfig)
 			} else if len(arguments) == 4 {
 				err = registration.ScheduleOffPeriod(arguments[1], arguments[2], arguments[3], &userConfig)
 				if err != nil {
@@ -188,7 +160,7 @@ func Main() {
 				if err != nil {
 					fmt.Println(err)
 				}
-				helpers.PrintSelectedDate(&currentState)
+				setNewState(selectedDate, &currentState, &userConfig)
 			} else {
 				fmt.Println("Invalid argument.\n" +
 					"Expects: 'sched <YYYYMMDD> <YYYYMMDD> <off/vac/sic>' or 'sched remove'")
@@ -200,11 +172,7 @@ func Main() {
 					fmt.Println(err)
 					break
 				}
-				currentState, err = setNewState(selectedDate, &userConfig)
-				if err != nil {
-					fmt.Println(err)
-				}
-				helpers.PrintSelectedDate(&currentState)
+				setNewState(selectedDate, &currentState, &userConfig)
 			} else {
 				fmt.Println("Invalid argument.\nExpects: 'back <norm/off/vac/sic>'")
 			}
@@ -220,7 +188,7 @@ func Main() {
 				if err != nil {
 					fmt.Println(err)
 				}
-				helpers.PrintSelectedDate(&currentState)
+				setNewState(selectedDate, &currentState, &userConfig)
 			} else {
 				fmt.Println("Invalid argument.\nExpects: 'conflunch '<INT(minutes)>'")
 			}
@@ -235,7 +203,7 @@ func Main() {
 				if err != nil {
 					fmt.Println(err)
 				}
-				helpers.PrintSelectedDate(&currentState)
+				setNewState(selectedDate, &currentState, &userConfig)
 			} else {
 				fmt.Println("Invalid argument.\nExpects: 'conflength <MMSS>'")
 			}
