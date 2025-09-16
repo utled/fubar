@@ -5,9 +5,11 @@ import (
 	"fTime/data"
 	"fTime/helpers"
 	"fTime/registration"
+	"fTime/utils"
 	"fmt"
 	"os"
 	"strings"
+	"time"
 )
 
 func Main() {
@@ -21,8 +23,7 @@ func Main() {
 		fmt.Println(err)
 	}
 
-	//selectedDate := time.Now().Format("2006-01-02")
-	selectedDate := "2024-12-08"
+	selectedDate := time.Now().Format(utils.DateLayout)
 
 	currentState, err := setNewState(selectedDate, &userConfig)
 	if err != nil {
@@ -38,6 +39,11 @@ func Main() {
 		switch arguments[0] {
 		case "today":
 			if len(arguments) == 1 {
+				selectedDate = time.Now().Format(utils.DateLayout)
+				currentState, err = setNewState(selectedDate, &userConfig)
+				if err != nil {
+					return
+				}
 				helpers.PrintSelectedDate(&currentState)
 			} else {
 				fmt.Println("Invalid argument.\nExpects: 'today'")
