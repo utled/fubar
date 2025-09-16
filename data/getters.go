@@ -9,10 +9,16 @@ import (
 )
 
 func GetTimesheetRange() error {
-	con, err := openDBConnection()
+	con, err := db.CreateConnection()
 	if err != nil {
 		return err
 	}
+	defer func(con *sql.DB) {
+		err = db.CloseConnection(con)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}(con)
 
 	query := "SELECT * FROM timesheet WHERE workdate between ? AND ?;"
 	startDate := "2024-02-01"
@@ -52,14 +58,14 @@ func GetTimesheetRange() error {
 }
 
 func GetOneWorkDateRecord(queryDate string) (record WorkDateRecord, err error) {
-	con, err := openDBConnection()
+	con, err := db.CreateConnection()
 	if err != nil {
 		return WorkDateRecord{}, err
 	}
 	defer func(con *sql.DB) {
 		err = db.CloseConnection(con)
 		if err != nil {
-			fmt.Println("failed to close connection:", err)
+			fmt.Println(err)
 		}
 	}(con)
 
@@ -90,14 +96,14 @@ func GetOneWorkDateRecord(queryDate string) (record WorkDateRecord, err error) {
 }
 
 func GetMaxDates() (maxCompletedDate string, maxDate string, err error) {
-	con, err := openDBConnection()
+	con, err := db.CreateConnection()
 	if err != nil {
 		return "", "", err
 	}
 	defer func(con *sql.DB) {
 		err = db.CloseConnection(con)
 		if err != nil {
-			fmt.Println("failed to close connection:", err)
+			fmt.Println(err)
 		}
 	}(con)
 
@@ -119,14 +125,14 @@ func GetMaxDates() (maxCompletedDate string, maxDate string, err error) {
 }
 
 func GetUserConfig() (config UserConfig, err error) {
-	con, err := openDBConnection()
+	con, err := db.CreateConnection()
 	if err != nil {
 		return UserConfig{}, err
 	}
 	defer func(con *sql.DB) {
 		err = db.CloseConnection(con)
 		if err != nil {
-			fmt.Println("failed to close connection:", err)
+			fmt.Println(err)
 		}
 	}(con)
 
@@ -150,14 +156,14 @@ func GetUserConfig() (config UserConfig, err error) {
 }
 
 func GetPreviousBalance(selectedDate time.Time) (previousBalance float64, err error) {
-	con, err := openDBConnection()
+	con, err := db.CreateConnection()
 	if err != nil {
 		return 0.0, err
 	}
 	defer func(con *sql.DB) {
 		err = db.CloseConnection(con)
 		if err != nil {
-			fmt.Println("failed to close connection:", err)
+			fmt.Println(err)
 		}
 	}(con)
 

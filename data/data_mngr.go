@@ -2,7 +2,6 @@ package data
 
 import (
 	"database/sql"
-	"fTime/db"
 )
 
 type OffDay struct {
@@ -39,13 +38,4 @@ type UserConfig struct {
 	OffStart         sql.NullString
 	OffEnd           sql.NullString
 	OffType          sql.NullString
-}
-
-func openDBConnection() (conn *sql.DB, err error) {
-	con, err := db.CreateConnection()
-	if err != nil {
-		return nil, err
-	}
-
-	return con, nil
 }

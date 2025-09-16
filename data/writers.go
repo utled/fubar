@@ -7,14 +7,14 @@ import (
 )
 
 func WriteStart(selectedDate string, registeredTime string, dayLength string) error {
-	con, err := openDBConnection()
+	con, err := db.CreateConnection()
 	if err != nil {
 		return err
 	}
 	defer func(con *sql.DB) {
 		err = db.CloseConnection(con)
 		if err != nil {
-			fmt.Println("failed to close connection:", err)
+			fmt.Println(err)
 		}
 	}(con)
 
@@ -28,14 +28,14 @@ func WriteStart(selectedDate string, registeredTime string, dayLength string) er
 }
 
 func WriteNewBalance(selectedDate string, dayTotal string, dayBalance float64, totalBalance float64) error {
-	con, err := openDBConnection()
+	con, err := db.CreateConnection()
 	if err != nil {
 		return err
 	}
 	defer func(con *sql.DB) {
 		err = db.CloseConnection(con)
 		if err != nil {
-			fmt.Println("failed to close connection:", err)
+			fmt.Println(err)
 		}
 	}(con)
 
@@ -52,14 +52,14 @@ func WriteNewBalance(selectedDate string, dayTotal string, dayBalance float64, t
 }
 
 func WriteOffDays(offPeriod *[]OffDay, totalBalance float64, defaultDayLength string) error {
-	con, err := openDBConnection()
+	con, err := db.CreateConnection()
 	if err != nil {
 		return err
 	}
 	defer func(con *sql.DB) {
 		err = db.CloseConnection(con)
 		if err != nil {
-			fmt.Println("failed to close connection:", err)
+			fmt.Println(err)
 		}
 	}(con)
 
@@ -100,14 +100,14 @@ func WriteOffDays(offPeriod *[]OffDay, totalBalance float64, defaultDayLength st
 }
 
 func WriteBackflush(backflushRange *[]WorkDateRecord) error {
-	con, err := openDBConnection()
+	con, err := db.CreateConnection()
 	if err != nil {
 		return err
 	}
 	defer func(con *sql.DB) {
 		err = db.CloseConnection(con)
 		if err != nil {
-			fmt.Println("failed to close connection:", err)
+			fmt.Println(err)
 		}
 	}(con)
 
@@ -148,14 +148,14 @@ func WriteBackflush(backflushRange *[]WorkDateRecord) error {
 }
 
 func UpdateStart(selectedDate string, registeredTime string) error {
-	con, err := openDBConnection()
+	con, err := db.CreateConnection()
 	if err != nil {
 		return err
 	}
 	defer func(con *sql.DB) {
 		err = db.CloseConnection(con)
 		if err != nil {
-			fmt.Println("failed to close connection:", err)
+			fmt.Println(err)
 		}
 	}(con)
 
@@ -175,14 +175,14 @@ func UpdateEnd(
 	lunchDuration int16,
 	additionalTime int16,
 ) error {
-	con, err := openDBConnection()
+	con, err := db.CreateConnection()
 	if err != nil {
 		return err
 	}
 	defer func(con *sql.DB) {
 		err = db.CloseConnection(con)
 		if err != nil {
-			fmt.Println("failed to close connection:", err)
+			fmt.Println(err)
 		}
 	}(con)
 
@@ -198,14 +198,14 @@ WHERE workdate = ?`
 }
 
 func UpdateLunch(selectedDate string, lunchDuration int16) error {
-	con, err := openDBConnection()
+	con, err := db.CreateConnection()
 	if err != nil {
 		return err
 	}
 	defer func(con *sql.DB) {
 		err = db.CloseConnection(con)
 		if err != nil {
-			fmt.Println("failed to close connection:", err)
+			fmt.Println(err)
 		}
 	}(con)
 
@@ -219,14 +219,14 @@ func UpdateLunch(selectedDate string, lunchDuration int16) error {
 }
 
 func UpdateAdditionalTime(selectedDate string, additionalTime int16) error {
-	con, err := openDBConnection()
+	con, err := db.CreateConnection()
 	if err != nil {
 		return err
 	}
 	defer func(con *sql.DB) {
 		err = db.CloseConnection(con)
 		if err != nil {
-			fmt.Println("failed to close connection:", err)
+			fmt.Println(err)
 		}
 	}(con)
 
@@ -240,14 +240,14 @@ func UpdateAdditionalTime(selectedDate string, additionalTime int16) error {
 }
 
 func UpdateDefaultLunch(lunchDuration int16) error {
-	con, err := openDBConnection()
+	con, err := db.CreateConnection()
 	if err != nil {
 		return err
 	}
 	defer func(con *sql.DB) {
 		err = db.CloseConnection(con)
 		if err != nil {
-			fmt.Println("failed to close connection:", err)
+			fmt.Println(err)
 		}
 	}(con)
 
@@ -261,14 +261,14 @@ func UpdateDefaultLunch(lunchDuration int16) error {
 }
 
 func UpdateDefaultLength(dayLength int16) error {
-	con, err := openDBConnection()
+	con, err := db.CreateConnection()
 	if err != nil {
 		return err
 	}
 	defer func(con *sql.DB) {
 		err = db.CloseConnection(con)
 		if err != nil {
-			fmt.Println("failed to close connection:", err)
+			fmt.Println(err)
 		}
 	}(con)
 
@@ -282,14 +282,14 @@ func UpdateDefaultLength(dayLength int16) error {
 }
 
 func UpdateScheduledOff(offStart string, offEnd string, offType string) error {
-	con, err := openDBConnection()
+	con, err := db.CreateConnection()
 	if err != nil {
 		return err
 	}
 	defer func(con *sql.DB) {
 		err = db.CloseConnection(con)
 		if err != nil {
-			fmt.Println("failed to close connection:", err)
+			fmt.Println(err)
 		}
 	}(con)
 
@@ -305,14 +305,14 @@ WHERE ROWID = 1`
 }
 
 func UpdateFullOffDay(offPeriod *[]OffDay, totalBalance float64, defaultDayLength string) error {
-	con, err := openDBConnection()
+	con, err := db.CreateConnection()
 	if err != nil {
 		return err
 	}
 	defer func(con *sql.DB) {
 		err = db.CloseConnection(con)
 		if err != nil {
-			fmt.Println("failed to close connection:", err)
+			fmt.Println(err)
 		}
 	}(con)
 
@@ -352,14 +352,14 @@ func UpdateFullOffDay(offPeriod *[]OffDay, totalBalance float64, defaultDayLengt
 }
 
 func UpdatePartialOffDay(offPeriod *[]OffDay, totalBalance float64) error {
-	con, err := openDBConnection()
+	con, err := db.CreateConnection()
 	if err != nil {
 		return err
 	}
 	defer func(con *sql.DB) {
 		err = db.CloseConnection(con)
 		if err != nil {
-			fmt.Println("failed to close connection:", err)
+			fmt.Println(err)
 		}
 	}(con)
 
@@ -383,14 +383,14 @@ func UpdatePartialOffDay(offPeriod *[]OffDay, totalBalance float64) error {
 }
 
 func UpdateTotalBalance(dateRange *[]string, previousBalance float64) error {
-	con, err := openDBConnection()
+	con, err := db.CreateConnection()
 	if err != nil {
 		return err
 	}
 	defer func(con *sql.DB) {
 		err = db.CloseConnection(con)
 		if err != nil {
-			fmt.Println("failed to close connection:", err)
+			fmt.Println(err)
 		}
 	}(con)
 
@@ -406,14 +406,14 @@ func UpdateTotalBalance(dateRange *[]string, previousBalance float64) error {
 }
 
 func DeleteRecord(selectedDate string) error {
-	con, err := openDBConnection()
+	con, err := db.CreateConnection()
 	if err != nil {
 		return err
 	}
 	defer func(con *sql.DB) {
 		err = db.CloseConnection(con)
 		if err != nil {
-			fmt.Println("failed to close connection:", err)
+			fmt.Println(err)
 		}
 	}(con)
 
