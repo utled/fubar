@@ -28,14 +28,6 @@ func Main() {
 	currentState := data.ReportState{}
 	setNewState(selectedDate, &currentState, &userConfig)
 
-	/*currentState, err := setNewState(selectedDate, &userConfig)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	helpers.PrintHeader(true, &currentState)
-	*/
-
 	for {
 		reader := bufio.NewReader(os.Stdin)
 		input, _ := reader.ReadString('\n')
