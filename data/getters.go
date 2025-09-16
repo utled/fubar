@@ -8,10 +8,10 @@ import (
 	"time"
 )
 
-func GetTimesheetRange() error {
+func GetTimesheetRange(startDate string, endDate string) (timesheet []*WorkDateRecord, err error) {
 	con, err := db.CreateConnection()
 	if err != nil {
-		return err
+		return timesheet, err
 	}
 	defer func(con *sql.DB) {
 		err = db.CloseConnection(con)
@@ -21,14 +21,10 @@ func GetTimesheetRange() error {
 	}(con)
 
 	query := "SELECT * FROM timesheet WHERE workdate between ? AND ?;"
-	startDate := "2024-02-01"
-	endDate := "2024-02-01"
 	response, err := con.Query(query, startDate, endDate)
 	if err != nil {
-		return fmt.Errorf("failed to execute query: %v", err)
+		return timesheet, fmt.Errorf("failed to execute query: %v", err)
 	}
-
-	var timesheet []WorkDateRecord
 
 	for response.Next() {
 		workDateRecord := &WorkDateRecord{}
@@ -46,15 +42,15 @@ func GetTimesheetRange() error {
 			&workDateRecord.DayType,
 		)
 		if err != nil {
-			return fmt.Errorf("failed to serialize range of records to struct: %v", err)
+			return timesheet, fmt.Errorf("failed to serialize range of records to struct: %v", err)
 		}
-		timesheet = append(timesheet, *workDateRecord)
+		timesheet = append(timesheet, workDateRecord)
 	}
 	/*	for idx := len(timesheet) - 1; idx >= 0; idx-- {
 		fmt.Println(timesheet[idx])
 	}*/
 
-	return nil
+	return timesheet, nil
 }
 
 func GetOneWorkDateRecord(queryDate string) (record WorkDateRecord, err error) {

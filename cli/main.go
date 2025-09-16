@@ -42,7 +42,27 @@ func Main() {
 				fmt.Println("Invalid argument.\nExpects: 'today'")
 			}
 		case "range":
-			fmt.Println("not implemented...")
+			if len(arguments) == 3 {
+				startDate, err := helpers.FormatValidDateString(arguments[1])
+				if err != nil {
+					fmt.Println(err)
+					break
+				}
+				endDate, err := helpers.FormatValidDateString(arguments[2])
+				if err != nil {
+					fmt.Println(err)
+					break
+				}
+				timesheet, err := data.GetTimesheetRange(startDate, endDate)
+				if err != nil {
+					fmt.Println(err)
+					break
+				}
+				helpers.PrintHeader(true, &currentState)
+				helpers.PrintDateRange(timesheet)
+			} else {
+				fmt.Println("Invalid argument.\nExpects: 'range <YYYYMMDD YYYYMMDD>'")
+			}
 		case "switch":
 			if len(arguments) == 2 {
 				selectedDate, err = helpers.FormatValidDateString(arguments[1])

@@ -79,6 +79,48 @@ func PrintCommands(state *data.ReportState) {
 	fmt.Println()
 }
 
+func PrintDateRange(dateRange []*data.WorkDateRecord) {
+	fmt.Printf("%-15s", "Date")
+	fmt.Printf("%-15s", "Type")
+	fmt.Printf("%-15s", "Start")
+	fmt.Printf("%-15s", "Lunch")
+	fmt.Printf("%-15s", "End")
+	fmt.Printf("%-15s", "Additional")
+	fmt.Printf("%-15s", "Day Total")
+	fmt.Printf("%-15s", "Overtime")
+	fmt.Printf("%-15s", "Day Balance")
+	fmt.Printf("%-15s\n", "Total Balance")
+	fmt.Println("__________________________________________________________________________________________" +
+		"____________________________________________________________")
+
+	for index := len(dateRange) - 1; index >= 0; index-- {
+		fmt.Printf("%-15s", dateRange[index].WorkDate)
+		fmt.Printf("%-15s", dateRange[index].DayType.String)
+		fmt.Printf("%-15s", dateRange[index].StartTime.String)
+		fmt.Printf("%-15d", dateRange[index].LunchDuration.Int16)
+		fmt.Printf("%-15s", dateRange[index].EndTime.String)
+		fmt.Printf("%-15d", dateRange[index].AdditionalTime.Int16)
+		fmt.Printf("%-15s", dateRange[index].DayTotal.String)
+		fmt.Printf("%-15s", fmt.Sprintf("%t", dateRange[index].Overtime.Bool))
+		fmt.Printf("%-15.2f", dateRange[index].DayBalance.Float64)
+		fmt.Printf("%-15.2f\n", dateRange[index].MovingBalance.Float64)
+	}
+	fmt.Println()
+	/*	for _, date := range dateRange {
+		fmt.Printf("%-15s", dateRange[index].WorkDate)
+		fmt.Printf("%-15s", dateRange[index].DayType.String)
+		fmt.Printf("%-15s", dateRange[index].StartTime.String)
+		fmt.Printf("%-15d", dateRange[index].LunchDuration.Int16)
+		fmt.Printf("%-15s", dateRange[index].EndTime.String)
+		fmt.Printf("%-15d", dateRange[index].AdditionalTime.Int16)
+		fmt.Printf("%-15s", dateRange[index].DayTotal.String)
+		fmt.Printf("%-15s", fmt.Sprintf("%t", dateRange[index].Overtime.Bool))
+		fmt.Printf("%-15.2f", dateRange[index].DayBalance.Float64)
+		fmt.Printf("%-15.2f\n", dateRange[index].MovingBalance.Float64)
+	}*/
+
+}
+
 var clearFunctions map[string]func()
 
 func InitClearFunctions() {
