@@ -92,10 +92,17 @@ func Main() {
 				fmt.Println("Invalid argument.\nExpects: 'end <MMSS> [optional]<ot/-ot>'")
 			}
 
-		case "ot":
-			fmt.Println("not implemented...")
-		case "-ot":
-			fmt.Println("not implemented...")
+		case "ot", "-ot":
+			if len(arguments) == 1 && (arguments[0] == "ot" || arguments[0] == "-ot") {
+				err = registration.RegisterOvertime(arguments[0], &currentState, &userConfig)
+				if err != nil {
+					fmt.Println(err)
+					break
+				}
+				setNewState(selectedDate, &currentState, &userConfig)
+			} else {
+				fmt.Println("Invalid argument.\nExpects: 'of/-ot' only")
+			}
 		case "lunch":
 			if len(arguments) == 2 {
 				err = registration.RegisterLunch(arguments[1], &currentState)
