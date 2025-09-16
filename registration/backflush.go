@@ -63,7 +63,7 @@ func RegisterBackflush(state *data.ReportState, dayType string) error {
 
 	today := time.Now()
 
-	previousBalance, err := data.GetPreviousBalance(lastCompletedDate.AddDate(0, 0, -1))
+	previousBalance, err := data.GetPreviousBalance(lastCompletedDate.AddDate(0, 0, 1))
 	if err != nil {
 		return err
 	}
