@@ -33,7 +33,7 @@ func Main() {
 		input, _ := reader.ReadString('\n')
 		arguments := strings.Split(strings.TrimSpace(input), " ")
 		switch arguments[0] {
-		case "today":
+		case "today", "t":
 			if len(arguments) == 1 {
 				selectedDate = time.Now().Format(utils.DateLayout)
 				setNewState(selectedDate, &currentState, &userConfig)
@@ -41,27 +41,7 @@ func Main() {
 			} else {
 				fmt.Println("Invalid argument.\nExpects: 'today'")
 			}
-		case "range":
-			if len(arguments) == 3 {
-				timesheet, err := helpers.SetDateRangeFromDates(arguments[1], arguments[2])
-				if err != nil {
-					fmt.Println(err)
-				}
-				helpers.PrintDateRange(timesheet, false, &currentState)
-			} else {
-				fmt.Println("Invalid argument.\nExpects: 'range <YYYYMMDD YYYYMMDD>'")
-			}
-		case "last":
-			if len(arguments) == 2 {
-				timesheet, err := helpers.SetDateRangeFromDayCount(arguments[1])
-				if err != nil {
-					fmt.Println(err)
-				}
-				helpers.PrintDateRange(timesheet, true, &currentState)
-			} else {
-				fmt.Println("Invalid argument.\nExpects: 'last <INT(days)>'")
-			}
-		case "switch":
+		case "switch", "sw":
 			if len(arguments) == 2 {
 				selectedDate, err = helpers.FormatValidDateString(arguments[1])
 				if err != nil {
@@ -72,7 +52,33 @@ func Main() {
 			} else {
 				fmt.Println("Invalid argument.\nExpects: 'switch <YYYYMMDD>'")
 			}
-		case "start":
+		case "last", "la":
+			if len(arguments) == 2 {
+				timesheet, err := helpers.SetDateRangeFromDayCount(arguments[1])
+				if err != nil {
+					fmt.Println(err)
+				}
+				helpers.PrintDateRange(timesheet, true, &currentState)
+			} else {
+				fmt.Println("Invalid argument.\nExpects: 'last <INT(days)>'")
+			}
+		case "range", "ra":
+			if len(arguments) == 3 {
+				timesheet, err := helpers.SetDateRangeFromDates(arguments[1], arguments[2])
+				if err != nil {
+					fmt.Println(err)
+				}
+				helpers.PrintDateRange(timesheet, false, &currentState)
+			} else {
+				fmt.Println("Invalid argument.\nExpects: 'range <YYYYMMDD YYYYMMDD>'")
+			}
+		case "clear", "c":
+			err = helpers.ClearTerminal()
+			if err != nil {
+				fmt.Println(err)
+			}
+			helpers.PrintHeader(true, &currentState)
+		case "start", "s":
 			if len(arguments) == 2 {
 				err = registration.RegisterStart(arguments[1], &currentState, &userConfig)
 				if err != nil {
@@ -83,7 +89,7 @@ func Main() {
 			} else {
 				fmt.Println("Invalid argument.\nExpects: 'start <YYYYMMDD>'")
 			}
-		case "end":
+		case "end", "e":
 			if len(arguments) == 2 {
 				currentState.SelectedRecord.DayType.String = "norm"
 				err = registration.RegisterEnd(arguments[1], &currentState, &userConfig)
@@ -123,7 +129,7 @@ func Main() {
 			} else {
 				fmt.Println("Invalid argument.\nExpects: 'of/-ot' only")
 			}
-		case "lunch":
+		case "lunch", "l":
 			if len(arguments) == 2 {
 				err = registration.RegisterLunch(arguments[1], &currentState)
 				if err != nil {
@@ -135,7 +141,7 @@ func Main() {
 				fmt.Println("Invalid argument.\nExpects: lunch '<INT(minutes)>'")
 			}
 
-		case "addit":
+		case "addit", "ad":
 			if len(arguments) == 2 {
 				err = registration.RegisterAdditionalTime(arguments[1], &currentState)
 				if err != nil {
@@ -168,7 +174,7 @@ func Main() {
 			} else {
 				fmt.Println("Invalid argument.\nExpects: 'norm' only")
 			}
-		case "sched":
+		case "sched", "sc":
 			if len(arguments) == 2 && arguments[1] == "remove" {
 				err = registration.RemoveScheduledOffPeriod()
 				if err != nil {
@@ -239,7 +245,7 @@ func Main() {
 			}
 		case "cmd":
 			helpers.PrintCommands(&currentState)
-		case "delete":
+		case "delete", "dl":
 			if len(arguments) == 1 {
 				err = registration.DeleteDate(&currentState)
 			} else {
