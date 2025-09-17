@@ -39,8 +39,9 @@ func RegisterOvertime(otArgument string, state *data.ReportState, userConfig *da
 		}
 	}
 
+	state.SelectedRecord.DayType.String = "norm"
 	endTime := state.SelectedRecord.EndTime.String[:2] + state.SelectedRecord.EndTime.String[3:5]
-	err = RegisterEnd(endTime, "norm", state, userConfig)
+	err = RegisterEnd(endTime, state, userConfig)
 	if err != nil {
 		return err
 	}

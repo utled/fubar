@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func RegisterEnd(endTime string, dayType string, state *data.ReportState, userConfig *data.UserConfig) error {
+func RegisterEnd(endTime string, state *data.ReportState, userConfig *data.UserConfig) error {
 	if !state.SelectedRecord.StartTime.Valid {
 		return fmt.Errorf("can't end selected date.\nstart time must be registered first.")
 	}
@@ -42,7 +42,7 @@ func RegisterEnd(endTime string, dayType string, state *data.ReportState, userCo
 		state.SelectedRecord.Overtime.Bool,
 		lunchDuration,
 		additionalTime,
-		dayType,
+		state.SelectedRecord.DayType.String,
 	)
 	if err != nil {
 		return err

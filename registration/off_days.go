@@ -198,7 +198,7 @@ func RevertOffDay(userConfig *data.UserConfig, state *data.ReportState) error {
 	state.SelectedRecord.DayType.String = "norm"
 
 	endTime := state.SelectedRecord.EndTime.String[:2] + state.SelectedRecord.EndTime.String[3:5]
-	err := RegisterEnd(endTime, state.SelectedRecord.DayType.String, state, userConfig)
+	err := RegisterEnd(endTime, state, userConfig)
 	if err != nil {
 		return err
 	}

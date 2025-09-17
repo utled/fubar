@@ -87,7 +87,8 @@ func Main() {
 			}
 		case "end":
 			if len(arguments) == 2 {
-				err = registration.RegisterEnd(arguments[1], "norm", &currentState, &userConfig)
+				currentState.SelectedRecord.DayType.String = "norm"
+				err = registration.RegisterEnd(arguments[1], &currentState, &userConfig)
 				if err != nil {
 					fmt.Println(err)
 					break
@@ -102,7 +103,8 @@ func Main() {
 					fmt.Println("Invalid argument.\nExpects: 'end <MMSS [optional]ot/-ot'")
 					break
 				}
-				err = registration.RegisterEnd(arguments[1], "norm", &currentState, &userConfig)
+				currentState.SelectedRecord.DayType.String = "norm"
+				err = registration.RegisterEnd(arguments[1], &currentState, &userConfig)
 				if err != nil {
 					fmt.Println(err)
 					break
