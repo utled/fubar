@@ -58,8 +58,7 @@ func Main() {
 					fmt.Println(err)
 					break
 				}
-				helpers.PrintHeader(true, &currentState)
-				helpers.PrintDateRange(timesheet, false)
+				helpers.PrintDateRange(timesheet, false, &currentState)
 			} else {
 				fmt.Println("Invalid argument.\nExpects: 'range <YYYYMMDD YYYYMMDD>'")
 			}
