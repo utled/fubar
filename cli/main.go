@@ -18,14 +18,13 @@ func Main() {
 		fmt.Println(err)
 	}
 
+	selectedDate := time.Now().Format(utils.DateLayout)
+	currentState := data.ReportState{}
 	userConfig, err := data.GetUserConfig()
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	selectedDate := time.Now().Format(utils.DateLayout)
-
-	currentState := data.ReportState{}
 	setNewState(selectedDate, &currentState, &userConfig)
 
 	for {

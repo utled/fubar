@@ -17,15 +17,14 @@ func CheckPreviousCompletion(selectedDate string, maxCompletedDateString string)
 		return false, fmt.Errorf("failed to parse max completed date%v", err)
 	}
 
-	var previousCompleted bool
 	dateDiff := today.Sub(maxCompletedDate)
 	if dateDiff.Hours() > 24 {
-		previousCompleted = false
+		isCompleted = false
 	} else {
-		previousCompleted = true
+		isCompleted = true
 	}
 
-	return previousCompleted, nil
+	return isCompleted, nil
 }
 
 func CheckIfDateExists(dateString string, maxDateString string) (dateExists bool, err error) {
