@@ -85,6 +85,8 @@ func PrintCommands(state *data.ReportState) {
 	availableCommands := []string{
 		"\n_____DISPLAY_____________________________________________________________________________________________",
 		"today[t]                                       -> Display current date",
+		"next[n]                                        -> Display next date",
+		"prev[p]                                        -> Display previous date",
 		"switch[sw] <YYYYMMDD>                          -> Switch display date",
 		"last[la] <INT(days)>                           -> Display last X days as table",
 		"range[ra] <YYYYMMDD> <YYYYMMD>                 -> Display date range as table",

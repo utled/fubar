@@ -40,6 +40,22 @@ func Main() {
 			} else {
 				fmt.Println("Invalid argument.\nExpects: 'today'")
 			}
+		case "next", "n":
+			if len(arguments) == 1 {
+				selectedDate = time.Now().AddDate(0, 0, 1).Format(utils.DateLayout)
+				setNewState(selectedDate, &currentState, &userConfig)
+				helpers.PrintSelectedDate(&currentState)
+			} else {
+				fmt.Println("Invalid argument.\nExpects: 'today'")
+			}
+		case "previous", "p":
+			if len(arguments) == 1 {
+				selectedDate = time.Now().AddDate(0, 0, -1).Format(utils.DateLayout)
+				setNewState(selectedDate, &currentState, &userConfig)
+				helpers.PrintSelectedDate(&currentState)
+			} else {
+				fmt.Println("Invalid argument.\nExpects: 'today'")
+			}
 		case "switch", "sw":
 			if len(arguments) == 2 {
 				selectedDate, err = helpers.FormatValidDateString(arguments[1])
