@@ -42,7 +42,11 @@ func Main() {
 			}
 		case "next", "n":
 			if len(arguments) == 1 {
-				selectedDate = time.Now().AddDate(0, 0, 1).Format(utils.DateLayout)
+				currentDate, err := time.Parse(utils.DateLayout, selectedDate)
+				if err != nil {
+					fmt.Println(err)
+				}
+				selectedDate = currentDate.AddDate(0, 0, 1).Format(utils.DateLayout)
 				setNewState(selectedDate, &currentState, &userConfig)
 				helpers.PrintSelectedDate(&currentState)
 			} else {
@@ -50,7 +54,11 @@ func Main() {
 			}
 		case "previous", "p":
 			if len(arguments) == 1 {
-				selectedDate = time.Now().AddDate(0, 0, -1).Format(utils.DateLayout)
+				currentDate, err := time.Parse(utils.DateLayout, selectedDate)
+				selectedDate = currentDate.AddDate(0, 0, -1).Format(utils.DateLayout)
+				if err != nil {
+					fmt.Println(err)
+				}
 				setNewState(selectedDate, &currentState, &userConfig)
 				helpers.PrintSelectedDate(&currentState)
 			} else {
