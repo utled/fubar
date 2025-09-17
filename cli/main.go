@@ -43,24 +43,23 @@ func Main() {
 			}
 		case "range":
 			if len(arguments) == 3 {
-				startDate, err := helpers.FormatValidDateString(arguments[1])
+				timesheet, err := helpers.SetDateRangeFromDates(arguments[1], arguments[2])
 				if err != nil {
 					fmt.Println(err)
-					break
-				}
-				endDate, err := helpers.FormatValidDateString(arguments[2])
-				if err != nil {
-					fmt.Println(err)
-					break
-				}
-				timesheet, err := data.GetTimesheetRange(startDate, endDate)
-				if err != nil {
-					fmt.Println(err)
-					break
 				}
 				helpers.PrintDateRange(timesheet, false, &currentState)
 			} else {
 				fmt.Println("Invalid argument.\nExpects: 'range <YYYYMMDD YYYYMMDD>'")
+			}
+		case "last":
+			if len(arguments) == 2 {
+				timesheet, err := helpers.SetDateRangeFromDayCount(arguments[1])
+				if err != nil {
+					fmt.Println(err)
+				}
+				helpers.PrintDateRange(timesheet, true, &currentState)
+			} else {
+				fmt.Println("Invalid argument.\nExpects: 'last <INT(days)>'")
 			}
 		case "switch":
 			if len(arguments) == 2 {
