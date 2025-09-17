@@ -52,7 +52,7 @@ func Main() {
 			} else {
 				fmt.Println("Invalid argument.\nExpects: 'today'")
 			}
-		case "previous", "p":
+		case "prev", "p":
 			if len(arguments) == 1 {
 				currentDate, err := time.Parse(utils.DateLayout, selectedDate)
 				selectedDate = currentDate.AddDate(0, 0, -1).Format(utils.DateLayout)
