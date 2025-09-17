@@ -59,6 +59,7 @@ func PrintCommands(state *data.ReportState) {
 		"lunch <INT(minutes)>                      -> Set/modify lunch time for displayed date",
 		"addit <INT(minutes)>                      -> Set/modify additional time for displayed date>",
 		"off/vac/sic                               -> Flag displayed date as non working day/partial day",
+		"norm                                      -> Revert an off day back to normal",
 		"\n_____SCHEDULING__________________________________________________________________________________________",
 		"sched <YYYYMMDD> <YYYYMMDD> <off/vac/sic> -> Schedule date period for coming off time",
 		"sched remove                              -> Remove scheduled period",

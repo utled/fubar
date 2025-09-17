@@ -148,6 +148,19 @@ func registerPartialOffDay(state *data.ReportState, offType string) error {
 		return err
 	}
 
+	selectedBeforeMax, err := helpers.CheckDateBefore(state.SelectedDate, state.MaxCompletedDate)
+	if err != nil {
+		return err
+	}
+
+	if selectedBeforeMax {
+		state.SelectedRecord.MovingBalance.Float64 = previousBalance
+		err = rebalanceSucceedingDates(state)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -170,6 +183,22 @@ func RegisterOffDay(userConfig *data.UserConfig, state *data.ReportState, offTyp
 	}
 
 	err := registerFullOffDay(userConfig, state, offType)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func RevertOffDay(userConfig *data.UserConfig, state *data.ReportState) error {
+	if state.SelectedRecord.DayType.String == "norm" {
+		return fmt.Errorf("date is already flagged as a normal workday")
+	}
+
+	state.SelectedRecord.DayType.String = "norm"
+
+	endTime := state.SelectedRecord.EndTime.String[:2] + state.SelectedRecord.EndTime.String[3:5]
+	err := RegisterEnd(endTime, state.SelectedRecord.DayType.String, state, userConfig)
 	if err != nil {
 		return err
 	}

@@ -174,6 +174,7 @@ func UpdateEnd(
 	overtime bool,
 	lunchDuration int16,
 	additionalTime int16,
+	dayType string,
 ) error {
 	con, err := db.CreateConnection()
 	if err != nil {
@@ -187,9 +188,9 @@ func UpdateEnd(
 	}(con)
 
 	query := `UPDATE timesheet 
-SET end_time = ?, overtime = ?, lunch_duration = ?, additional_time = ? 
+SET end_time = ?, overtime = ?, lunch_duration = ?, additional_time = ?, day_type = ? 
 WHERE workdate = ?`
-	_, err = con.Exec(query, registeredTime, overtime, lunchDuration, additionalTime, selectedDate)
+	_, err = con.Exec(query, registeredTime, overtime, lunchDuration, additionalTime, dayType, selectedDate)
 	if err != nil {
 		return fmt.Errorf("failed to update end time%v", err)
 	}

@@ -87,7 +87,7 @@ func Main() {
 			}
 		case "end":
 			if len(arguments) == 2 {
-				err = registration.RegisterEnd(arguments[1], &currentState, &userConfig)
+				err = registration.RegisterEnd(arguments[1], "norm", &currentState, &userConfig)
 				if err != nil {
 					fmt.Println(err)
 					break
@@ -102,7 +102,7 @@ func Main() {
 					fmt.Println("Invalid argument.\nExpects: 'end <MMSS [optional]ot/-ot'")
 					break
 				}
-				err = registration.RegisterEnd(arguments[1], &currentState, &userConfig)
+				err = registration.RegisterEnd(arguments[1], "norm", &currentState, &userConfig)
 				if err != nil {
 					fmt.Println(err)
 					break
@@ -156,6 +156,17 @@ func Main() {
 				setNewState(selectedDate, &currentState, &userConfig)
 			} else {
 				fmt.Println("Invalid argument.\nExpects: 'off/vac/sic' only")
+			}
+		case "norm":
+			if len(arguments) == 1 {
+				err = registration.RevertOffDay(&userConfig, &currentState)
+				if err != nil {
+					fmt.Println(err)
+					break
+				}
+				setNewState(selectedDate, &currentState, &userConfig)
+			} else {
+				fmt.Println("Invalid argument.\nExpects: 'norm' only")
 			}
 		case "sched":
 			if len(arguments) == 2 && arguments[1] == "remove" {

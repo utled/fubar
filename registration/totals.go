@@ -30,7 +30,7 @@ func RegisterTotals(state *data.ReportState) error {
 		return err
 	}
 	var totalBalance float64
-	if state.SelectedRecord.Overtime.Bool {
+	if state.SelectedRecord.Overtime.Bool || state.SelectedRecord.DayType.String != "norm" {
 		totalBalance = previousBalance
 	} else {
 		totalBalance = helpers.CalcTotalBalance(state.SelectedRecord, previousBalance)
