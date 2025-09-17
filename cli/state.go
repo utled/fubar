@@ -3,8 +3,36 @@ package cli
 import (
 	"fTime/data"
 	"fTime/helpers"
+	"fTime/utils"
 	"fmt"
+	"time"
 )
+
+func calcProjectedEnd(dateRecord *data.WorkDateRecord, userConfig *data.UserConfig) string {
+	startTime, err := helpers.ParseTimeObject(dateRecord.StartTime.String)
+	if err != nil {
+		return ""
+	}
+
+	dayLength, err := helpers.ParseTimeObject(dateRecord.DayLength.String)
+	if err != nil {
+		return ""
+	}
+
+	var lunchDuration time.Time
+	if dateRecord.LunchDuration.Valid {
+		lunchDuration = dayLength.Add(time.Minute * time.Duration(dateRecord.LunchDuration.Int16))
+		fmt.Println(lunchDuration)
+	} else {
+		lunchDuration = dayLength.Add(time.Minute * time.Duration(userConfig.DefaultLunch.Int16))
+	}
+
+	addHour := time.Duration(lunchDuration.Hour()) * time.Hour
+	addMinute := time.Duration(lunchDuration.Minute()) * time.Minute
+	projectedEnd := startTime.Add(addHour + addMinute)
+
+	return projectedEnd.Format(utils.TimeLayout)
+}
 
 func setNewState(selectedDate string, currentState *data.ReportState, userConfig *data.UserConfig) {
 	maxCompletedDate, maxDate, err := data.GetMaxDates()
@@ -34,7 +62,7 @@ func setNewState(selectedDate string, currentState *data.ReportState, userConfig
 		}
 	}
 
-	projectedEnd := helpers.CalcProjectedEnd(&selectedDateRecord, userConfig)
+	projectedEnd := calcProjectedEnd(&selectedDateRecord, userConfig)
 	currentState.ReportUpToDate = previousCompleted
 	currentState.MaxDate = maxDate
 	currentState.MaxCompletedDate = maxCompletedDate
