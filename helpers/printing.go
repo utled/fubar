@@ -50,8 +50,8 @@ func PrintCommands(state *data.ReportState) {
 	availableCommands := []string{
 		"\n_____DISPLAY_____________________________________________________________________________________________",
 		"today                                     -> Display current date",
-		"range <YYYYMMDD YYYYMMDD>             -> Display date range as table",
-		"switch <YYYYMMDD>                       -> Switch display date",
+		"range <YYYYMMDD YYYYMMDD>                 -> Display date range as table",
+		"switch <YYYYMMDD>                         -> Switch display date",
 		"\n_____DAILY ACTIONS_______________________________________________________________________________________",
 		"start <MMSS>                              -> Set/modify start time for displayed date",
 		"end <MMSS> [optional]<ot/-ot>>            -> Set/modify end time for displayed date",
@@ -62,7 +62,7 @@ func PrintCommands(state *data.ReportState) {
 		"\n_____SCHEDULING__________________________________________________________________________________________",
 		"sched <YYYYMMDD> <YYYYMMDD> <off/vac/sic> -> Schedule date period for coming off time",
 		"sched remove                              -> Remove scheduled period",
-		"back <norm/off/vac/sic>                        -> Backfill all non registered days back to last completed date",
+		"back <norm/off/vac/sic>                   -> Backfill all non registered days back to last completed date",
 		"\n_____DEFAULT CONFIGURATIONS______________________________________________________________________________",
 		"conflunch <INT(minutes)>                  -> Update default lunch duration",
 		"conflength <MMSS>                         -> Update default length of day",
@@ -79,7 +79,7 @@ func PrintCommands(state *data.ReportState) {
 	fmt.Println()
 }
 
-func PrintDateRange(dateRange []*data.WorkDateRecord) {
+func PrintDateRange(dateRange []*data.WorkDateRecord, reversed bool) {
 	fmt.Printf("%-15s", "Date")
 	fmt.Printf("%-15s", "Type")
 	fmt.Printf("%-15s", "Start")
@@ -93,31 +93,34 @@ func PrintDateRange(dateRange []*data.WorkDateRecord) {
 	fmt.Println("__________________________________________________________________________________________" +
 		"____________________________________________________________")
 
-	for index := len(dateRange) - 1; index >= 0; index-- {
-		fmt.Printf("%-15s", dateRange[index].WorkDate)
-		fmt.Printf("%-15s", dateRange[index].DayType.String)
-		fmt.Printf("%-15s", dateRange[index].StartTime.String)
-		fmt.Printf("%-15d", dateRange[index].LunchDuration.Int16)
-		fmt.Printf("%-15s", dateRange[index].EndTime.String)
-		fmt.Printf("%-15d", dateRange[index].AdditionalTime.Int16)
-		fmt.Printf("%-15s", dateRange[index].DayTotal.String)
-		fmt.Printf("%-15s", fmt.Sprintf("%t", dateRange[index].Overtime.Bool))
-		fmt.Printf("%-15.2f", dateRange[index].DayBalance.Float64)
-		fmt.Printf("%-15.2f\n", dateRange[index].MovingBalance.Float64)
+	if !reversed {
+		for index := len(dateRange) - 1; index >= 0; index-- {
+			fmt.Printf("%-15s", dateRange[index].WorkDate)
+			fmt.Printf("%-15s", dateRange[index].DayType.String)
+			fmt.Printf("%-15s", dateRange[index].StartTime.String)
+			fmt.Printf("%-15d", dateRange[index].LunchDuration.Int16)
+			fmt.Printf("%-15s", dateRange[index].EndTime.String)
+			fmt.Printf("%-15d", dateRange[index].AdditionalTime.Int16)
+			fmt.Printf("%-15s", dateRange[index].DayTotal.String)
+			fmt.Printf("%-15s", fmt.Sprintf("%t", dateRange[index].Overtime.Bool))
+			fmt.Printf("%-15.2f", dateRange[index].DayBalance.Float64)
+			fmt.Printf("%-15.2f\n", dateRange[index].MovingBalance.Float64)
+		}
+		fmt.Println()
+	} else {
+		for _, date := range dateRange {
+			fmt.Printf("%-15s", date.WorkDate)
+			fmt.Printf("%-15s", date.DayType.String)
+			fmt.Printf("%-15s", date.StartTime.String)
+			fmt.Printf("%-15d", date.LunchDuration.Int16)
+			fmt.Printf("%-15s", date.EndTime.String)
+			fmt.Printf("%-15d", date.AdditionalTime.Int16)
+			fmt.Printf("%-15s", date.DayTotal.String)
+			fmt.Printf("%-15s", fmt.Sprintf("%t", date.Overtime.Bool))
+			fmt.Printf("%-15.2f", date.DayBalance.Float64)
+			fmt.Printf("%-15.2f\n", date.MovingBalance.Float64)
+		}
 	}
-	fmt.Println()
-	/*	for _, date := range dateRange {
-		fmt.Printf("%-15s", dateRange[index].WorkDate)
-		fmt.Printf("%-15s", dateRange[index].DayType.String)
-		fmt.Printf("%-15s", dateRange[index].StartTime.String)
-		fmt.Printf("%-15d", dateRange[index].LunchDuration.Int16)
-		fmt.Printf("%-15s", dateRange[index].EndTime.String)
-		fmt.Printf("%-15d", dateRange[index].AdditionalTime.Int16)
-		fmt.Printf("%-15s", dateRange[index].DayTotal.String)
-		fmt.Printf("%-15s", fmt.Sprintf("%t", dateRange[index].Overtime.Bool))
-		fmt.Printf("%-15.2f", dateRange[index].DayBalance.Float64)
-		fmt.Printf("%-15.2f\n", dateRange[index].MovingBalance.Float64)
-	}*/
 
 }
 
