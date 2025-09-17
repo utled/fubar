@@ -134,7 +134,7 @@ func Main() {
 			}
 
 		case "ot", "-ot":
-			if len(arguments) == 1 && (arguments[0] == "ot" || arguments[0] == "-ot") {
+			if len(arguments) == 1 {
 				err = registration.RegisterOvertime(arguments[0], &currentState, &userConfig)
 				if err != nil {
 					fmt.Println(err)
