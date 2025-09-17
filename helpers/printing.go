@@ -132,8 +132,10 @@ func PrintDateRange(dateRange []*data.WorkDateRecord, reversed bool, state *data
 	fmt.Printf("%-15s", "Overtime")
 	fmt.Printf("%-15s", "Day Balance")
 	fmt.Printf("%-15s\n", "Total Balance")
-	fmt.Println("__________________________________________________________________________________________" +
-		"____________________________________________________________")
+	for i := 1; i < 149; i++ {
+		fmt.Print("_")
+	}
+	fmt.Println()
 
 	if !reversed {
 		for index := len(dateRange) - 1; index >= 0; index-- {
