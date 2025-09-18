@@ -20,7 +20,7 @@ func GetTimesheetRange(startDate string, endDate string) (timesheet []*WorkDateR
 		}
 	}(con)
 
-	query := "SELECT * FROM timesheet WHERE workdate between ? AND ?;"
+	query := "SELECT * FROM timesheet WHERE workdate BETWEEN ? AND ?;"
 	response, err := con.Query(query, startDate, endDate)
 	if err != nil {
 		return timesheet, fmt.Errorf("failed to execute query: %v", err)
@@ -30,25 +30,22 @@ func GetTimesheetRange(startDate string, endDate string) (timesheet []*WorkDateR
 		workDateRecord := &WorkDateRecord{}
 		err := response.Scan(
 			&workDateRecord.WorkDate,
+			&workDateRecord.DayType,
 			&workDateRecord.StartTime,
 			&workDateRecord.EndTime,
 			&workDateRecord.LunchDuration,
+			&workDateRecord.AdditionalTime,
+			&workDateRecord.Overtime,
 			&workDateRecord.DayTotal,
 			&workDateRecord.DayBalance,
-			&workDateRecord.Overtime,
-			&workDateRecord.MovingBalance,
-			&workDateRecord.AdditionalTime,
+			&workDateRecord.TotalBalance,
 			&workDateRecord.DayLength,
-			&workDateRecord.DayType,
 		)
 		if err != nil {
 			return timesheet, fmt.Errorf("failed to serialize range of records to struct: %v", err)
 		}
 		timesheet = append(timesheet, workDateRecord)
 	}
-	/*	for idx := len(timesheet) - 1; idx >= 0; idx-- {
-		fmt.Println(timesheet[idx])
-	}*/
 
 	return timesheet, nil
 }
@@ -72,16 +69,16 @@ func GetOneWorkDateRecord(queryDate string) (record WorkDateRecord, err error) {
 
 	err = response.Scan(
 		&workDateRecord.WorkDate,
+		&workDateRecord.DayType,
 		&workDateRecord.StartTime,
 		&workDateRecord.EndTime,
 		&workDateRecord.LunchDuration,
+		&workDateRecord.AdditionalTime,
+		&workDateRecord.Overtime,
 		&workDateRecord.DayTotal,
 		&workDateRecord.DayBalance,
-		&workDateRecord.Overtime,
-		&workDateRecord.MovingBalance,
-		&workDateRecord.AdditionalTime,
+		&workDateRecord.TotalBalance,
 		&workDateRecord.DayLength,
-		&workDateRecord.DayType,
 	)
 	if err != nil {
 		return WorkDateRecord{}, fmt.Errorf("failed to serialize record to struct%v", err)
@@ -132,12 +129,13 @@ func GetUserConfig() (config UserConfig, err error) {
 		}
 	}(con)
 
-	query := "SELECT * FROM userconfig limit 1;"
+	query := "SELECT * FROM userconfig WHERE id = 1;"
 	response := con.QueryRow(query)
 
 	userConfig := &UserConfig{}
 
 	err = response.Scan(
+		&userConfig.ID,
 		&userConfig.DefaultLunch,
 		&userConfig.DefaultDayLength,
 		&userConfig.OffStart,
@@ -165,7 +163,7 @@ func GetPreviousBalance(selectedDate time.Time) (previousBalance float64, err er
 
 	previousDate := selectedDate.AddDate(0, 0, -1)
 	previousDateString := previousDate.Format(utils.DateLayout)
-	query := "SELECT moving_balance FROM timesheet WHERE workdate = ?;"
+	query := "SELECT total_balance FROM timesheet WHERE workdate = ?;"
 	response := con.QueryRow(query, previousDateString)
 	err = response.Scan(&previousBalance)
 	if err != nil {

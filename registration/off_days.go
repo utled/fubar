@@ -13,7 +13,7 @@ func RegisterWeekend(saturday time.Time, userConfig *data.UserConfig, state *dat
 	sunday := saturday.AddDate(0, 0, 1)
 	weekend = append(weekend, data.OffDay{OffDate: saturday.Format(utils.DateLayout), OffType: "wknd"})
 	weekend = append(weekend, data.OffDay{OffDate: sunday.Format(utils.DateLayout), OffType: "wknd"})
-	previousBalance := state.SelectedRecord.MovingBalance.Float64
+	previousBalance := state.SelectedRecord.TotalBalance.Float64
 
 	err := data.WriteOffDays(&weekend, previousBalance, userConfig.DefaultDayLength.String)
 	if err != nil {
@@ -64,7 +64,7 @@ func RegisterOffPeriod(nextDay time.Time, userConfig *data.UserConfig, state *da
 		}
 	}
 
-	previousBalance := state.SelectedRecord.MovingBalance.Float64
+	previousBalance := state.SelectedRecord.TotalBalance.Float64
 
 	err = data.WriteOffDays(&offPeriod, previousBalance, userConfig.DefaultDayLength.String)
 	if err != nil {
@@ -97,7 +97,7 @@ func registerFullOffDay(userConfig *data.UserConfig, state *data.ReportState, of
 		if err != nil {
 			return err
 		}
-		state.SelectedRecord.MovingBalance.Float64 = previousBalance
+		state.SelectedRecord.TotalBalance.Float64 = previousBalance
 		err = rebalanceSucceedingDates(state)
 		if err != nil {
 			return err
@@ -107,7 +107,7 @@ func registerFullOffDay(userConfig *data.UserConfig, state *data.ReportState, of
 		if err != nil {
 			return err
 		}
-		state.SelectedRecord.MovingBalance.Float64 = previousBalance
+		state.SelectedRecord.TotalBalance.Float64 = previousBalance
 		nextDay := parsedDate.AddDate(0, 0, 1)
 		if userConfig.OffStart.String != "" {
 			parsedScheduledStart, err := time.Parse(utils.DateLayout, userConfig.OffStart.String)
@@ -154,7 +154,7 @@ func registerPartialOffDay(state *data.ReportState, offType string) error {
 	}
 
 	if selectedBeforeMax {
-		state.SelectedRecord.MovingBalance.Float64 = previousBalance
+		state.SelectedRecord.TotalBalance.Float64 = previousBalance
 		err = rebalanceSucceedingDates(state)
 		if err != nil {
 			return err

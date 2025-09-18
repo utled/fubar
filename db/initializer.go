@@ -8,8 +8,8 @@ import (
 )
 
 type DefaultConfig struct {
-	LunchDuration int
-	LengthOfDay   string
+	DefaultLunch     int
+	DefaultDayLength string
 }
 
 func InitializeDB() error {
@@ -40,17 +40,17 @@ func InitializeDB() error {
 func createTables(db *sql.DB) error {
 	statements := []string{
 		`CREATE TABLE IF NOT EXISTS timesheet (
-			workdate TEXT UNIQUE NOT NULL,
-			start_time TEXT,
-			end_time TEXT,
+			workdate VARCHAR(10) UNIQUE NOT NULL,
+			day_type VARCHAR(4),
+			start_time VARCHAR(8),
+			end_time VARCHAR(8),
 			lunch_duration INT,
-			day_total TEXT,
-			day_balance FLOAT,
-			overtime INT,
-			moving_balance FLOAT,
 			additional_time INT,
-			sick_day INT,
-			day_length TEXT
+			overtime BOOLEAN,
+			day_total VARCHAR(8),
+			day_balance FLOAT,
+			total_balance FLOAT,
+			day_length VARCHAR(8)
 		);`,
 		/*		`CREATE TABLE IF NOT EXISTS userconfig (
 				lunch_duration INT,
@@ -71,16 +71,16 @@ func createTables(db *sql.DB) error {
 }
 
 func writeDefaultConfig(db *sql.DB) error {
-	query := "SELECT lunch_duration, length_of_day FROM userconfig WHERE ROWID = ?;"
-	queryResponse := db.QueryRow(query, 1)
+	query := "SELECT default_lunch, default_day_length FROM userconfig WHERE id = 1;"
+	queryResponse := db.QueryRow(query)
 
 	config := &DefaultConfig{}
-	err := queryResponse.Scan(&config.LunchDuration, &config.LengthOfDay)
+	err := queryResponse.Scan(&config.DefaultLunch, &config.DefaultDayLength)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			config.LunchDuration = 40
-			config.LengthOfDay = "08:00"
-			_, err = db.Exec("INSERT INTO userconfig (lunch_duration, length_of_day) VALUES (?, ?)", config.LunchDuration, config.LengthOfDay)
+			config.DefaultLunch = 40
+			config.DefaultDayLength = "08:00"
+			_, err = db.Exec("INSERT INTO userconfig (default_lunch, default_day_length) VALUES (?, ?)", config.DefaultLunch, config.DefaultDayLength)
 			if err != nil {
 				return fmt.Errorf("failed to write default user config: %v", err)
 			}

@@ -40,7 +40,7 @@ func WriteNewBalance(selectedDate string, dayTotal string, dayBalance float64, t
 	}(con)
 
 	query := "UPDATE timesheet " +
-		"SET day_total = ?, day_balance = ?, moving_balance = ?" +
+		"SET day_total = ?, day_balance = ?, total_balance = ?" +
 		"WHERE workdate = ?"
 
 	_, err = con.Exec(query, dayTotal, dayBalance, totalBalance, selectedDate)
@@ -65,32 +65,32 @@ func WriteOffDays(offPeriod *[]OffDay, totalBalance float64, defaultDayLength st
 
 	query := `INSERT INTO timesheet(
                       workdate, 
+                      day_type,
                       start_time,
                       end_time,
                       lunch_duration,
+                      additional_time,
+                      overtime,
                       day_total,
                       day_balance,
-                      overtime,
-                      moving_balance,
-                      additional_time,
-                      day_length,
-                      day_type)
+                      total_balance,
+                      day_length)
                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 
 	for _, day := range *offPeriod {
 		_, err = con.Exec(
 			query,
 			day.OffDate,
+			day.OffType,
 			"00:00:00",
 			"00:00:00",
 			0,
+			0,
+			false,
 			"00:00:00",
 			0.0,
-			false,
 			totalBalance,
-			0,
-			defaultDayLength,
-			day.OffType)
+			defaultDayLength)
 		if err != nil {
 			return fmt.Errorf("failed to write weekend: %v", err)
 		}
@@ -112,33 +112,33 @@ func WriteBackflush(backflushRange *[]WorkDateRecord) error {
 	}(con)
 
 	query := `INSERT INTO timesheet(
-                      workdate, 
+                      workdate,
+                      day_type,
                       start_time,
                       end_time,
                       lunch_duration,
+                      additional_time,
+                      overtime,
                       day_total,
                       day_balance,
-                      overtime,
-                      moving_balance,
-                      additional_time,
-                      day_length,
-                      day_type)
+                      total_balance,
+                      day_length)
                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 
 	for _, day := range *backflushRange {
 		_, err = con.Exec(
 			query,
 			day.WorkDate,
+			day.DayType,
 			day.StartTime,
 			day.EndTime,
 			day.LunchDuration,
+			day.AdditionalTime,
+			day.Overtime,
 			day.DayTotal,
 			day.DayBalance,
-			day.Overtime,
-			day.MovingBalance,
-			day.AdditionalTime,
-			day.DayLength,
-			day.DayType)
+			day.TotalBalance,
+			day.DayLength)
 		if err != nil {
 			return fmt.Errorf("failed to write backflush records: %v", err)
 		}
@@ -252,7 +252,7 @@ func UpdateDefaultLunch(lunchDuration int16) error {
 		}
 	}(con)
 
-	query := "UPDATE userconfig SET lunch_duration = ? WHERE ROWID = 1"
+	query := "UPDATE userconfig SET default_lunch = ? WHERE id = 1"
 	_, err = con.Exec(query, lunchDuration)
 	if err != nil {
 		return fmt.Errorf("failed to update default lunch%v", err)
@@ -273,7 +273,7 @@ func UpdateDefaultLength(dayLength int16) error {
 		}
 	}(con)
 
-	query := "UPDATE userconfig SET length_of_day = ? WHERE ROWID = 1"
+	query := "UPDATE userconfig SET default_day_length = ? WHERE id = 1"
 	_, err = con.Exec(query, dayLength)
 	if err != nil {
 		return fmt.Errorf("failed to update default lunch%v", err)
@@ -318,31 +318,31 @@ func UpdateFullOffDay(offPeriod *[]OffDay, totalBalance float64, defaultDayLengt
 	}(con)
 
 	query := `UPDATE timesheet
-    SET start_time = ?, 
+    SET day_type = ?,
+    	start_time = ?, 
         end_time = ?, 
         lunch_duration = ?, 
-        day_total = ?, 
-        day_balance = ?, 
-        overtime = ?, 
-        moving_balance = ?, 
         additional_time = ?, 
-        day_length = ?, 
-        day_type = ?
+        overtime = ?,
+        day_total = ?, 
+        day_balance = ?,  
+        total_balance = ?, 
+        day_length = ?
     WHERE workdate = ?`
 
 	for _, day := range *offPeriod {
 		_, err = con.Exec(
 			query,
+			day.OffType,
 			"00:00:00",
 			"00:00:00",
 			0,
+			0,
+			false,
 			"00:00:00",
 			0.0,
-			false,
 			totalBalance,
-			0,
 			defaultDayLength,
-			day.OffType,
 			day.OffDate)
 		if err != nil {
 			return fmt.Errorf("failed to write weekend: %v", err)
@@ -365,7 +365,7 @@ func UpdatePartialOffDay(offPeriod *[]OffDay, totalBalance float64) error {
 	}(con)
 
 	query := `UPDATE timesheet
-    SET moving_balance = ?,
+    SET total_balance = ?,
         day_type = ?
     WHERE workdate = ?`
 
@@ -395,7 +395,7 @@ func UpdateTotalBalance(dateRange *[]string, previousBalance float64) error {
 		}
 	}(con)
 
-	query := `UPDATE timesheet SET moving_balance = day_balance + ? WHERE workdate = ?`
+	query := `UPDATE timesheet SET total_balance = day_balance + ? WHERE workdate = ?`
 	for _, day := range *dateRange {
 		_, err = con.Exec(query, previousBalance, day)
 		if err != nil {

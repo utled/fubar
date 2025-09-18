@@ -24,7 +24,7 @@ func rebalanceSucceedingDates(state *data.ReportState) error {
 		succeedingDates = append(succeedingDates, currentDate.Format(utils.DateLayout))
 	}
 
-	err = data.UpdateTotalBalance(&succeedingDates, state.SelectedRecord.MovingBalance.Float64)
+	err = data.UpdateTotalBalance(&succeedingDates, state.SelectedRecord.TotalBalance.Float64)
 	if err != nil {
 		return err
 	}

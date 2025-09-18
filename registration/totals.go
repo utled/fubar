@@ -85,7 +85,7 @@ func RegisterTotals(state *data.ReportState) error {
 	} else {
 		totalBalance = calcTotalBalance(state.SelectedRecord, previousBalance)
 	}
-	state.SelectedRecord.MovingBalance.Float64 = totalBalance
+	state.SelectedRecord.TotalBalance.Float64 = totalBalance
 
 	err = data.WriteNewBalance(selectedDate.Format(utils.DateLayout), dayTotal, dayBalance, totalBalance)
 	if err != nil {

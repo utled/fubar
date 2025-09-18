@@ -65,7 +65,7 @@ func PrintSelectedDate(state *data.ReportState) {
 	fmt.Printf("%-12s", "End: ")
 	fmt.Printf("%-20s", state.SelectedRecord.EndTime.String)
 	fmt.Printf("%-15s", "Total Balance: ")
-	fmt.Printf("%-20.2f\n", state.SelectedRecord.MovingBalance.Float64)
+	fmt.Printf("%-20.2f\n", state.SelectedRecord.TotalBalance.Float64)
 
 	fmt.Printf("%-12s", "Additional: ")
 	fmt.Printf("%-20d\n", state.SelectedRecord.AdditionalTime.Int16)
@@ -152,7 +152,7 @@ func PrintDateRange(dateRange []*data.WorkDateRecord, reversed bool, state *data
 			fmt.Printf("%-15s", dateRange[index].DayTotal.String)
 			fmt.Printf("%-15s", fmt.Sprintf("%t", dateRange[index].Overtime.Bool))
 			fmt.Printf("%-15.2f", dateRange[index].DayBalance.Float64)
-			fmt.Printf("%-15.2f\n", dateRange[index].MovingBalance.Float64)
+			fmt.Printf("%-15.2f\n", dateRange[index].TotalBalance.Float64)
 		}
 		fmt.Println()
 	} else {
@@ -166,7 +166,7 @@ func PrintDateRange(dateRange []*data.WorkDateRecord, reversed bool, state *data
 			fmt.Printf("%-15s", date.DayTotal.String)
 			fmt.Printf("%-15s", fmt.Sprintf("%t", date.Overtime.Bool))
 			fmt.Printf("%-15.2f", date.DayBalance.Float64)
-			fmt.Printf("%-15.2f\n", date.MovingBalance.Float64)
+			fmt.Printf("%-15.2f\n", date.TotalBalance.Float64)
 		}
 	}
 
