@@ -13,8 +13,6 @@ func CreateConnection() (db *sql.DB, err error) {
 	dbPswd := os.Getenv("FTIMEDBPswd")
 	dbHost := os.Getenv("FTIMEDBHost")
 
-	fmt.Println(dbUser, dbPswd, dbHost)
-
 	cfg := mysql.NewConfig()
 	cfg.User = dbUser
 	cfg.Passwd = dbPswd
