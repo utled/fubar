@@ -40,3 +40,30 @@ type UserConfig struct {
 	OffEnd           sql.NullString
 	OffType          sql.NullString
 }
+
+type MonthStats struct {
+	Month         string
+	TotalWeekDays int
+	WorkedDays    int
+	WorkedTime    string
+	VacationDays  int
+	SickDays      int
+	WeekendDays   int
+	OffDays       int
+	OverTimeDays  int
+	TotalOvertime sql.NullFloat64
+}
+
+type FullStats struct {
+	WorkedDays    int
+	TotalWeekDays int
+	WorkedTime    string
+	AvgStart      string
+	AvgEnd        string
+	AvgLunch      float32
+	SickDays      int
+	VacationDays  int
+	OverTimeDays  int
+	TotalOvertime sql.NullFloat64
+	AvgOvertime   sql.NullFloat64
+}

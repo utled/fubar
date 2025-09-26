@@ -172,3 +172,116 @@ func GetPreviousBalance(selectedDate time.Time) (previousBalance float64, err er
 
 	return previousBalance, nil
 }
+
+func GetMonthlySummary(year int) (monthlySummary []*MonthStats, err error) {
+	con, err := db.CreateConnection()
+	if err != nil {
+		return monthlySummary, err
+	}
+	defer func(con *sql.DB) {
+		err = db.CloseConnection(con)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}(con)
+
+	query := `SELECT
+		MONTHNAME(workdate) as month,
+		COUNT(CASE WHEN day_type NOT IN ('wknd', 'off') THEN 1 END) AS total_weekdays,
+		COUNT(CASE WHEN day_type = 'norm' THEN 1 END) AS worked_days,
+		SEC_TO_TIME(SUM(TIME_TO_SEC(day_total))) AS total_time_worked,
+		COUNT(CASE WHEN day_type = 'vac' THEN 1 END) AS vacation_days,
+		COUNT(CASE WHEN day_type = 'sic' THEN 1 END) AS sick_days,
+		COUNT(CASE WHEN day_type = 'wknd' THEN 1 END) AS weekend_days,
+		COUNT(CASE WHEN day_type = 'off' THEN 1 END) AS off_days,
+		COUNT(CASE WHEN overtime = TRUE THEN 1 END) AS ot_days,
+		SUM(CASE WHEN overtime = TRUE THEN day_balance END) AS total_ot
+	FROM timesheet
+	WHERE YEAR(workdate) = ?
+	GROUP BY MONTHNAME(workdate);`
+
+	response, err := con.Query(query, year)
+	if err != nil {
+		return monthlySummary, fmt.Errorf("failed to execute query: %v", err)
+	}
+
+	for response.Next() {
+		monthStats := &MonthStats{}
+		err := response.Scan(
+			&monthStats.Month,
+			&monthStats.TotalWeekDays,
+			&monthStats.WorkedDays,
+			&monthStats.WorkedTime,
+			&monthStats.VacationDays,
+			&monthStats.SickDays,
+			&monthStats.WeekendDays,
+			&monthStats.OffDays,
+			&monthStats.OverTimeDays,
+			&monthStats.TotalOvertime,
+		)
+		if err != nil {
+			return monthlySummary, fmt.Errorf("failed to serialize range of records to struct: %v", err)
+		}
+		monthlySummary = append(monthlySummary, monthStats)
+	}
+
+	return monthlySummary, nil
+}
+
+func GetFullStatistics(startDate string, endDate string) (fullStatistics *FullStats, err error) {
+	con, err := db.CreateConnection()
+	if err != nil {
+		return fullStatistics, err
+	}
+	defer func(con *sql.DB) {
+		err = db.CloseConnection(con)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}(con)
+
+	query := `select
+		COUNT(CASE WHEN day_type = 'norm' THEN 1 END) AS worked_days,
+		COUNT(CASE WHEN day_type not in ('wknd', 'off') THEN 1 END) AS total_weekdays,
+		SEC_TO_TIME(sum(TIME_TO_SEC(day_total))) AS total_time_worked,
+		SEC_TO_TIME(
+			 round(
+					 avg(CASE WHEN day_type = 'norm' THEN TIME_TO_SEC(start_time) END)
+			 )
+		) AS avg_start,
+		SEC_TO_TIME(
+			 ROUND(
+					 AVG(CASE WHEN day_type = 'norm' THEN TIME_TO_SEC(end_time) END)
+			 )
+		) AS avg_end,
+		AVG(CASE WHEN day_type = 'norm' THEN lunch_duration END) AS avg_lunch,
+		COUNT(CASE WHEN day_type = 'sic' THEN 1 END) AS sick_days,
+		COUNT(CASE WHEN day_type = 'vac' THEN 1 END) AS vacation_days,
+		COUNT(CASE WHEN overtime = TRUE THEN 1 END) AS ot_days,
+		SUM(CASE WHEN overtime = TRUE THEN day_balance END) AS total_ot,
+		AVG(CASE WHEN overtime = TRUE THEN day_balance END) AS avg_ot
+	FROM timesheet
+	WHERE workdate BETWEEN ? AND ?;`
+
+	response := con.QueryRow(query, startDate, endDate)
+
+	fullStatistics = &FullStats{}
+
+	err = response.Scan(
+		&fullStatistics.WorkedDays,
+		&fullStatistics.TotalWeekDays,
+		&fullStatistics.WorkedTime,
+		&fullStatistics.AvgStart,
+		&fullStatistics.AvgEnd,
+		&fullStatistics.AvgLunch,
+		&fullStatistics.SickDays,
+		&fullStatistics.VacationDays,
+		&fullStatistics.OverTimeDays,
+		&fullStatistics.TotalOvertime,
+		&fullStatistics.AvgOvertime,
+	)
+	if err != nil {
+		return fullStatistics, fmt.Errorf("failed to serialize record to struct%v", err)
+	}
+	return fullStatistics, nil
+}

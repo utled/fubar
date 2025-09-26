@@ -274,6 +274,67 @@ func Main() {
 			} else {
 				fmt.Println("Invalid argument.\nExpects: 'delete' only")
 			}
+		case "stats", "st":
+			if len(arguments) >= 2 {
+				switch arguments[1] {
+				case "all", "a":
+					if len(arguments) == 2 {
+						err = helpers.DisplayAllStatistics(&currentState)
+						if err != nil {
+							fmt.Println(err)
+						}
+					} else {
+						fmt.Println("Invalid argument.\nExpects: 'stats[st] all[a]' only")
+					}
+				case "sum", "s":
+					if len(arguments) == 3 {
+						err = helpers.DisplaySumStatistics(arguments[2], &currentState)
+						if err != nil {
+							fmt.Println(err)
+						}
+					} else {
+						fmt.Println("Invalid argument.\nExpects: 'stats[st] sum[s] <YYYY>'")
+					}
+				case "year", "y":
+					if len(arguments) == 3 {
+						err = helpers.DisplayYearStatistics(arguments[2], &currentState)
+						if err != nil {
+							fmt.Println(err)
+						}
+					} else {
+						fmt.Println("Invalid argument.\nExpects: 'stats[st] year[y] <YYYY>'")
+					}
+				case "month", "m":
+					if len(arguments) == 4 {
+						err = helpers.DisplayMonthStatistics(arguments[2], arguments[3], &currentState)
+						if err != nil {
+							fmt.Println(err)
+						}
+					} else {
+						fmt.Println("Invalid argument.\nExpects: 'stats[st] month[m] <INT(monthnum)> <YYYY>'")
+					}
+				case "day", "d":
+					if len(arguments) == 3 {
+						err = helpers.DisplayDaysStatistics(arguments[2], &currentState)
+						if err != nil {
+							fmt.Println(err)
+						}
+					} else {
+						fmt.Println("Invalid argument.\nExpects: 'stats[st] day[d] <INT(days)>'")
+					}
+				case "range", "r":
+					if len(arguments) == 4 {
+						err = helpers.DisplayRangeStatistics(arguments[2], arguments[3], &currentState)
+						if err != nil {
+							fmt.Println(err)
+						}
+					} else {
+						fmt.Println("Invalid argument.\nExpects: 'stats[st] range[r] <YYYYMMDD> <YYYYMMDD>'")
+					}
+				}
+			} else {
+				fmt.Println("Invalid argument.\nRun 'cmd' to display available commands.")
+			}
 		default:
 			err := helpers.ClearTerminal()
 			if err != nil {

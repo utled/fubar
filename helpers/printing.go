@@ -111,6 +111,13 @@ func PrintCommands(state *data.ReportState) {
 		"Ctrl+C                                         -> Close program",
 		"\n_____OTHER_______________________________________________________________________________________________",
 		"delete[dl]                                     -> Delete selected date (can only delete last registered date)",
+		"\n_____STATISTICS__________________________________________________________________________________________",
+		"stats[st] all[a]                                    -> Display all time statistics",
+		"stats[st] sum[s] <YYYY>                             -> Display yearly summary grouped by month",
+		"stats[st] year[y] <YYYY>                            -> Display statistics for specified year",
+		"stats[st] month[m] <INT(monthnum)> <YYYY>           -> Display statistics for specified month",
+		"stats[st] days[d] <INT(days)>                       -> Display statistics for specified num of days back",
+		"stats[st] range[r] <YYYYMMDD> <YYYYMMDD>            -> Display statistics for specified range of dates",
 	}
 
 	for _, command := range availableCommands {
@@ -170,6 +177,91 @@ func PrintDateRange(dateRange []*data.WorkDateRecord, reversed bool, state *data
 		}
 	}
 
+}
+
+func PrintMonthlySummary(monthlySummary []*data.MonthStats, title string, state *data.ReportState) {
+	err := ClearTerminal()
+	if err != nil {
+		fmt.Println(err)
+	}
+	PrintHeader(true, state)
+
+	fmt.Print("\n", title, "\n")
+	for i := 1; i < 149; i++ {
+		fmt.Print("_")
+	}
+	fmt.Print("\n\n")
+
+	fmt.Printf("%-15s", "Month")
+	fmt.Printf("%-15s", "Weekdays")
+	fmt.Printf("%-15s", "Worked Days")
+	fmt.Printf("%-15s", "Worked Time")
+	fmt.Printf("%-15s", "Vacation Days")
+	fmt.Printf("%-15s", "Sick Days")
+	fmt.Printf("%-15s", "Wknd Days")
+	fmt.Printf("%-15s", "Off Days")
+	fmt.Printf("%-15s", "OT Days")
+	fmt.Printf("%-15s\n", "Total OT")
+	for i := 1; i < 149; i++ {
+		fmt.Print("_")
+	}
+	fmt.Println()
+
+	for _, month := range monthlySummary {
+		fmt.Printf("%-15s", month.Month)
+		fmt.Printf("%-15d", month.TotalWeekDays)
+		fmt.Printf("%-15d", month.WorkedDays)
+		fmt.Printf("%-15s", month.WorkedTime)
+		fmt.Printf("%-15d", month.VacationDays)
+		fmt.Printf("%-15d", month.SickDays)
+		fmt.Printf("%-15d", month.WeekendDays)
+		fmt.Printf("%-15d", month.OffDays)
+		fmt.Printf("%-15d", month.OverTimeDays)
+		fmt.Printf("%-15.2f\n", month.TotalOvertime.Float64)
+	}
+}
+
+func PrintFullStatistics(fullStatistics *data.FullStats, title string, state *data.ReportState) {
+	err := ClearTerminal()
+	if err != nil {
+		fmt.Println(err)
+	}
+	PrintHeader(true, state)
+
+	fmt.Print("\n", title, "\n")
+	for i := 1; i < 95; i++ {
+		fmt.Print("_")
+	}
+	fmt.Println()
+
+	fmt.Printf("%-15s", "Worked Days: ")
+	fmt.Printf("%-20d", fullStatistics.WorkedDays)
+	fmt.Printf("%-15s", "Avg Start: ")
+	fmt.Printf("%-20s", fullStatistics.AvgStart)
+	fmt.Printf("%-16s", "Sick Days: ")
+	fmt.Printf("%-20d\n", fullStatistics.SickDays)
+
+	fmt.Printf("%-15s", "Weekdays: ")
+	fmt.Printf("%-20d", fullStatistics.TotalWeekDays)
+	fmt.Printf("%-15s", "Avg End: ")
+	fmt.Printf("%-20s", fullStatistics.AvgEnd)
+	fmt.Printf("%-16s", "Vacation Days: ")
+	fmt.Printf("%-20d\n", fullStatistics.VacationDays)
+
+	fmt.Printf("%-15s", "Worked Time: ")
+	fmt.Printf("%-20s", fullStatistics.WorkedTime)
+	fmt.Printf("%-15s", "Avg Lunch: ")
+	fmt.Printf("%-20.2f", fullStatistics.AvgLunch)
+	fmt.Printf("%-16s", "Overtime Days: ")
+	fmt.Printf("%-20d\n", fullStatistics.OverTimeDays)
+
+	fmt.Printf("%-70s", "")
+	fmt.Printf("%-16s", "Total Overtime: ")
+	fmt.Printf("%-20.2f\n", fullStatistics.TotalOvertime.Float64)
+
+	fmt.Printf("%-70s", "")
+	fmt.Printf("%-16s", "Avg Overtime: ")
+	fmt.Printf("%-20.2f\n", fullStatistics.AvgOvertime.Float64)
 }
 
 var clearFunctions map[string]func()
