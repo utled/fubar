@@ -127,6 +127,14 @@ func DisplayRangeStatistics(startDateString string, endDateString string, state 
 		return err
 	}
 
+	startIsBeforeEnd, err := CheckDateBefore(startDate, endDate)
+	if err != nil {
+		return err
+	}
+	if !startIsBeforeEnd {
+		return fmt.Errorf("start date must be before end date")
+	}
+
 	fullStatistics, err := data.GetFullStatistics(startDate, endDate)
 	if err != nil {
 		return err
