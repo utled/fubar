@@ -296,7 +296,7 @@ func UpdateScheduledOff(offStart string, offEnd string, offType string) error {
 
 	query := `UPDATE userconfig 
 SET scheduled_off_start = ?, scheduled_off_end = ?, scheduled_off_type = ? 
-WHERE ROWID = 1`
+WHERE ID = 1`
 	_, err = con.Exec(query, offStart, offEnd, offType)
 	if err != nil {
 		return fmt.Errorf("failed to update scheduled off period: %v", err)
