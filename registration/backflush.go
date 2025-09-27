@@ -44,7 +44,7 @@ func makeFullDay(dateString string, previousBalance float64, offType string) dat
 	return dateRecord
 }
 
-func RegisterBackflush(state *data.ReportState, dayType string) error {
+func RegisterBackflush(dayType string, state *data.ReportState, userConfig *data.UserConfig) error {
 	lastCompletedDate, err := time.Parse(utils.DateLayout, state.MaxCompletedDate)
 	if err != nil {
 		return fmt.Errorf("failed to parse last completed date: %v", err)
@@ -87,6 +87,26 @@ func RegisterBackflush(state *data.ReportState, dayType string) error {
 	err = data.WriteBackflush(&backflushRange)
 	if err != nil {
 		return err
+	}
+
+	nextDay := today.AddDate(0, 0, 1)
+	if userConfig.OffStart.String != "" {
+		parsedScheduledStart, err := time.Parse(utils.DateLayout, userConfig.OffStart.String)
+		if err != nil {
+			return fmt.Errorf("failed to parse scheduled start date.%v", err)
+		}
+		if nextDay == parsedScheduledStart {
+			err = RegisterOffPeriod(nextDay, userConfig, state)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	if nextDay.Weekday() == time.Saturday {
+		err = RegisterWeekend(nextDay, userConfig, state)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

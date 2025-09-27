@@ -226,7 +226,7 @@ func Main() {
 			}
 		case "back":
 			if len(arguments) == 2 {
-				err = registration.RegisterBackflush(&currentState, arguments[1])
+				err = registration.RegisterBackflush(arguments[1], &currentState, &userConfig)
 				if err != nil {
 					fmt.Println(err)
 					break
