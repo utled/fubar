@@ -65,3 +65,16 @@ func CheckDateBefore(startDate string, endDate string) (dateBefore bool, err err
 
 	return dateBefore, err
 }
+
+func CheckIfDateIsWknd(dateString string) (isWknd bool, err error) {
+	dateToCheck, err := time.Parse(utils.DateLayout, dateString)
+	if err != nil {
+		return false, fmt.Errorf("failed to parse date %v", err)
+	}
+	if dateToCheck.Weekday() == time.Saturday || dateToCheck.Weekday() == time.Sunday {
+		isWknd = true
+	} else {
+		isWknd = false
+	}
+	return isWknd, err
+}

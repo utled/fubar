@@ -83,6 +83,18 @@ func ScheduleOffPeriod(
 		return fmt.Errorf("start date must be before end date")
 	}
 
+	startIsWknd, err := helpers.CheckIfDateIsWknd(offStartFormatted)
+	if err != nil {
+		return err
+	}
+	endIsWknd, err := helpers.CheckIfDateIsWknd(offEndFormatted)
+	if err != nil {
+		return err
+	}
+	if startIsWknd || endIsWknd {
+		return fmt.Errorf("off period can't start or end on a wknd")
+	}
+
 	err = data.UpdateScheduledOff(offStartFormatted, offEndFormatted, offType)
 	if err != nil {
 		return err

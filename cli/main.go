@@ -198,17 +198,22 @@ func Main() {
 				fmt.Println("Invalid argument.\nExpects: 'norm' only")
 			}
 		case "sched", "sc":
-			if len(arguments) == 2 && arguments[1] == "remove" {
-				err = registration.RemoveScheduledOffPeriod()
-				if err != nil {
-					fmt.Println(err)
-					break
+			if len(arguments) == 2 {
+				switch arguments[1] {
+				case "remove":
+					err = registration.RemoveScheduledOffPeriod()
+					if err != nil {
+						fmt.Println(err)
+						break
+					}
+					userConfig, err = data.GetUserConfig()
+					if err != nil {
+						fmt.Println(err)
+					}
+					setNewState(selectedDate, &currentState, &userConfig)
+				case "show":
+					helpers.PrintScheduledOffPeriod(&userConfig, &currentState)
 				}
-				userConfig, err = data.GetUserConfig()
-				if err != nil {
-					fmt.Println(err)
-				}
-				setNewState(selectedDate, &currentState, &userConfig)
 			} else if len(arguments) == 4 {
 				err = registration.ScheduleOffPeriod(arguments[1], arguments[2], arguments[3], &userConfig)
 				if err != nil {
@@ -222,7 +227,9 @@ func Main() {
 				setNewState(selectedDate, &currentState, &userConfig)
 			} else {
 				fmt.Println("Invalid argument.\n" +
-					"Expects: 'sched <YYYYMMDD> <YYYYMMDD> <off/vac/sic>' or 'sched remove'")
+					"Expects: 'sched <YYYYMMDD> <YYYYMMDD> <off/vac/sic>' or\n" +
+					"'sched remove' or\n" +
+					"'sched show'")
 			}
 		case "back":
 			if len(arguments) == 2 {
