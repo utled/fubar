@@ -100,7 +100,7 @@ func Main() {
 			if err != nil {
 				fmt.Println(err)
 			}
-			helpers.PrintHeader(true, &currentState)
+			helpers.PrintHeader(&currentState)
 		case "start", "s":
 			if len(arguments) == 2 {
 				err = registration.RegisterStart(arguments[1], &currentState, &userConfig)

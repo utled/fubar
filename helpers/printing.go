@@ -8,7 +8,7 @@ import (
 	"runtime"
 )
 
-func PrintHeader(withSupportText bool, state *data.ReportState) {
+func PrintHeader(state *data.ReportState) {
 	fmt.Println()
 
 	fmt.Printf("%65s", "    ██████  ███████████  ███                          \n")
@@ -22,10 +22,9 @@ func PrintHeader(withSupportText bool, state *data.ReportState) {
 	fmt.Printf("%65s", "                                                      \n")
 	fmt.Printf("%72s", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
 
-	if withSupportText {
-		fmt.Printf("%72s", "cmd -> Display available commands           Ctrl+C -> Close program\n")
-		fmt.Println()
-	}
+	fmt.Printf("%72s", "cmd -> Display available commands           Ctrl+C -> Close program\n")
+	fmt.Println()
+
 	if !state.ReportUpToDate {
 		fmt.Printf("%4s", "")
 		fmt.Printf("%-67s", "There are missing regitrations")
@@ -54,7 +53,7 @@ func PrintSelectedDate(state *data.ReportState) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	PrintHeader(true, state)
+	PrintHeader(state)
 
 	fmt.Printf("%-12s", "Start: ")
 	fmt.Printf("%-20s", state.SelectedRecord.StartTime.String)
@@ -89,7 +88,7 @@ func PrintCommands(state *data.ReportState) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	PrintHeader(false, state)
+	PrintHeader(state)
 	availableCommands := []string{
 		"\n_____DISPLAY_____________________________________________________________________________________________",
 		"today[t]                                       -> Display current date",
@@ -139,7 +138,7 @@ func PrintDateRange(dateRange []*data.WorkDateRecord, reversed bool, state *data
 	if err != nil {
 		fmt.Println(err)
 	}
-	PrintHeader(false, state)
+	PrintHeader(state)
 
 	fmt.Printf("%-12s", "Date")
 	fmt.Printf("%-6s", "Type")
@@ -194,7 +193,7 @@ func PrintMonthlySummary(monthlySummary []*data.MonthStats, title string, state 
 	if err != nil {
 		fmt.Println(err)
 	}
-	PrintHeader(true, state)
+	PrintHeader(state)
 
 	fmt.Print("\n", title, "\n")
 	for i := 1; i < 112; i++ {
@@ -238,7 +237,7 @@ func PrintFullStatistics(fullStatistics *data.FullStats, title string, state *da
 	if err != nil {
 		fmt.Println(err)
 	}
-	PrintHeader(true, state)
+	PrintHeader(state)
 
 	fmt.Print("\n", title, "\n")
 	for i := 1; i < 93; i++ {
