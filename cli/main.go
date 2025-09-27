@@ -331,6 +331,8 @@ func Main() {
 					} else {
 						fmt.Println("Invalid argument.\nExpects: 'stats[st] range[r] <YYYYMMDD> <YYYYMMDD>'")
 					}
+				default:
+					fmt.Println("Invalid argument.\nRun 'cmd' to display available commands.")
 				}
 			} else {
 				fmt.Println("Invalid argument.\nRun 'cmd' to display available commands.")

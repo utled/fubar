@@ -27,7 +27,7 @@ func DisplayAllStatistics(state *data.ReportState) error {
 func DisplaySumStatistics(year string, state *data.ReportState) error {
 	yearInt, err := strconv.Atoi(year)
 	if err != nil {
-		return fmt.Errorf("year input is not a numeric value")
+		return fmt.Errorf("Invalid argument.\nExpects: 'stats[st] sum[s] <YYYY>'")
 	}
 
 	monthlySummary, err := data.GetMonthlySummary(yearInt)
@@ -45,7 +45,7 @@ func DisplaySumStatistics(year string, state *data.ReportState) error {
 func DisplayYearStatistics(year string, state *data.ReportState) error {
 	yearInt, err := strconv.Atoi(year)
 	if err != nil {
-		return fmt.Errorf("year input is not a numeric value")
+		return fmt.Errorf("Invalid argument.\nExpects: 'stats[st] year[y] <YYYY>'")
 	}
 
 	startDate := time.Date(yearInt, 1, 1, 0, 0, 0, 0, time.UTC).Format(utils.DateLayout)
@@ -64,18 +64,20 @@ func DisplayYearStatistics(year string, state *data.ReportState) error {
 }
 
 func DisplayMonthStatistics(month string, year string, state *data.ReportState) error {
+	invalidArgumentMsg := fmt.Errorf("Invalid argument.\nExpects: 'stats[st] month[m] <INT(monthnum)> <YYYY>'")
+
 	monthInt, err := strconv.Atoi(month)
 	if err != nil {
-		return fmt.Errorf("month input is not a numeric value")
+		return invalidArgumentMsg
 	}
 
 	if monthInt < 1 || monthInt > 12 {
-		return fmt.Errorf("month input is not a valid month")
+		return fmt.Errorf("Invalid month number.\n Month must be between 1 and 12")
 	}
 
 	yearInt, err := strconv.Atoi(year)
 	if err != nil {
-		return fmt.Errorf("year input is not a numeric value")
+		return invalidArgumentMsg
 	}
 
 	startDate := time.Date(yearInt, time.Month(monthInt), 1, 0, 0, 0, 0, time.UTC).Format(utils.DateLayout)
@@ -97,7 +99,7 @@ func DisplayMonthStatistics(month string, year string, state *data.ReportState) 
 func DisplayDaysStatistics(numOfDays string, state *data.ReportState) error {
 	numOfDaysInt, err := strconv.Atoi(numOfDays)
 	if err != nil {
-		return fmt.Errorf("year input is not a numeric value")
+		return fmt.Errorf("Invalid argument.\nExpects: 'stats[st] day[d] <INT(days)>'")
 	}
 
 	today := time.Now()
