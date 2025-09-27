@@ -38,24 +38,26 @@ func InitializeDB() error {
 func createTables(db *sql.DB) error {
 	statements := []string{
 		`CREATE TABLE IF NOT EXISTS timesheet (
-			workdate VARCHAR(10) UNIQUE NOT NULL,
+			workdate DATE PRIMARY KEY,
 			day_type VARCHAR(4),
-			start_time VARCHAR(8),
-			end_time VARCHAR(8),
+			start_time TIME,
+			end_time TIME,
 			lunch_duration INT,
 			additional_time INT,
 			overtime BOOLEAN,
-			day_total VARCHAR(8),
+			day_total TIME,
 			day_balance FLOAT,
 			total_balance FLOAT,
-			day_length VARCHAR(8)
+			day_length TIME
 		);`,
-		/*		`CREATE TABLE IF NOT EXISTS userconfig (
-				lunch_duration INT,
-				length_of_day TEXT,
-				vacation_start TEXT,
-				vacation_end TEXT
-			);`,*/
+		`CREATE TABLE IF NOT EXISTS userconfig (
+    			ID INT AUTO_INCREMENT PRIMARY KEY,
+				default_lunch INT,
+				default_day_length TIME,
+				scheduled_off_start VARCHAR(10),
+				scheduled_off_end VARCHAR(10),
+				scheduled_off_type VARCHAR(3)
+			);`,
 	}
 
 	for _, statement := range statements {

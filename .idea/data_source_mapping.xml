@@ -2,6 +2,5 @@
 <project version="4">
   <component name="DataSourcePerFileMappings">
     <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/5d45ef5f-5035-4867-b1b4-423fd2b926fd/console.sql" value="5d45ef5f-5035-4867-b1b4-423fd2b926fd" />
-    <file url="file://$PROJECT_DIR$/test.go" value="5d45ef5f-5035-4867-b1b4-423fd2b926fd" />
   </component>
 </project>
