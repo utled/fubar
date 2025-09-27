@@ -9,6 +9,11 @@ import (
 )
 
 func PrintHeader(state *data.ReportState) {
+	err := ClearTerminal()
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	fmt.Println()
 
 	fmt.Printf("%65s", "    ██████  ███████████  ███                          \n")
@@ -49,10 +54,6 @@ func PrintHeader(state *data.ReportState) {
 }
 
 func PrintSelectedDate(state *data.ReportState) {
-	err := ClearTerminal()
-	if err != nil {
-		fmt.Println(err)
-	}
 	PrintHeader(state)
 
 	fmt.Printf("%-12s", "Start: ")
@@ -84,10 +85,6 @@ func PrintSelectedDate(state *data.ReportState) {
 }
 
 func PrintCommands(state *data.ReportState) {
-	err := ClearTerminal()
-	if err != nil {
-		fmt.Println(err)
-	}
 	PrintHeader(state)
 	availableCommands := []string{
 		"\n_____DISPLAY_____________________________________________________________________________________________",
@@ -134,10 +131,6 @@ func PrintCommands(state *data.ReportState) {
 }
 
 func PrintDateRange(dateRange []*data.WorkDateRecord, reversed bool, state *data.ReportState) {
-	err := ClearTerminal()
-	if err != nil {
-		fmt.Println(err)
-	}
 	PrintHeader(state)
 
 	fmt.Printf("%-12s", "Date")
@@ -189,10 +182,6 @@ func PrintDateRange(dateRange []*data.WorkDateRecord, reversed bool, state *data
 }
 
 func PrintMonthlySummary(monthlySummary []*data.MonthStats, title string, state *data.ReportState) {
-	err := ClearTerminal()
-	if err != nil {
-		fmt.Println(err)
-	}
 	PrintHeader(state)
 
 	fmt.Print("\n", title, "\n")
@@ -233,10 +222,6 @@ func PrintMonthlySummary(monthlySummary []*data.MonthStats, title string, state 
 }
 
 func PrintFullStatistics(fullStatistics *data.FullStats, title string, state *data.ReportState) {
-	err := ClearTerminal()
-	if err != nil {
-		fmt.Println(err)
-	}
 	PrintHeader(state)
 
 	fmt.Print("\n", title, "\n")
