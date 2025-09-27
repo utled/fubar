@@ -10,12 +10,16 @@ import (
 
 func PrintHeader(withSupportText bool, state *data.ReportState) {
 	fmt.Println()
-	fmt.Printf("%72s", "┏━━━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━┓━━━┓\n")
-	fmt.Printf("%72s", "┃┏┓┏┓┃┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┫┣┛┓┏┓┃\n")
-	fmt.Printf("%72s", "┗┛┃┃┗┛┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃┃┃\n")
-	fmt.Printf("%72s", "  ┃┃  ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃ ┃┃┃┃\n")
-	fmt.Printf("%72s", " ┏┛┗┓━┫┣┓┫┣┓┫┣┓┫┣┓┫┣┓┫┣┓┫┣┓┫┣┓┫┣┓┫┣┓┫┣┓┫┣┓┫┣┓┫┣┓┫┣┓┫┣┓┫┣┓┫┣┓┫┣┓┛┗┛┃\n")
-	fmt.Printf("%72s", " ┗━━┛━━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━┛━━━┛\n")
+
+	fmt.Printf("%65s", "    ██████  ███████████  ███                          \n")
+	fmt.Printf("%65s", "   ███░░███░█░░░███░░░█ ░░░                           \n")
+	fmt.Printf("%65s", "  ░███ ░░░ ░   ░███  ░  ████  █████████████    ██████ \n")
+	fmt.Printf("%65s", " ███████       ░███    ░░███ ░░███░░███░░███  ███░░███\n")
+	fmt.Printf("%65s", "░░░███░        ░███     ░███  ░███ ░███ ░███ ░███████ \n")
+	fmt.Printf("%65s", "  ░███         ░███     ░███  ░███ ░███ ░███ ░███░░░  \n")
+	fmt.Printf("%65s", "  █████        █████    █████ █████░███ █████░░██████ \n")
+	fmt.Printf("%65s", " ░░░░░        ░░░░░    ░░░░░ ░░░░░ ░░░ ░░░░░  ░░░░░░  \n")
+	fmt.Printf("%65s", "                                                      \n")
 	fmt.Printf("%72s", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
 
 	if withSupportText {
@@ -41,6 +45,7 @@ func PrintHeader(withSupportText bool, state *data.ReportState) {
 	fmt.Println()
 	fmt.Printf("%72s", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
 	fmt.Println()
+	fmt.Println()
 
 }
 
@@ -50,6 +55,7 @@ func PrintSelectedDate(state *data.ReportState) {
 		fmt.Println(err)
 	}
 	PrintHeader(true, state)
+
 	fmt.Printf("%-12s", "Start: ")
 	fmt.Printf("%-20s", state.SelectedRecord.StartTime.String)
 	fmt.Printf("%-15s", "Day Total: ")
@@ -73,6 +79,8 @@ func PrintSelectedDate(state *data.ReportState) {
 	fmt.Printf("%-20s\n", fmt.Sprintf("%t", state.SelectedRecord.Overtime.Bool))
 	fmt.Printf("%-12s", "Type: ")
 	fmt.Printf("%-20s\n", state.SelectedRecord.DayType.String)
+
+	fmt.Println()
 
 }
 
@@ -133,49 +141,51 @@ func PrintDateRange(dateRange []*data.WorkDateRecord, reversed bool, state *data
 	}
 	PrintHeader(false, state)
 
-	fmt.Printf("%-15s", "Date")
-	fmt.Printf("%-15s", "Type")
-	fmt.Printf("%-15s", "Start")
-	fmt.Printf("%-15s", "Lunch")
-	fmt.Printf("%-15s", "End")
-	fmt.Printf("%-15s", "Additional")
-	fmt.Printf("%-15s", "Day Total")
-	fmt.Printf("%-15s", "Overtime")
-	fmt.Printf("%-15s", "Day Balance")
-	fmt.Printf("%-15s\n", "Total Balance")
-	for i := 1; i < 149; i++ {
+	fmt.Printf("%-12s", "Date")
+	fmt.Printf("%-6s", "Type")
+	fmt.Printf("%-10s", "Start")
+	fmt.Printf("%-7s", "Lunch")
+	fmt.Printf("%-10s", "End")
+	fmt.Printf("%-7s", "+Time")
+	fmt.Printf("%-11s", "Day Total")
+	fmt.Printf("%-10s", "Overtime")
+	fmt.Printf("%-9s", "Day +/-")
+	fmt.Printf("%-10s\n", "Total +/-")
+	for i := 1; i < 92; i++ {
 		fmt.Print("_")
 	}
 	fmt.Println()
 
 	if !reversed {
 		for index := len(dateRange) - 1; index >= 0; index-- {
-			fmt.Printf("%-15s", dateRange[index].WorkDate)
-			fmt.Printf("%-15s", dateRange[index].DayType.String)
-			fmt.Printf("%-15s", dateRange[index].StartTime.String)
-			fmt.Printf("%-15d", dateRange[index].LunchDuration.Int16)
-			fmt.Printf("%-15s", dateRange[index].EndTime.String)
-			fmt.Printf("%-15d", dateRange[index].AdditionalTime.Int16)
-			fmt.Printf("%-15s", dateRange[index].DayTotal.String)
-			fmt.Printf("%-15s", fmt.Sprintf("%t", dateRange[index].Overtime.Bool))
-			fmt.Printf("%-15.2f", dateRange[index].DayBalance.Float64)
-			fmt.Printf("%-15.2f\n", dateRange[index].TotalBalance.Float64)
+			fmt.Printf("%-12s", dateRange[index].WorkDate)
+			fmt.Printf("%-6s", dateRange[index].DayType.String)
+			fmt.Printf("%-10s", dateRange[index].StartTime.String)
+			fmt.Printf("%-7d", dateRange[index].LunchDuration.Int16)
+			fmt.Printf("%-10s", dateRange[index].EndTime.String)
+			fmt.Printf("%-7d", dateRange[index].AdditionalTime.Int16)
+			fmt.Printf("%-11s", dateRange[index].DayTotal.String)
+			fmt.Printf("%-10s", fmt.Sprintf("%t", dateRange[index].Overtime.Bool))
+			fmt.Printf("%-9.2f", dateRange[index].DayBalance.Float64)
+			fmt.Printf("%-10.2f\n", dateRange[index].TotalBalance.Float64)
 		}
 		fmt.Println()
 	} else {
 		for _, date := range dateRange {
-			fmt.Printf("%-15s", date.WorkDate)
-			fmt.Printf("%-15s", date.DayType.String)
-			fmt.Printf("%-15s", date.StartTime.String)
-			fmt.Printf("%-15d", date.LunchDuration.Int16)
-			fmt.Printf("%-15s", date.EndTime.String)
-			fmt.Printf("%-15d", date.AdditionalTime.Int16)
-			fmt.Printf("%-15s", date.DayTotal.String)
-			fmt.Printf("%-15s", fmt.Sprintf("%t", date.Overtime.Bool))
-			fmt.Printf("%-15.2f", date.DayBalance.Float64)
-			fmt.Printf("%-15.2f\n", date.TotalBalance.Float64)
+			fmt.Printf("%-12s", date.WorkDate)
+			fmt.Printf("%-6s", date.DayType.String)
+			fmt.Printf("%-10s", date.StartTime.String)
+			fmt.Printf("%-7d", date.LunchDuration.Int16)
+			fmt.Printf("%-10s", date.EndTime.String)
+			fmt.Printf("%-7d", date.AdditionalTime.Int16)
+			fmt.Printf("%-11s", date.DayTotal.String)
+			fmt.Printf("%-10s", fmt.Sprintf("%t", date.Overtime.Bool))
+			fmt.Printf("%-9.2f", date.DayBalance.Float64)
+			fmt.Printf("%-10.2f\n", date.TotalBalance.Float64)
 		}
 	}
+
+	fmt.Println()
 
 }
 
@@ -187,38 +197,40 @@ func PrintMonthlySummary(monthlySummary []*data.MonthStats, title string, state 
 	PrintHeader(true, state)
 
 	fmt.Print("\n", title, "\n")
-	for i := 1; i < 149; i++ {
+	for i := 1; i < 112; i++ {
 		fmt.Print("_")
 	}
 	fmt.Print("\n\n")
 
-	fmt.Printf("%-15s", "Month")
-	fmt.Printf("%-15s", "Weekdays")
-	fmt.Printf("%-15s", "Worked Days")
-	fmt.Printf("%-15s", "Worked Time")
+	fmt.Printf("%-11s", "Month")
+	fmt.Printf("%-10s", "Weekdays")
+	fmt.Printf("%-13s", "Worked Days")
+	fmt.Printf("%-13s", "Worked Time")
 	fmt.Printf("%-15s", "Vacation Days")
-	fmt.Printf("%-15s", "Sick Days")
-	fmt.Printf("%-15s", "Wknd Days")
-	fmt.Printf("%-15s", "Off Days")
-	fmt.Printf("%-15s", "OT Days")
-	fmt.Printf("%-15s\n", "Total OT")
-	for i := 1; i < 149; i++ {
+	fmt.Printf("%-11s", "Sick Days")
+	fmt.Printf("%-11s", "Wknd Days")
+	fmt.Printf("%-10s", "Off Days")
+	fmt.Printf("%-9s", "OT Days")
+	fmt.Printf("%-10s\n", "Total OT")
+	for i := 1; i < 112; i++ {
 		fmt.Print("_")
 	}
 	fmt.Println()
 
 	for _, month := range monthlySummary {
-		fmt.Printf("%-15s", month.Month)
-		fmt.Printf("%-15d", month.TotalWeekDays)
-		fmt.Printf("%-15d", month.WorkedDays)
-		fmt.Printf("%-15s", month.WorkedTime)
+		fmt.Printf("%-11s", month.Month)
+		fmt.Printf("%-10d", month.TotalWeekDays)
+		fmt.Printf("%-13d", month.WorkedDays)
+		fmt.Printf("%-13s", month.WorkedTime)
 		fmt.Printf("%-15d", month.VacationDays)
-		fmt.Printf("%-15d", month.SickDays)
-		fmt.Printf("%-15d", month.WeekendDays)
-		fmt.Printf("%-15d", month.OffDays)
-		fmt.Printf("%-15d", month.OverTimeDays)
-		fmt.Printf("%-15.2f\n", month.TotalOvertime.Float64)
+		fmt.Printf("%-11d", month.SickDays)
+		fmt.Printf("%-11d", month.WeekendDays)
+		fmt.Printf("%-10d", month.OffDays)
+		fmt.Printf("%-9d", month.OverTimeDays)
+		fmt.Printf("%-10.2f\n", month.TotalOvertime.Float64)
 	}
+
+	fmt.Println()
 }
 
 func PrintFullStatistics(fullStatistics *data.FullStats, title string, state *data.ReportState) {
@@ -229,7 +241,7 @@ func PrintFullStatistics(fullStatistics *data.FullStats, title string, state *da
 	PrintHeader(true, state)
 
 	fmt.Print("\n", title, "\n")
-	for i := 1; i < 95; i++ {
+	for i := 1; i < 93; i++ {
 		fmt.Print("_")
 	}
 	fmt.Println()
@@ -262,6 +274,8 @@ func PrintFullStatistics(fullStatistics *data.FullStats, title string, state *da
 	fmt.Printf("%-70s", "")
 	fmt.Printf("%-16s", "Avg Overtime: ")
 	fmt.Printf("%-20.2f\n", fullStatistics.AvgOvertime.Float64)
+
+	fmt.Println()
 }
 
 var clearFunctions map[string]func()
