@@ -55,8 +55,6 @@ func PrintHeader(state *data.ReportState) {
 
 }
 
-// PrintSelectedDate prints a formatted view of the selected date,
-// and it's assigned values collected through the current state.
 func PrintSelectedDate(state *data.ReportState) {
 	PrintHeader(state)
 
@@ -88,7 +86,6 @@ func PrintSelectedDate(state *data.ReportState) {
 
 }
 
-// PrintCommands prints a formatted list of all available commands and user input formatting.
 func PrintCommands(state *data.ReportState) {
 	PrintHeader(state)
 	availableCommands := []string{
@@ -111,6 +108,7 @@ func PrintCommands(state *data.ReportState) {
 		"\n_____SCHEDULING__________________________________________________________________________________________",
 		"sched[sc] <YYYYMMDD> <YYYYMMDD> <off/vac/sic>  -> Schedule date period for coming off time",
 		"sched[sc] remove                               -> Remove scheduled period",
+		"sched[sc] show                                 -> Display scheduled period",
 		"back <norm/off/vac/sic>                        -> Backfill all non registered days back to last completed date",
 		"\n_____DEFAULT CONFIGURATIONS______________________________________________________________________________",
 		"conflunch <INT(minutes)>                       -> Update default lunch duration",
@@ -135,7 +133,21 @@ func PrintCommands(state *data.ReportState) {
 	fmt.Println()
 }
 
-// PrintDateRange prints all data for each date record in table format.
+func PrintScheduledOffPeriod(userConfig *data.UserConfig, state *data.ReportState) {
+	PrintHeader(state)
+	if userConfig.OffStart.String == "" {
+		fmt.Println("No off period is scheduled")
+	} else {
+		fmt.Printf("%-30s", "Scheduled off period, Start: ")
+		fmt.Print(userConfig.OffStart.String, "\n")
+		fmt.Printf("%-30s", "Scheduled off period, End: ")
+		fmt.Print(userConfig.OffEnd.String, "\n")
+		fmt.Printf("%-30s", "Scheduled off period, Type: ")
+		fmt.Print(userConfig.OffType.String, "\n")
+	}
+	fmt.Println()
+}
+
 func PrintDateRange(dateRange []*data.WorkDateRecord, ascending bool, state *data.ReportState) {
 	PrintHeader(state)
 
@@ -186,7 +198,6 @@ func PrintDateRange(dateRange []*data.WorkDateRecord, ascending bool, state *dat
 
 }
 
-// PrintMonthlySummary prints a formatted table of summarized statistics grouped by month.
 func PrintMonthlySummary(monthlySummary []*data.MonthStats, title string, state *data.ReportState) {
 	PrintHeader(state)
 
@@ -227,7 +238,6 @@ func PrintMonthlySummary(monthlySummary []*data.MonthStats, title string, state 
 	fmt.Println()
 }
 
-// PrintFullStatistics prints formatted statistics for a defined date range.
 func PrintFullStatistics(fullStatistics *data.FullStats, title string, state *data.ReportState) {
 	PrintHeader(state)
 
