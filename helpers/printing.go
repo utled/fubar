@@ -8,6 +8,8 @@ import (
 	"runtime"
 )
 
+// PrintHeader clears the terminal and prints the header and subheader.
+// To be used before any other printing functions.
 func PrintHeader(state *data.ReportState) {
 	err := ClearTerminal()
 	if err != nil {
@@ -53,6 +55,8 @@ func PrintHeader(state *data.ReportState) {
 
 }
 
+// PrintSelectedDate prints a formatted view of the selected date,
+// and it's assigned values collected through the current state.
 func PrintSelectedDate(state *data.ReportState) {
 	PrintHeader(state)
 
@@ -84,6 +88,7 @@ func PrintSelectedDate(state *data.ReportState) {
 
 }
 
+// PrintCommands prints a formatted list of all available commands and user input formatting.
 func PrintCommands(state *data.ReportState) {
 	PrintHeader(state)
 	availableCommands := []string{
@@ -130,7 +135,8 @@ func PrintCommands(state *data.ReportState) {
 	fmt.Println()
 }
 
-func PrintDateRange(dateRange []*data.WorkDateRecord, reversed bool, state *data.ReportState) {
+// PrintDateRange prints all data for each date record in table format.
+func PrintDateRange(dateRange []*data.WorkDateRecord, ascending bool, state *data.ReportState) {
 	PrintHeader(state)
 
 	fmt.Printf("%-12s", "Date")
@@ -148,21 +154,7 @@ func PrintDateRange(dateRange []*data.WorkDateRecord, reversed bool, state *data
 	}
 	fmt.Println()
 
-	if !reversed {
-		for index := len(dateRange) - 1; index >= 0; index-- {
-			fmt.Printf("%-12s", dateRange[index].WorkDate)
-			fmt.Printf("%-6s", dateRange[index].DayType.String)
-			fmt.Printf("%-10s", dateRange[index].StartTime.String)
-			fmt.Printf("%-7d", dateRange[index].LunchDuration.Int16)
-			fmt.Printf("%-10s", dateRange[index].EndTime.String)
-			fmt.Printf("%-7d", dateRange[index].AdditionalTime.Int16)
-			fmt.Printf("%-11s", dateRange[index].DayTotal.String)
-			fmt.Printf("%-10s", fmt.Sprintf("%t", dateRange[index].Overtime.Bool))
-			fmt.Printf("%-9.2f", dateRange[index].DayBalance.Float64)
-			fmt.Printf("%-10.2f\n", dateRange[index].TotalBalance.Float64)
-		}
-		fmt.Println()
-	} else {
+	if ascending {
 		for _, date := range dateRange {
 			fmt.Printf("%-12s", date.WorkDate)
 			fmt.Printf("%-6s", date.DayType.String)
@@ -175,12 +167,26 @@ func PrintDateRange(dateRange []*data.WorkDateRecord, reversed bool, state *data
 			fmt.Printf("%-9.2f", date.DayBalance.Float64)
 			fmt.Printf("%-10.2f\n", date.TotalBalance.Float64)
 		}
+	} else {
+		for index := len(dateRange) - 1; index >= 0; index-- {
+			fmt.Printf("%-12s", dateRange[index].WorkDate)
+			fmt.Printf("%-6s", dateRange[index].DayType.String)
+			fmt.Printf("%-10s", dateRange[index].StartTime.String)
+			fmt.Printf("%-7d", dateRange[index].LunchDuration.Int16)
+			fmt.Printf("%-10s", dateRange[index].EndTime.String)
+			fmt.Printf("%-7d", dateRange[index].AdditionalTime.Int16)
+			fmt.Printf("%-11s", dateRange[index].DayTotal.String)
+			fmt.Printf("%-10s", fmt.Sprintf("%t", dateRange[index].Overtime.Bool))
+			fmt.Printf("%-9.2f", dateRange[index].DayBalance.Float64)
+			fmt.Printf("%-10.2f\n", dateRange[index].TotalBalance.Float64)
+		}
 	}
 
 	fmt.Println()
 
 }
 
+// PrintMonthlySummary prints a formatted table of summarized statistics grouped by month.
 func PrintMonthlySummary(monthlySummary []*data.MonthStats, title string, state *data.ReportState) {
 	PrintHeader(state)
 
@@ -221,6 +227,7 @@ func PrintMonthlySummary(monthlySummary []*data.MonthStats, title string, state 
 	fmt.Println()
 }
 
+// PrintFullStatistics prints formatted statistics for a defined date range.
 func PrintFullStatistics(fullStatistics *data.FullStats, title string, state *data.ReportState) {
 	PrintHeader(state)
 

@@ -81,7 +81,7 @@ func Main() {
 				if err != nil {
 					fmt.Println(err)
 				}
-				helpers.PrintDateRange(timesheet, true, &currentState)
+				helpers.PrintDateRange(timesheet, false, &currentState)
 			} else {
 				fmt.Println("Invalid argument.\nExpects: 'last <INT(days)>'")
 			}
@@ -91,7 +91,7 @@ func Main() {
 				if err != nil {
 					fmt.Println(err)
 				}
-				helpers.PrintDateRange(timesheet, false, &currentState)
+				helpers.PrintDateRange(timesheet, true, &currentState)
 			} else {
 				fmt.Println("Invalid argument.\nExpects: 'range <YYYYMMDD YYYYMMDD>'")
 			}
