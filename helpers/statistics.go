@@ -8,6 +8,8 @@ import (
 	"time"
 )
 
+// DisplayAllStatistics displays statistics in table format for all recorded dates.
+// Requires a pointer to the current application state to be passed to the header printing function.
 func DisplayAllStatistics(state *data.ReportState) error {
 	startDate := time.Date(1901, 1, 1, 0, 0, 0, 0, time.UTC).Format(utils.DateLayout)
 	endDate := time.Now().Format(utils.DateLayout)
@@ -24,6 +26,9 @@ func DisplayAllStatistics(state *data.ReportState) error {
 	return nil
 }
 
+// DisplaySumStatistics displays statistics in table format for a given year, grouped by month.
+// year must be a string representing an integer.
+// Requires a pointer to the current application state to be passed to the header printing function.
 func DisplaySumStatistics(year string, state *data.ReportState) error {
 	yearInt, err := strconv.Atoi(year)
 	if err != nil {
@@ -42,6 +47,9 @@ func DisplaySumStatistics(year string, state *data.ReportState) error {
 	return nil
 }
 
+// DisplayYearStatistics displays statistics in table format for a given year.
+// year must be a string representing an integer.
+// Requires a pointer to the current application state to be passed to the header printing function.
 func DisplayYearStatistics(year string, state *data.ReportState) error {
 	yearInt, err := strconv.Atoi(year)
 	if err != nil {
@@ -63,6 +71,10 @@ func DisplayYearStatistics(year string, state *data.ReportState) error {
 	return nil
 }
 
+// DisplayMonthStatistics displays statistics in table format for a given month and year.
+// month must be a string representing an integer between 1 and 12.
+// year must be a string representing an integer.
+// Requires a pointer to the current application state to be passed to the header printing function.
 func DisplayMonthStatistics(month string, year string, state *data.ReportState) error {
 	invalidArgumentMsg := fmt.Errorf("Invalid argument.\nExpects: 'stats[st] month[m] <INT(monthnum)> <YYYY>'")
 
@@ -96,10 +108,17 @@ func DisplayMonthStatistics(month string, year string, state *data.ReportState) 
 	return nil
 }
 
+// DisplayDaysStatistics displays statistics in table format for the last number of days.
+// numOfDays must be a string representing a positive integer.
+// Requires a pointer to the current application state to be passed to the header printing function.
 func DisplayDaysStatistics(numOfDays string, state *data.ReportState) error {
 	numOfDaysInt, err := strconv.Atoi(numOfDays)
 	if err != nil {
 		return fmt.Errorf("Invalid argument.\nExpects: 'stats[st] day[d] <INT(days)>'")
+	}
+
+	if numOfDaysInt < 1 {
+		return fmt.Errorf("Invalid number of days.\nNumber of days must be a positive integer")
 	}
 
 	today := time.Now()
@@ -118,6 +137,10 @@ func DisplayDaysStatistics(numOfDays string, state *data.ReportState) error {
 	return nil
 }
 
+// DisplayRangeStatistics displays statistics in table format for a given date range
+// defined by startDate and endDate in the string format <YYYYMMDD>.
+// startDate must be before endDate.
+// Requires a pointer to the current application state to be passed to the header printing function.
 func DisplayRangeStatistics(startDateString string, endDateString string, state *data.ReportState) error {
 	startDate, err := FormatValidDateString(startDateString)
 	if err != nil {
