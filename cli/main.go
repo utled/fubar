@@ -242,10 +242,22 @@ func Main() {
 			} else {
 				fmt.Println("Invalid argument.\nExpects: 'back <norm/off/vac/sic>'")
 			}
-
-		case "conflunch":
-			if len(arguments) == 2 {
-				err = registration.UpdateDefaultLunch(arguments[1])
+		case "conf":
+			if len(arguments) == 2 && (arguments[1] == "show" || arguments[1] == "s") {
+				helpers.PrintUserConfig(&userConfig, &currentState)
+			} else if len(arguments) == 3 && (arguments[1] == "lunch" || arguments[1] == "l") {
+				err = registration.UpdateDefaultLunch(arguments[2])
+				if err != nil {
+					fmt.Println(err)
+					break
+				}
+				userConfig, err = data.GetUserConfig()
+				if err != nil {
+					fmt.Println(err)
+				}
+				setNewState(selectedDate, &currentState, &userConfig)
+			} else if len(arguments) == 3 && (arguments[1] == "length" || arguments[1] == "le") {
+				err = registration.UpdateDefaultLength(arguments[2])
 				if err != nil {
 					fmt.Println(err)
 					break
@@ -256,22 +268,12 @@ func Main() {
 				}
 				setNewState(selectedDate, &currentState, &userConfig)
 			} else {
-				fmt.Println("Invalid argument.\nExpects: 'conflunch '<INT(minutes)>'")
-			}
-		case "conflength":
-			if len(arguments) == 2 {
-				err = registration.UpdateDefaultLength(arguments[1])
-				if err != nil {
-					fmt.Println(err)
-					break
-				}
-				userConfig, err = data.GetUserConfig()
-				if err != nil {
-					fmt.Println(err)
-				}
-				setNewState(selectedDate, &currentState, &userConfig)
-			} else {
-				fmt.Println("Invalid argument.\nExpects: 'conflength <MMSS>'")
+				fmt.Println(
+					"Invalid argument.\n" +
+						"Expects: " +
+						"'conf lunch[l] <INT(minutes)>' or\n" +
+						"'conf length[le] <MMSS>' or\n" +
+						"'conf show[s]' only")
 			}
 		case "cmd":
 			helpers.PrintCommands(&currentState)

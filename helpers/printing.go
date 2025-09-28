@@ -111,8 +111,9 @@ func PrintCommands(state *data.ReportState) {
 		"sched[sc] show                                 -> Display scheduled period",
 		"back <norm/off/vac/sic>                        -> Backfill all non registered days back to last completed date",
 		"\n_____DEFAULT CONFIGURATIONS______________________________________________________________________________",
-		"conflunch <INT(minutes)>                       -> Update default lunch duration",
-		"conflength <MMSS>                              -> Update default length of day",
+		"conf lunch[l] <INT(minutes)>                   -> Update default lunch duration",
+		"conf length[le] <MMSS>                         -> Update default length of day",
+		"conf show[s]                                   -> Display current user defaults",
 		"\n_____GENERAL_____________________________________________________________________________________________",
 		"cmd                                            -> Display available commands",
 		"Ctrl+C                                         -> Close program",
@@ -145,6 +146,15 @@ func PrintScheduledOffPeriod(userConfig *data.UserConfig, state *data.ReportStat
 		fmt.Printf("%-30s", "Scheduled off period, Type: ")
 		fmt.Print(userConfig.OffType.String, "\n")
 	}
+	fmt.Println()
+}
+
+func PrintUserConfig(userConfig *data.UserConfig, state *data.ReportState) {
+	PrintHeader(state)
+	fmt.Printf("%-20s", "Default Lunch: ")
+	fmt.Print(userConfig.DefaultLunch.Int16, "\n")
+	fmt.Printf("%-20s", "Default Day Length: ")
+	fmt.Print(userConfig.DefaultDayLength.String, "\n")
 	fmt.Println()
 }
 

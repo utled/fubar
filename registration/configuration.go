@@ -14,7 +14,7 @@ func UpdateDefaultLunch(lunchDurationString string) error {
 	}
 	lunchDuration := int16(lunchDurationInt)
 	if lunchDuration < 0 {
-		return fmt.Errorf("lunchDuration can't be a negative value")
+		return fmt.Errorf("lunch Duration can't be a negative value")
 	}
 
 	err = data.UpdateDefaultLunch(lunchDuration)
@@ -32,7 +32,7 @@ func UpdateDefaultLength(dayLengthString string) error {
 	}
 	dayLength := int16(dayLengthInt)
 	if dayLength < 0 {
-		return fmt.Errorf("lunchDuration can't be a negative value")
+		return fmt.Errorf("day Length can't be a negative value")
 	}
 
 	err = data.UpdateDefaultLength(dayLength)
