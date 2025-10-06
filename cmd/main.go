@@ -4,7 +4,6 @@ import (
 	"fTime/cli"
 	"fTime/db"
 	"fTime/helpers"
-	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -17,7 +16,10 @@ func main() {
 
 	go func() {
 		<-signalChan
-		fmt.Println()
+		err := helpers.ClearTerminal()
+		if err != nil {
+			return
+		}
 		os.Exit(0)
 	}()
 

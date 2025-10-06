@@ -120,12 +120,12 @@ func PrintCommands(state *data.ReportState) {
 		"\n_____OTHER_______________________________________________________________________________________________",
 		"delete[dl]                                     -> Delete selected date (can only delete last registered date)",
 		"\n_____STATISTICS__________________________________________________________________________________________",
-		"stats[st] all[a]                                    -> Display all time statistics",
-		"stats[st] sum[s] <YYYY>                             -> Display yearly summary grouped by month",
-		"stats[st] year[y] <YYYY>                            -> Display statistics for specified year",
-		"stats[st] month[m] <INT(monthnum)> <YYYY>           -> Display statistics for specified month",
-		"stats[st] days[d] <INT(days)>                       -> Display statistics for specified num of days back",
-		"stats[st] range[r] <YYYYMMDD> <YYYYMMDD>            -> Display statistics for specified range of dates",
+		"stats[st] all[a]                               -> Display all time statistics",
+		"stats[st] sum[s] <YYYY>                        -> Display yearly summary grouped by month",
+		"stats[st] year[y] <YYYY>                       -> Display statistics for specified year",
+		"stats[st] month[m] <INT(monthnum)> <YYYY>      -> Display statistics for specified month",
+		"stats[st] days[d] <INT(days)>                  -> Display statistics for specified num of days back",
+		"stats[st] range[r] <YYYYMMDD> <YYYYMMDD>       -> Display statistics for specified range of dates",
 	}
 
 	for _, command := range availableCommands {
