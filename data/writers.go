@@ -39,9 +39,7 @@ func WriteNewBalance(selectedDate string, dayTotal string, dayBalance float64, t
 		}
 	}(con)
 
-	query := "UPDATE timesheet " +
-		"SET day_total = ?, day_balance = ?, total_balance = ?" +
-		"WHERE workdate = ?"
+	query := "UPDATE timesheet SET day_total = ?, day_balance = ?, total_balance = ? WHERE workdate = ?"
 
 	_, err = con.Exec(query, dayTotal, dayBalance, totalBalance, selectedDate)
 	if err != nil {

@@ -280,6 +280,11 @@ func Main() {
 		case "delete", "dl":
 			if len(arguments) == 1 {
 				err = registration.DeleteDate(&currentState)
+				if err != nil {
+					fmt.Println(err)
+					break
+				}
+				setNewState(selectedDate, &currentState, &userConfig)
 			} else {
 				fmt.Println("Invalid argument.\nExpects: 'delete' only")
 			}
