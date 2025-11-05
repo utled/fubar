@@ -211,7 +211,9 @@ func PrintDateRange(dateRange []*data.WorkDateRecord, ascending bool, state *dat
 func PrintMonthlySummary(monthlySummary []*data.MonthStats, title string, state *data.ReportState) {
 	PrintHeader(state)
 
-	fmt.Print("\n", title, "\n")
+	fmt.Print("\n", title, "\n\n")
+	PrintWorkedDaysDiagram(monthlySummary)
+	fmt.Println()
 	for i := 1; i < 112; i++ {
 		fmt.Print("_")
 	}
@@ -287,6 +289,108 @@ func PrintFullStatistics(fullStatistics *data.FullStats, title string, state *da
 	fmt.Printf("%-20.2f\n", fullStatistics.AvgOvertime.Float64)
 
 	fmt.Println()
+}
+
+/*func PrintVacSicDaysDiagram(aYear []*data.MonthStats, year int) {
+	var maxDays int
+	for _, month := range aYear {
+		if month.VacationDays > maxDays {
+			maxDays = month.VacationDays
+		}
+		if month.SickDays > maxDays {
+			maxDays = month.SickDays
+		}
+	}
+
+	fmt.Printf("%-5s", "")
+	fmt.Print(year, " (Vacation Days ", "██", ", Sickdays ░)", "\n")
+
+	months := []string{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"}
+	fmt.Printf("%-5s", "")
+	for _, month := range months {
+		fmt.Printf("%-4s", month)
+	}
+	fmt.Println()
+
+	fmt.Printf("%-4s", "")
+	for range 48 {
+		fmt.Printf("_")
+	}
+	fmt.Print("\n")
+
+	for i := maxDays - 1; i >= 0; i-- {
+		fmt.Printf("%-3d", i+1)
+		fmt.Print("|")
+		for j := 0; j < 12; j++ {
+			if len(aYear) >= j+1 && aYear[j].VacationDays >= i+1 {
+				fmt.Printf("%3s", "██")
+			} else {
+				fmt.Printf("%3s", "  ")
+			}
+			if len(aYear) >= j+1 && aYear[j].SickDays >= i+1 {
+				fmt.Print("░")
+			} else {
+				fmt.Print(" ")
+			}
+		}
+		fmt.Print("|\n")
+	}
+}*/
+
+func PrintWorkedDaysDiagram(monthStats []*data.MonthStats) {
+	var maxDays int
+	for _, month := range monthStats {
+		if month.WorkedDays > maxDays {
+			maxDays = month.WorkedDays
+		}
+		if month.TotalWeekDays > maxDays {
+			maxDays = month.TotalWeekDays
+		}
+	}
+
+	fmt.Printf("%-5s", "")
+	fmt.Print("(Worked Days ", "██", ", Weekdays ░)", "\n")
+
+	months := []string{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"}
+	fmt.Printf("%-5s", "")
+	for _, month := range months {
+		fmt.Printf("%-4s", month)
+	}
+	fmt.Println()
+
+	fmt.Printf("%-5s", "")
+	for idx, _ := range months {
+		if len(monthStats) >= idx+1 {
+			fmt.Printf("%-4d", monthStats[idx].WorkedDays)
+		} else {
+			fmt.Printf("%-4d", 0)
+		}
+	}
+	fmt.Println()
+
+	fmt.Printf("%-4s", "")
+	for range 48 {
+		fmt.Printf("_")
+	}
+	fmt.Print("\n")
+
+	for i := maxDays - 1; i >= 0; i-- {
+		fmt.Printf("%-3d", i+1)
+		fmt.Print("|")
+		for j := 0; j < 12; j++ {
+			if len(monthStats) >= j+1 && monthStats[j].WorkedDays >= i+1 {
+				fmt.Printf("%3s", "██")
+			} else {
+				fmt.Printf("%3s", "  ")
+			}
+			if len(monthStats) >= j+1 && monthStats[j].TotalWeekDays >= i+1 {
+				fmt.Print("░")
+			} else {
+				fmt.Print(" ")
+			}
+		}
+		fmt.Print("|\n")
+	}
 }
 
 var clearFunctions map[string]func()
