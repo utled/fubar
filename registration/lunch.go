@@ -9,11 +9,11 @@ import (
 func RegisterLunch(lunchString string, state *data.ReportState) error {
 	lunchDurationInt, err := strconv.Atoi(lunchString)
 	if err != nil {
-		return fmt.Errorf("failed to convert lunch duration to numeric value.\nInput format must be <MM>")
+		return fmt.Errorf("failed to convert lunch duration to numeric value.\nInput format must be <INT(minutes)>")
 	}
 	lunchDuration := int16(lunchDurationInt)
-	if lunchDuration < 1 || lunchDuration > 59 {
-		return fmt.Errorf("lunch duration must be between 1 and 59 in format <MM>")
+	if lunchDuration < 1 || lunchDuration > 999 {
+		return fmt.Errorf("lunch duration must be between 1 and 99 in format <INT(minutes)>")
 	}
 
 	err = data.UpdateLunch(state.SelectedDate, lunchDuration)
