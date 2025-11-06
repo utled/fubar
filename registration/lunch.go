@@ -28,6 +28,7 @@ func RegisterLunch(lunchString string, state *data.ReportState) error {
 		if err != nil {
 			return err
 		}
+		err = rebalanceSucceedingDates(state)
 	}
 
 	return nil

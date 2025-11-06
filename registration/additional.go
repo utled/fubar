@@ -23,9 +23,12 @@ func RegisterAdditionalTime(additionalTimeString string, state *data.ReportState
 
 	state.SelectedRecord.AdditionalTime.Int16 = additionalTime
 
-	err = RegisterTotals(state)
-	if err != nil {
-		return err
+	if state.SelectedRecord.EndTime.Valid {
+		err = RegisterTotals(state)
+		if err != nil {
+			return err
+		}
+		err = rebalanceSucceedingDates(state)
 	}
 
 	return nil
