@@ -13,6 +13,7 @@ type ReportState struct {
 	ReportUpToDate   bool
 	MaxDate          string
 	MaxCompletedDate string
+	TotalBalance     float64
 	SelectedDate     string
 	SelectedRecord   *WorkDateRecord
 	ProjectedEnd     string

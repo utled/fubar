@@ -117,6 +117,28 @@ func GetMaxDates() (maxCompletedDate string, maxDate string, err error) {
 	return maxCompletedDate, maxDate, nil
 }
 
+func GetCurrentTotalBalance() (totalBalance float64, err error) {
+	con, err := db.CreateConnection()
+	if err != nil {
+		return 0.0, err
+	}
+	defer func(con *sql.DB) {
+		err = db.CloseConnection(con)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}(con)
+
+	query := "SELECT total_balance FROM timesheet WHERE workdate = (SELECT MAX(workdate) FROM timesheet WHERE total_balance IS NOT NULL)"
+	response := con.QueryRow(query)
+	err = response.Scan(&totalBalance)
+	if err != nil {
+		return 0.0, fmt.Errorf("failed to read total balance: %v", err)
+	}
+
+	return totalBalance, nil
+}
+
 func GetUserConfig() (config UserConfig, err error) {
 	con, err := db.CreateConnection()
 	if err != nil {

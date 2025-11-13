@@ -37,17 +37,28 @@ func PrintHeader(state *data.ReportState) {
 		fmt.Printf("%-67s", "There are missing regitrations")
 		fmt.Println()
 		fmt.Printf("%4s", "")
-		fmt.Printf("%-15s%-10s", "Last completed date:", state.MaxCompletedDate)
+		fmt.Printf("%-21s%-32s", "Last completed date: ", state.MaxCompletedDate)
+		if state.TotalBalance > 9.99 {
+			fmt.Printf("%-9s%4.2f", "Balance: ", state.TotalBalance)
+		} else {
+			fmt.Printf("%-10s%4.2f", "Balance: ", state.TotalBalance)
+		}
+
 		fmt.Println()
 		fmt.Println()
 	} else {
 		fmt.Printf("%4s", "")
-		fmt.Printf("%-67s", "Registrations are up to date")
+		fmt.Printf("%-53s", "Registrations are up to date")
+		if state.TotalBalance > 9.99 {
+			fmt.Printf("%-9s%4.2f", "Balance: ", state.TotalBalance)
+		} else {
+			fmt.Printf("%-10s%4.2f", "Balance: ", state.TotalBalance)
+		}
 		fmt.Println()
 		fmt.Println()
 	}
 	fmt.Printf("%4s", "")
-	fmt.Printf("%-15s%-10s", "Selected date:", state.SelectedDate)
+	fmt.Printf("%-15s%-10s", "Selected date: ", state.SelectedDate)
 	fmt.Println()
 	fmt.Printf("%72s", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
 	fmt.Println()
@@ -58,27 +69,52 @@ func PrintHeader(state *data.ReportState) {
 func PrintSelectedDate(state *data.ReportState) {
 	PrintHeader(state)
 
-	fmt.Printf("%-12s", "Start: ")
-	fmt.Printf("%-20s", state.SelectedRecord.StartTime.String)
-	fmt.Printf("%-15s", "Day Total: ")
-	fmt.Printf("%-20s", state.SelectedRecord.DayTotal.String)
-	fmt.Printf("%-15s", "Projected End: ")
-	fmt.Printf("%-20s\n", state.ProjectedEnd)
+	if state.SelectedRecord.EndTime.Valid {
+		fmt.Printf("%4s", "")
+		fmt.Printf("%-12s", "Start: ")
+		fmt.Printf("%-20s", state.SelectedRecord.StartTime.String)
+		fmt.Printf("%-15s", "Day Total: ")
+		fmt.Printf("%-20s\n", state.SelectedRecord.DayTotal.String)
 
-	fmt.Printf("%-12s", "Lunch: ")
-	fmt.Printf("%-20d", state.SelectedRecord.LunchDuration.Int16)
-	fmt.Printf("%-15s", "Day Balance: ")
-	fmt.Printf("%-20.2f\n", state.SelectedRecord.DayBalance.Float64)
+		fmt.Printf("%4s", "")
+		fmt.Printf("%-12s", "Lunch: ")
+		fmt.Printf("%-20d", state.SelectedRecord.LunchDuration.Int16)
+		fmt.Printf("%-15s", "Day Balance: ")
+		fmt.Printf("%-20.2f\n", state.SelectedRecord.DayBalance.Float64)
 
-	fmt.Printf("%-12s", "End: ")
-	fmt.Printf("%-20s", state.SelectedRecord.EndTime.String)
-	fmt.Printf("%-15s", "Total Balance: ")
-	fmt.Printf("%-20.2f\n", state.SelectedRecord.TotalBalance.Float64)
+		fmt.Printf("%4s", "")
+		fmt.Printf("%-12s", "End: ")
+		fmt.Printf("%-20s\n", state.SelectedRecord.EndTime.String)
+	} else {
+		if state.SelectedRecord.StartTime.Valid {
+			fmt.Printf("%4s", "")
+			fmt.Printf("%-12s", "Start: ")
+			fmt.Printf("%-20s", state.SelectedRecord.StartTime.String)
+			fmt.Printf("%-15s", "Projected End: ")
+			fmt.Printf("%-20s\n", state.ProjectedEnd)
+		} else {
+			fmt.Printf("%4s", "")
+			fmt.Printf("%-12s", "Start: ")
+			fmt.Printf("%-20s\n", state.SelectedRecord.StartTime.String)
+		}
 
+		fmt.Printf("%4s", "")
+		fmt.Printf("%-12s", "Lunch: ")
+		fmt.Printf("%-20d\n", state.SelectedRecord.LunchDuration.Int16)
+
+		fmt.Printf("%4s", "")
+		fmt.Printf("%-12s", "End: ")
+		fmt.Printf("%-20s\n", state.SelectedRecord.EndTime.String)
+	}
+
+	fmt.Println()
+	fmt.Printf("%4s", "")
 	fmt.Printf("%-12s", "Additional: ")
 	fmt.Printf("%-20d\n", state.SelectedRecord.AdditionalTime.Int16)
+	fmt.Printf("%4s", "")
 	fmt.Printf("%-12s", "Overtime: ")
 	fmt.Printf("%-20s\n", fmt.Sprintf("%t", state.SelectedRecord.Overtime.Bool))
+	fmt.Printf("%4s", "")
 	fmt.Printf("%-12s", "Type: ")
 	fmt.Printf("%-20s\n", state.SelectedRecord.DayType.String)
 

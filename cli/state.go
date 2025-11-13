@@ -40,6 +40,11 @@ func setNewState(selectedDate string, currentState *data.ReportState, userConfig
 		fmt.Println("failed to set new state.\n", err)
 	}
 
+	totalBalance, err := data.GetCurrentTotalBalance()
+	if err != nil {
+		fmt.Println("failed to set new state.\n", err)
+	}
+
 	previousCompleted, err := helpers.CheckPreviousCompletion(selectedDate, maxCompletedDate)
 	if err != nil {
 		fmt.Println("failed to set new state.\n", err)
@@ -66,6 +71,7 @@ func setNewState(selectedDate string, currentState *data.ReportState, userConfig
 	currentState.ReportUpToDate = previousCompleted
 	currentState.MaxDate = maxDate
 	currentState.MaxCompletedDate = maxCompletedDate
+	currentState.TotalBalance = totalBalance
 	currentState.SelectedDate = selectedDate
 	currentState.SelectedRecord = &selectedDateRecord
 	currentState.ProjectedEnd = projectedEnd
