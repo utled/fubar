@@ -47,11 +47,11 @@ func PrintHeader(state *data.ReportState) {
 		fmt.Println()
 	} else {
 		fmt.Printf("%4s", "")
-		fmt.Printf("%-53s", "Registrations are up to date")
-		if state.TotalBalance > 9.99 {
-			fmt.Printf("%-9s%4.2f", "Balance: ", state.TotalBalance)
+		fmt.Printf("%-52s", "Registrations are up to date")
+		if state.TotalBalance < 0 {
+			fmt.Printf("%-7s%5s", "Balance: ", DecimalToTime(state.TotalBalance))
 		} else {
-			fmt.Printf("%-10s%4.2f", "Balance: ", state.TotalBalance)
+			fmt.Printf("%-10s%4s", "Balance: ", DecimalToTime(state.TotalBalance))
 		}
 		fmt.Println()
 		fmt.Println()

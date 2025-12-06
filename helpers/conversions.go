@@ -3,6 +3,7 @@ package helpers
 import (
 	"fTime/utils"
 	"fmt"
+	"math"
 	"strconv"
 	"time"
 )
@@ -65,4 +66,16 @@ func ParseTimeObject(timeString string) (time.Time, error) {
 	timeObject := time.Date(year, month, day, hour, minute, second, 0, time.Local)
 
 	return timeObject, nil
+}
+
+func DecimalToTime(totalBalance float64) (balanceString string) {
+	sign := ""
+	if totalBalance < 0 {
+		sign = "-"
+		totalBalance = math.Abs(totalBalance)
+	}
+	balanceDuration := time.Duration(totalBalance * float64(time.Hour))
+	hours := int(balanceDuration.Hours())
+	minutes := int(balanceDuration.Minutes()) % 60
+	return fmt.Sprintf("%s%02d:%02d\n", sign, hours, minutes)
 }
