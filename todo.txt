@@ -1,1 +1,0 @@
-should cmd/main.go perform all staging of activities? I.E call write end time, then call for rebalancing, off day registration et.c. or should the registration.go manage all logic?
