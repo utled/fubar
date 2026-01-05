@@ -1,4 +1,4 @@
-module fTime
+module fubar
 
 go 1.24
 

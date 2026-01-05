@@ -1,8 +1,8 @@
 package helpers
 
 import (
-	"fTime/data"
 	"fmt"
+	"fubar/data"
 	"os"
 	"os/exec"
 	"runtime"

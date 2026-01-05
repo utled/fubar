@@ -1,9 +1,9 @@
 package registration
 
 import (
-	"fTime/data"
-	"fTime/utils"
 	"fmt"
+	"fubar/data"
+	"fubar/utils"
 	"time"
 )
 

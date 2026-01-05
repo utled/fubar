@@ -2,9 +2,9 @@ package data
 
 import (
 	"database/sql"
-	"fTime/db"
-	"fTime/utils"
 	"fmt"
+	"fubar/db"
+	"fubar/utils"
 	"time"
 )
 

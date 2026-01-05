@@ -1,9 +1,9 @@
 package registration
 
 import (
-	"fTime/data"
-	"fTime/helpers"
 	"fmt"
+	"fubar/data"
+	"fubar/helpers"
 	"strconv"
 )
 

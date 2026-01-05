@@ -2,8 +2,8 @@ package data
 
 import (
 	"database/sql"
-	"fTime/db"
 	"fmt"
+	"fubar/db"
 )
 
 func WriteStart(selectedDate string, registeredTime string, dayLength string) error {

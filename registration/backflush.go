@@ -2,9 +2,9 @@ package registration
 
 import (
 	"database/sql"
-	"fTime/data"
-	"fTime/utils"
 	"fmt"
+	"fubar/data"
+	"fubar/utils"
 	"time"
 )
 

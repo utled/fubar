@@ -1,10 +1,10 @@
 package cli
 
 import (
-	"fTime/data"
-	"fTime/helpers"
-	"fTime/utils"
 	"fmt"
+	"fubar/data"
+	"fubar/helpers"
+	"fubar/utils"
 	"time"
 )
 

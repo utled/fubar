@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fTime/cli"
-	"fTime/db"
-	"fTime/helpers"
+	"fubar/cli"
+	"fubar/db"
+	"fubar/helpers"
 	"log"
 	"os"
 	"os/signal"

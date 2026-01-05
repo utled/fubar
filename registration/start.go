@@ -1,10 +1,10 @@
 package registration
 
 import (
-	"fTime/data"
-	"fTime/helpers"
-	"fTime/utils"
 	"fmt"
+	"fubar/data"
+	"fubar/helpers"
+	"fubar/utils"
 )
 
 func RegisterStart(startTime string, state *data.ReportState, userConfig *data.UserConfig) error {

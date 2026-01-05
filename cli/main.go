@@ -2,11 +2,11 @@ package cli
 
 import (
 	"bufio"
-	"fTime/data"
-	"fTime/helpers"
-	"fTime/registration"
-	"fTime/utils"
 	"fmt"
+	"fubar/data"
+	"fubar/helpers"
+	"fubar/registration"
+	"fubar/utils"
 	"os"
 	"strings"
 	"time"

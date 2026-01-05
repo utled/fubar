@@ -9,9 +9,9 @@ import (
 )
 
 func CreateConnection() (db *sql.DB, err error) {
-	dbUser := os.Getenv("FTIMEDBUser")
-	dbPswd := os.Getenv("FTIMEDBPswd")
-	dbHost := os.Getenv("FTIMEDBHost")
+	dbUser := os.Getenv("fubarUser")
+	dbPswd := os.Getenv("fubarPswd")
+	dbHost := os.Getenv("fubarHost")
 
 	cfg := mysql.NewConfig()
 	cfg.User = dbUser

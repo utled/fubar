@@ -1,9 +1,9 @@
 package helpers
 
 import (
-	"fTime/data"
-	"fTime/utils"
 	"fmt"
+	"fubar/data"
+	"fubar/utils"
 	"strconv"
 	"time"
 )

@@ -1,8 +1,8 @@
 package registration
 
 import (
-	"fTime/data"
 	"fmt"
+	"fubar/data"
 )
 
 func DeleteDate(state *data.ReportState) error {
