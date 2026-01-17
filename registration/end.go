@@ -13,13 +13,9 @@ func RegisterEnd(endTime string, state *data.ReportState, userConfig *data.UserC
 		return fmt.Errorf("can't end selected date.\nstart time must be registered first.")
 	}
 
-	formattedTime, err := helpers.FormatValidTimeString(endTime)
+	registeredTime, err := helpers.ParseTimeObject(endTime)
 	if err != nil {
-		return fmt.Errorf("failed to format end time.%v", err)
-	}
-	registeredTime, err := helpers.ParseTimeObject(formattedTime)
-	if err != nil {
-		return fmt.Errorf("failed to parse end time: %v", err)
+		return fmt.Errorf("failed to parse end time: \n%v", err)
 	}
 
 	var lunchDuration int16
@@ -48,6 +44,12 @@ func RegisterEnd(endTime string, state *data.ReportState, userConfig *data.UserC
 		return err
 	}
 	state.SelectedRecord.EndTime.String = registeredTime.Format(utils.TimeLayout)
+	state.SelectedRecord.EndTime.Valid = true
+	state.SelectedRecord.LunchDuration.Int16 = lunchDuration
+	state.SelectedRecord.LunchDuration.Valid = true
+	state.SelectedRecord.AdditionalTime.Int16 = additionalTime
+	state.SelectedRecord.AdditionalTime.Valid = true
+	state.SelectedRecord.DayType.Valid = true
 
 	err = RegisterTotals(state)
 	if err != nil {

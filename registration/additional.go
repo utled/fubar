@@ -3,32 +3,28 @@ package registration
 import (
 	"fmt"
 	"fubar/data"
-	"strconv"
 )
 
-func RegisterAdditionalTime(additionalTimeString string, state *data.ReportState) error {
-	additionalTimeInt, err := strconv.Atoi(additionalTimeString)
-	if err != nil {
-		return fmt.Errorf("failed to convert input to numeric value.\nInput format must be <MM>")
-	}
-	additionalTime := int16(additionalTimeInt)
-	if additionalTime < 0 {
-		return fmt.Errorf("additionalTime can't be a negative value")
+func RegisterAdditionalTime(additionalTime int, state *data.ReportState) error {
+	if !state.SelectedRecord.EndTime.Valid {
+		return fmt.Errorf("end time must be registered before additional time")
 	}
 
-	err = data.UpdateAdditionalTime(state.SelectedDate, additionalTime)
+	err := data.UpdateAdditionalTime(state.SelectedDate, additionalTime)
 	if err != nil {
 		return err
 	}
 
-	state.SelectedRecord.AdditionalTime.Int16 = additionalTime
+	state.SelectedRecord.AdditionalTime.Int16 = int16(additionalTime)
+	state.SelectedRecord.AdditionalTime.Valid = true
 
-	if state.SelectedRecord.EndTime.Valid {
-		err = RegisterTotals(state)
-		if err != nil {
-			return err
-		}
-		err = rebalanceSucceedingDates(state)
+	err = RegisterTotals(state)
+	if err != nil {
+		return err
+	}
+	err = rebalanceSucceedingDates(state)
+	if err != nil {
+		return err
 	}
 
 	return nil

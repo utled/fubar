@@ -152,7 +152,6 @@ func registerPartialOffDay(state *data.ReportState, offType string) error {
 	if err != nil {
 		return err
 	}
-
 	if selectedBeforeMax {
 		state.SelectedRecord.TotalBalance.Float64 = previousBalance
 		err = rebalanceSucceedingDates(state)
@@ -170,6 +169,10 @@ func RegisterOffDay(userConfig *data.UserConfig, state *data.ReportState, offTyp
 	}
 
 	if state.SelectedRecord.EndTime.Valid {
+		if state.SelectedRecord.DayBalance.Float64 > 0.0 {
+			return fmt.Errorf("cannot register a day with plus time as a partial off/vac/sic day")
+		}
+
 		err := registerPartialOffDay(state, offType)
 		if err != nil {
 			return err
@@ -197,8 +200,7 @@ func RevertOffDay(userConfig *data.UserConfig, state *data.ReportState) error {
 
 	state.SelectedRecord.DayType.String = "norm"
 
-	endTime := state.SelectedRecord.EndTime.String[:2] + state.SelectedRecord.EndTime.String[3:5]
-	err := RegisterEnd(endTime, state, userConfig)
+	err := RegisterEnd(state.SelectedRecord.EndTime.String, state, userConfig)
 	if err != nil {
 		return err
 	}

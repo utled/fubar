@@ -8,11 +8,12 @@ import (
 	"fubar/registration"
 	"fubar/utils"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
 
-func Main() {
+func Launch() {
 	err := helpers.ClearTerminal()
 	if err != nil {
 		fmt.Println(err)
@@ -103,19 +104,29 @@ func Main() {
 			helpers.PrintHeader(&currentState)
 		case "start", "s":
 			if len(arguments) == 2 {
-				err = registration.RegisterStart(arguments[1], &currentState, &userConfig)
+				startTime, err := helpers.FormatValidTimeString(arguments[1])
+				if err != nil {
+					fmt.Println(err)
+					break
+				}
+				err = registration.RegisterStart(startTime, &currentState, &userConfig)
 				if err != nil {
 					fmt.Println(err)
 					break
 				}
 				setNewState(selectedDate, &currentState, &userConfig)
 			} else {
-				fmt.Println("Invalid argument.\nExpects: 'start <YYYYMMDD>'")
+				fmt.Println("Invalid argument.\nExpects: 'start <YYYYMMDD> or <YYYY:MM:DD>'")
 			}
 		case "end", "e":
 			if len(arguments) == 2 {
 				currentState.SelectedRecord.DayType.String = "norm"
-				err = registration.RegisterEnd(arguments[1], &currentState, &userConfig)
+				endTime, err := helpers.FormatValidTimeString(arguments[1])
+				if err != nil {
+					fmt.Println(err)
+					break
+				}
+				err = registration.RegisterEnd(endTime, &currentState, &userConfig)
 				if err != nil {
 					fmt.Println(err)
 					break
@@ -131,7 +142,12 @@ func Main() {
 					break
 				}
 				currentState.SelectedRecord.DayType.String = "norm"
-				err = registration.RegisterEnd(arguments[1], &currentState, &userConfig)
+				endTime, err := helpers.FormatValidTimeString(arguments[1])
+				if err != nil {
+					fmt.Println(err)
+					break
+				}
+				err = registration.RegisterEnd(endTime, &currentState, &userConfig)
 				if err != nil {
 					fmt.Println(err)
 					break
@@ -143,7 +159,13 @@ func Main() {
 
 		case "ot", "-ot":
 			if len(arguments) == 1 {
-				err = registration.RegisterOvertime(arguments[0], &currentState, &userConfig)
+				var overtime bool
+				if arguments[0] == "ot" {
+					overtime = true
+				} else {
+					overtime = false
+				}
+				err = registration.RegisterOvertime(overtime, &currentState, &userConfig)
 				if err != nil {
 					fmt.Println(err)
 					break
@@ -154,7 +176,12 @@ func Main() {
 			}
 		case "lunch", "l":
 			if len(arguments) == 2 {
-				err = registration.RegisterLunch(arguments[1], &currentState)
+				lunchDuration, err := strconv.Atoi(arguments[1])
+				if err != nil {
+					fmt.Println(err)
+					break
+				}
+				err = registration.RegisterLunch(lunchDuration, &currentState)
 				if err != nil {
 					fmt.Println(err)
 					break
@@ -166,7 +193,12 @@ func Main() {
 
 		case "addit", "ad":
 			if len(arguments) == 2 {
-				err = registration.RegisterAdditionalTime(arguments[1], &currentState)
+				additionalTime, err := strconv.Atoi(arguments[1])
+				if err != nil {
+					fmt.Println(err)
+					break
+				}
+				err = registration.RegisterAdditionalTime(additionalTime, &currentState)
 				if err != nil {
 					fmt.Println(err)
 					break
@@ -215,7 +247,18 @@ func Main() {
 					helpers.PrintScheduledOffPeriod(&userConfig, &currentState)
 				}
 			} else if len(arguments) == 4 {
-				err = registration.ScheduleOffPeriod(arguments[1], arguments[2], arguments[3], &userConfig)
+				offStart, err := helpers.FormatValidDateString(arguments[1])
+				if err != nil {
+					fmt.Println(err)
+					break
+				}
+
+				offEnd, err := helpers.FormatValidDateString(arguments[2])
+				if err != nil {
+					fmt.Println(err)
+					break
+				}
+				err = registration.ScheduleOffPeriod(offStart, offEnd, arguments[3], &userConfig)
 				if err != nil {
 					fmt.Println(err)
 					break
@@ -246,7 +289,17 @@ func Main() {
 			if len(arguments) == 2 && (arguments[1] == "show" || arguments[1] == "s") {
 				helpers.PrintUserConfig(&userConfig, &currentState)
 			} else if len(arguments) == 3 && (arguments[1] == "lunch" || arguments[1] == "l") {
-				err = registration.UpdateDefaultLunch(arguments[2])
+				lunchDuration, err := strconv.Atoi(arguments[2])
+				if err != nil {
+					fmt.Println("failed to convert input to numeric value.\nInput format must be <INT(minutes)>")
+					break
+				}
+				if lunchDuration < 0 {
+					fmt.Println("lunch Duration can't be a negative value")
+					break
+				}
+
+				err = data.UpdateDefaultLunch(lunchDuration)
 				if err != nil {
 					fmt.Println(err)
 					break
@@ -257,7 +310,12 @@ func Main() {
 				}
 				setNewState(selectedDate, &currentState, &userConfig)
 			} else if len(arguments) == 3 && (arguments[1] == "length" || arguments[1] == "le") {
-				err = registration.UpdateDefaultLength(arguments[2])
+				newDefaultDayLength, err := helpers.FormatValidTimeString(arguments[2])
+				if err != nil {
+					fmt.Println(err)
+					break
+				}
+				err = data.UpdateDefaultLength(newDefaultDayLength)
 				if err != nil {
 					fmt.Println(err)
 					break
@@ -272,7 +330,7 @@ func Main() {
 					"Invalid argument.\n" +
 						"Expects: " +
 						"'conf lunch[l] <INT(minutes)>' or\n" +
-						"'conf length[le] <MMSS>' or\n" +
+						"'conf length[le] <HHMM>' or\n" +
 						"'conf show[s]' only")
 			}
 		case "cmd":

@@ -20,7 +20,7 @@ func GetTimesheetRange(startDate string, endDate string) (timesheet []*WorkDateR
 		}
 	}(con)
 
-	query := "SELECT * FROM timesheet WHERE workdate BETWEEN ? AND ?;"
+	query := "SELECT * FROM timesheet WHERE workdate BETWEEN ? AND ? ORDER BY workdate desc;"
 	response, err := con.Query(query, startDate, endDate)
 	if err != nil {
 		return timesheet, fmt.Errorf("failed to execute query: %v", err)
@@ -117,6 +117,48 @@ func GetMaxDates() (maxCompletedDate string, maxDate string, err error) {
 	return maxCompletedDate, maxDate, nil
 }
 
+func GetMinDate() (minDate string, err error) {
+	con, err := db.CreateConnection()
+	if err != nil {
+		return "", err
+	}
+	defer func() {
+		err = db.CloseConnection(con)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}()
+
+	query := "SELECT MIN(workdate) FROM timesheet;"
+	response := con.QueryRow(query)
+	err = response.Scan(&minDate)
+	if err != nil {
+		return "", fmt.Errorf("failed to read min date: %v", err)
+	}
+	return minDate, nil
+}
+
+func GetYearRange() (minYear int, maxYear int, err error) {
+	con, err := db.CreateConnection()
+	if err != nil {
+		return 0, 0, err
+	}
+	defer func(con *sql.DB) {
+		err = db.CloseConnection(con)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}(con)
+
+	query := "SELECT MIN(year(workdate)), MAX(year(workdate)) FROM timesheet;"
+	response := con.QueryRow(query)
+	err = response.Scan(&minYear, &maxYear)
+	if err != nil {
+		return 0, 0, fmt.Errorf("failed to read year range: \n%v", err)
+	}
+	return minYear, maxYear, nil
+}
+
 func GetCurrentTotalBalance() (totalBalance float64, err error) {
 	con, err := db.CreateConnection()
 	if err != nil {
@@ -133,7 +175,7 @@ func GetCurrentTotalBalance() (totalBalance float64, err error) {
 	response := con.QueryRow(query)
 	err = response.Scan(&totalBalance)
 	if err != nil {
-		return 0.0, fmt.Errorf("failed to read total balance: %v", err)
+		return 0.0, fmt.Errorf("failed to read total balance: \n%v", err)
 	}
 
 	return totalBalance, nil

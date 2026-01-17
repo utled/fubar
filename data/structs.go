@@ -42,6 +42,15 @@ type UserConfig struct {
 	OffType          sql.NullString
 }
 
+type CollectedValues struct {
+	StartTime      string
+	LunchDuration  int
+	EndTime        string
+	AdditionalTime int
+	DayType        string
+	Overtime       bool
+}
+
 type MonthStats struct {
 	Month         string
 	TotalWeekDays int

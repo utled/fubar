@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="fTime" uuid="5d45ef5f-5035-4867-b1b4-423fd2b926fd">
+    <data-source source="LOCAL" name="fubar" uuid="83ee2f1c-f2cf-4589-a97d-453f5964b94c">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>

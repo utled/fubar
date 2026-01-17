@@ -1,10 +1,11 @@
 package main
 
 import (
+	"fmt"
+	"fubar"
 	"fubar/cli"
-	"fubar/db"
 	"fubar/helpers"
-	"log"
+	"fubar/tui"
 	"os"
 	"os/signal"
 	"syscall"
@@ -23,13 +24,21 @@ func main() {
 		os.Exit(0)
 	}()
 
-	err := db.InitializeDB()
-	if err != nil {
-		log.Fatalf("error initializing database: %v", err)
+	arguments := os.Args
+	switch len(arguments) {
+	case 1:
+		tui.Launch()
+	case 2:
+		switch arguments[1] {
+		case "cli":
+			helpers.InitClearFunctions()
+			cli.Launch()
+		case "test":
+			fubar.Test()
+		default:
+			fmt.Println("invalid argument")
+		}
+	default:
+		fmt.Println("invalid argument")
 	}
-
-	helpers.InitClearFunctions()
-
-	cli.Main()
-
 }

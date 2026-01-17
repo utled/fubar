@@ -196,7 +196,7 @@ WHERE workdate = ?`
 	return nil
 }
 
-func UpdateLunch(selectedDate string, lunchDuration int16) error {
+func UpdateLunch(selectedDate string, lunchDuration int) error {
 	con, err := db.CreateConnection()
 	if err != nil {
 		return err
@@ -217,7 +217,7 @@ func UpdateLunch(selectedDate string, lunchDuration int16) error {
 	return nil
 }
 
-func UpdateAdditionalTime(selectedDate string, additionalTime int16) error {
+func UpdateAdditionalTime(selectedDate string, additionalTime int) error {
 	con, err := db.CreateConnection()
 	if err != nil {
 		return err
@@ -238,7 +238,7 @@ func UpdateAdditionalTime(selectedDate string, additionalTime int16) error {
 	return nil
 }
 
-func UpdateDefaultLunch(lunchDuration int16) error {
+func UpdateDefaultLunch(lunchDuration int) error {
 	con, err := db.CreateConnection()
 	if err != nil {
 		return err
@@ -259,7 +259,7 @@ func UpdateDefaultLunch(lunchDuration int16) error {
 	return nil
 }
 
-func UpdateDefaultLength(dayLength int16) error {
+func UpdateDefaultLength(dayLength string) error {
 	con, err := db.CreateConnection()
 	if err != nil {
 		return err

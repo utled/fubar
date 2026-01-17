@@ -12,20 +12,19 @@ func RegisterStart(startTime string, state *data.ReportState, userConfig *data.U
 		return fmt.Errorf("can't start selected date.\nAll previous dates must be up to date.")
 	}
 
-	formattedTime, err := helpers.FormatValidTimeString(startTime)
+	registeredTime, err := helpers.ParseTimeObject(startTime)
 	if err != nil {
-		return fmt.Errorf("failed to format start time.%v", err)
-	}
-	registeredTime, err := helpers.ParseTimeObject(formattedTime)
-	if err != nil {
-		return fmt.Errorf("failed to parse start time.%v", err)
+		return fmt.Errorf("failed to parse start time: \n%v", err)
 	}
 
 	if state.SelectedRecord.StartTime.Valid {
-		err = data.UpdateStart(
+		err := data.UpdateStart(
 			state.SelectedRecord.WorkDate,
 			registeredTime.Format(utils.TimeLayout),
 		)
+		if err != nil {
+			return err
+		}
 	} else {
 		err = data.WriteStart(
 			state.SelectedRecord.WorkDate,
@@ -37,6 +36,10 @@ func RegisterStart(startTime string, state *data.ReportState, userConfig *data.U
 		}
 	}
 	state.SelectedRecord.StartTime.String = registeredTime.Format(utils.TimeLayout)
+	state.SelectedRecord.StartTime.Valid = true
+	state.SelectedRecord.DayLength.String = userConfig.DefaultDayLength.String
+	state.SelectedRecord.DayLength.Valid = true
+	state.MaxDate = state.SelectedDate
 
 	if !state.SelectedRecord.EndTime.Valid {
 		return nil

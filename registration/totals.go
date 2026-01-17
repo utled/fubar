@@ -64,12 +64,14 @@ func RegisterTotals(state *data.ReportState) error {
 		return err
 	}
 	state.SelectedRecord.DayTotal.String = dayTotal
+	state.SelectedRecord.DayTotal.Valid = true
 
 	dayBalance, err := calcDayBalance(state.SelectedRecord)
 	if err != nil {
 		return err
 	}
 	state.SelectedRecord.DayBalance.Float64 = dayBalance
+	state.SelectedRecord.DayBalance.Valid = true
 
 	selectedDate, err := time.Parse(utils.DateLayout, state.SelectedDate)
 	if err != nil {
@@ -79,18 +81,21 @@ func RegisterTotals(state *data.ReportState) error {
 	if err != nil {
 		return err
 	}
+
 	var totalBalance float64
 	if state.SelectedRecord.Overtime.Bool || state.SelectedRecord.DayType.String != "norm" {
 		totalBalance = previousBalance
 	} else {
 		totalBalance = calcTotalBalance(state.SelectedRecord, previousBalance)
 	}
-	state.SelectedRecord.TotalBalance.Float64 = totalBalance
 
 	err = data.WriteNewBalance(selectedDate.Format(utils.DateLayout), dayTotal, dayBalance, totalBalance)
 	if err != nil {
 		return err
 	}
+
+	state.SelectedRecord.TotalBalance.Float64 = totalBalance
+	state.SelectedRecord.TotalBalance.Valid = true
 
 	return nil
 }

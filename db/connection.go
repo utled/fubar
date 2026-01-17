@@ -12,13 +12,14 @@ func CreateConnection() (db *sql.DB, err error) {
 	dbUser := os.Getenv("fubarUser")
 	dbPswd := os.Getenv("fubarPswd")
 	dbHost := os.Getenv("fubarHost")
+	dbName := os.Getenv("fubarDB")
 
 	cfg := mysql.NewConfig()
 	cfg.User = dbUser
 	cfg.Passwd = dbPswd
 	cfg.Net = "tcp"
 	cfg.Addr = dbHost
-	cfg.DBName = "ftime"
+	cfg.DBName = dbName
 
 	db, err = sql.Open("mysql", cfg.FormatDSN())
 	if err != nil {
