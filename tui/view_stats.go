@@ -29,7 +29,7 @@ func (model *Model) statsYearSelectionView() string {
 	)
 }
 
-func (model *Model) allSumView() string {
+func (model *Model) statsAllSumView() string {
 	allSumOne := lipgloss.JoinVertical(
 		lipgloss.Center,
 		lipgloss.JoinHorizontal(lipgloss.Left, fmt.Sprintf("%25s", "Worked Days: "), model.statsDetails.allSumFields[idxWorkedDays].View()),
@@ -66,11 +66,11 @@ func (model *Model) statsGraphView() string {
 			model.statsDetails.graphArea.View(),
 			"\n",
 			lipgloss.NewStyle().Bold(true).Underline(true).Render("All time"),
-			model.allSumView(),
+			model.statsAllSumView(),
 		)
 }
 
-func (model *Model) monthSumView() string {
+func (model *Model) statsMonthSumView() string {
 	return lipgloss.JoinHorizontal(
 		lipgloss.Left,
 		lipgloss.JoinVertical(lipgloss.Left, lipgloss.NewStyle().Bold(true).Render(fmt.Sprintf("%-12s", "Avg Start")), model.statsDetails.monthSumFields[0].View()),
@@ -86,7 +86,7 @@ func (model *Model) statsTableView() string {
 			model.statsDetails.table.View(),
 			"\n\n\n\n\n\n\n\n\n",
 			lipgloss.NewStyle().Bold(true).Underline(true).Render("Selected Month"),
-			model.monthSumView(),
+			model.statsMonthSumView(),
 			"\n",
 		)
 }
