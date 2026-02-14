@@ -12,7 +12,6 @@ func (model *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		model.width = msg.Width
 		model.height = msg.Height
-		model.statsDetails.graphArea.Height = msg.Height - 30
 		return model, nil
 	case errMsg:
 		model.statusLabel = msg.Error()

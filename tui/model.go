@@ -186,7 +186,7 @@ func NewModel() Model {
 		monthAvgFields[i] = inputField
 	}
 
-	graphArea := viewport.New(55, 20)
+	graphArea := viewport.New(54, 30)
 	graphArea.SetContent("Loading graph...")
 
 	statsColumns := []table.Column{

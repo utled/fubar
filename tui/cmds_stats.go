@@ -112,7 +112,7 @@ func (model *Model) generateStatsGraph() tea.Cmd {
 				}
 			}
 			// Right border
-			b.WriteString("|\n")
+			b.WriteString(" |\n")
 		}
 
 		drawnGraph := b.String()

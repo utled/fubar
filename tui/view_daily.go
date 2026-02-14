@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"fubar/helpers"
 	"strconv"
+	"strings"
 
 	"github.com/charmbracelet/lipgloss"
 )
@@ -54,7 +55,7 @@ func (model *Model) dailySubHeaderView() string {
 		lipgloss.Center,
 		subHeaderOne,
 		subHeaderTwo,
-		"\n\n",
+		"",
 		lipgloss.NewStyle().Bold(true).Underline(true).Render(subHeaderThree),
 		subHeaderFour,
 		)
@@ -103,8 +104,7 @@ func (model *Model) dailyInputsView() string {
 }
 
 func (model *Model) renderDailyView() string {
-	footerOne := "[Up/Down] Traverse Days • [Left/Right] Switch Input"
-	footerTwo := "[Enter] Save • [Esc] Revert Changes • [Q] Quit"
+	footer := "[Enter] Save • [Esc] Revert Changes • [Q] Quit"
 
 	return lipgloss.Place(
 		model.width,
@@ -115,15 +115,14 @@ func (model *Model) renderDailyView() string {
 			lipgloss.Center,
 			model.dailyHeaderView(),
 			model.dailySubHeaderView(),
-			"\n\n",
+			"",
 			model.dailyInputsView(),
-			"\n",
+			"",
 			model.dateTable.View(),
 			"\n ",
 			model.statusLabel,
-			"\n\n",
-			lipgloss.NewStyle().Foreground(lipgloss.Color("238")).Render(footerOne),
-			lipgloss.NewStyle().Foreground(lipgloss.Color("238")).Render(footerTwo),
+			strings.Repeat("\n", 7),
+			lipgloss.NewStyle().Foreground(lipgloss.Color("238")).Render(footer),
 		),
 	)
 }

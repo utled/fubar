@@ -2,6 +2,7 @@ package tui
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/charmbracelet/lipgloss"
@@ -64,7 +65,7 @@ func (model *Model) statsSumView() string {
 		sumOne,
 		sumTwo,
 		sumThree,
-		"      ",
+		"",
 	)
 }
 
@@ -72,7 +73,7 @@ func (model *Model) statsGraphView() string {
 		return lipgloss.JoinVertical(
 			lipgloss.Center,
 			model.statsDetails.graphArea.View(),
-			"\n",
+			"",
 			lipgloss.NewStyle().Bold(true).Underline(true).Render("Selected Year"),
 			model.statsSumView(),
 		)
@@ -95,25 +96,24 @@ func (model *Model) statsTableView() string {
 		  "",
 			lipgloss.NewStyle().Bold(true).Underline(true).Render("Selected Month"),
 			model.statsMonthAvgView(),
-		  "",
+			strings.Repeat("\n", 3),
 		  lipgloss.NewStyle().Bold(true).Underline(true).Render("All Time"),
 			model.statsSumView(),
-			"",
+			strings.Repeat("\n", 5),
 		)
 }
 
 
 func (model *Model) renderStatisticsView() string {
 	var mainDisplay string
-	var footer string
 	switch model.statsDetails.displayType {
 	case graphDisplay:
-		footer = "[v] Switch View • [Q] Quit"
 		mainDisplay = model.statsGraphView()
 	case tableDisplay:
-		footer = "[v] Switch View • [Up/Down] Traverse Months • [Q] Quit"
 		mainDisplay = model.statsTableView()
 	}
+
+	footer := "[v] Switch View • [Q] Quit"
 
 	return lipgloss.Place(
 		model.width,
@@ -127,7 +127,7 @@ func (model *Model) renderStatisticsView() string {
 			model.statsYearSelectionView(),
 			"\n\n",
 			mainDisplay,
-			"\n",
+			"",
 			lipgloss.NewStyle().Height(2).Render(model.statusLabel),
 			lipgloss.NewStyle().Foreground(lipgloss.Color("238")).Render(footer),
 		),
