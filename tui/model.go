@@ -117,7 +117,6 @@ func NewModel() Model {
 		}
 		dailyInputFields[i] = inputField
 	}
-	dailyInputFields[idxStart].Focus()
 
 	columns := []table.Column{
 		{Title: "Date", Width: 12},
