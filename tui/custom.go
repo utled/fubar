@@ -84,7 +84,8 @@ type statsDetails struct {
 	yearSelection  textinput.Model
 	graphArea      viewport.Model
 	allSumFields   []textinput.Model
-	monthSumFields []textinput.Model
+	yearSumFields  []textinput.Model
+	monthAvgFields []textinput.Model
 	table          table.Model
 	tableTotals    data.MonthStats
 }

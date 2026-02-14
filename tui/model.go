@@ -168,14 +168,23 @@ func NewModel() Model {
 		inputField.CharLimit = 10
 		allSumFields[i] = inputField
 	}
+	
+	yearSumFields := make([]textinput.Model, 11)
+	for i := range yearSumFields {
+		inputField := textinput.New()
+		inputField.Prompt = ""
+		inputField.Width = 10
+		inputField.CharLimit = 10
+		yearSumFields[i] = inputField
+	}
 
-	monthSumFields := make([]textinput.Model, 4)
-	for i := range monthSumFields {
+	monthAvgFields := make([]textinput.Model, 4)
+	for i := range monthAvgFields {
 		inputField := textinput.New()
 		inputField.Prompt = ""
 		inputField.Width = 12
 		inputField.CharLimit = 12
-		monthSumFields[i] = inputField
+		monthAvgFields[i] = inputField
 	}
 
 	graphArea := viewport.New(55, 20)
@@ -198,7 +207,7 @@ func NewModel() Model {
 		table.WithColumns(statsColumns),
 		table.WithRows([]table.Row{}),
 		table.WithFocused(true),
-		table.WithHeight(20),
+		table.WithHeight(16),
 	)
 
 	statsTable.SetStyles(tableStyle)
@@ -208,7 +217,8 @@ func NewModel() Model {
 		table:          statsTable,
 		graphArea:      graphArea,
 		allSumFields:   allSumFields,
-		monthSumFields: monthSumFields,
+		yearSumFields:  yearSumFields,
+		monthAvgFields: monthAvgFields,
 	}
 
 	//                 //

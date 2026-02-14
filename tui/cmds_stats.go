@@ -99,7 +99,7 @@ func (model *Model) generateStatsGraph() tea.Cmd {
 		for i := maxDays - 1; i >= 0; i-- {
 			// Left border
 			fmt.Fprintf(&b, "%-3d|", i+1)
-			for j := 0; j < 12; j++ {
+			for j := range 12 {
 				if len(monthlySummary) >= j+1 && monthlySummary[j].WorkedDays >= i+1 {
 					fmt.Fprintf(&b, "%3s", "██")
 				} else {
@@ -127,6 +127,9 @@ type statsTableDataMsg struct {
 func (model *Model) fetchStatsTableData() tea.Cmd {
 	return func() tea.Msg {
 		selectedYear, err := strconv.Atoi(model.statsDetails.yearSelection.Value())
+		if err != nil {
+			return err
+		}
 		monthlySummary, err := data.GetMonthlySummary(selectedYear)
 		if err != nil {
 			return err
@@ -151,11 +154,27 @@ func (model *Model) fetchAllSumData() tea.Cmd {
 	}
 }
 
-type statsMonthSumDataMsg struct {
+type statsYearSumDataMsg struct {
 	fieldData *data.FullStats
 }
 
-func (model *Model) fetchMonthSumData(monthName string) tea.Cmd {
+func (model *Model) fetchYearSumData() tea.Cmd {
+	return func() tea.Msg {
+		minDate := model.statsDetails.yearSelection.Value() + "-01-01"
+		maxDate := model.statsDetails.yearSelection.Value() + "-12-31"
+		fullStatistics, err := data.GetFullStatistics(minDate, maxDate)
+		if err != nil {
+			return err
+		}
+		return statsYearSumDataMsg{fieldData: fullStatistics}
+	}
+}
+
+type statsMonthAvgDataMsg struct {
+	fieldData *data.FullStats
+}
+
+func (model *Model) fetchMonthAvgData(monthName string) tea.Cmd {
 
 	return func() tea.Msg {
 		var startDate, endDate string
@@ -185,6 +204,6 @@ func (model *Model) fetchMonthSumData(monthName string) tea.Cmd {
 		if err != nil {
 			return err
 		}
-		return statsMonthSumDataMsg{fieldData: fullStatistics}
+		return statsMonthAvgDataMsg{fieldData: fullStatistics}
 	}
 }

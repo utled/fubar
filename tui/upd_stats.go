@@ -25,7 +25,7 @@ func (model *Model) updateStats(msg tea.Msg) (tea.Model, tea.Cmd) {
 		cmds = append(cmds, model.generateStatsGraph())
 		cmds = append(cmds, model.fetchAllSumData())
 		cmds = append(cmds, model.fetchTableData())
-		cmds = append(cmds, model.fetchAllSumData())
+		cmds = append(cmds, model.fetchYearSumData())
 		return model, tea.Batch(cmds...)
 	case statsGraphMsg:
 		model.statsDetails.graphArea.SetContent(msg.graphString)
@@ -38,16 +38,14 @@ func (model *Model) updateStats(msg tea.Msg) (tea.Model, tea.Cmd) {
 			rows = append(rows, tableRow)
 		}
 		missingMonths := 12 - len(rows)
-		for i := 12 - missingMonths; i <= missingMonths; i++ {
+		for i := 12 - missingMonths; i < 12; i++ {
 			blankRow := generateBlankRow()
 			currentMonth := time.Month(i + 1).String()
 			blankRow[0] = currentMonth
 			rows = append(rows, blankRow)
 		}
 		totalsRow := generateBottomRows(&model.statsDetails.tableTotals)
-		for _, row := range totalsRow {
-			rows = append(rows, row)
-		}
+		rows = append(rows, totalsRow...)
 
 		model.statsDetails.table.SetRows(rows)
 		model.statsDetails.table.GotoTop()
@@ -69,18 +67,31 @@ func (model *Model) updateStats(msg tea.Msg) (tea.Model, tea.Cmd) {
 		model.statsDetails.allSumFields[idxTotalOT].SetValue(fmt.Sprintf("%.2f", msg.fieldData.TotalOvertime.Float64))
 		model.statsDetails.allSumFields[idxAvgOT].SetValue(fmt.Sprintf("%.2f", msg.fieldData.AvgOvertime.Float64))
 		return model, nil
-	case statsMonthSumDataMsg:
-		model.statsDetails.monthSumFields[0].SetValue(msg.fieldData.AvgStart)
-		model.statsDetails.monthSumFields[1].SetValue(msg.fieldData.AvgEnd)
+	case statsYearSumDataMsg:
+		model.statsDetails.yearSumFields[idxWorkedDays].SetValue(strconv.Itoa(msg.fieldData.WorkedDays))
+		model.statsDetails.yearSumFields[idxWeekdays].SetValue(strconv.Itoa(msg.fieldData.TotalWeekDays))
+		model.statsDetails.yearSumFields[idxWorkedTime].SetValue(msg.fieldData.WorkedTime)
+		model.statsDetails.yearSumFields[idxAvgStart].SetValue(msg.fieldData.AvgStart)
+		model.statsDetails.yearSumFields[idxAvgEnd].SetValue(msg.fieldData.AvgEnd)
+		model.statsDetails.yearSumFields[idxAvgLunch].SetValue(fmt.Sprintf("%.2f", msg.fieldData.AvgLunch))
+		model.statsDetails.yearSumFields[idxSickDays].SetValue(strconv.Itoa(msg.fieldData.SickDays))
+		model.statsDetails.yearSumFields[idxVacDays].SetValue(strconv.Itoa(msg.fieldData.VacationDays))
+		model.statsDetails.yearSumFields[idxOTDays].SetValue(strconv.Itoa(msg.fieldData.OverTimeDays))
+		model.statsDetails.yearSumFields[idxTotalOT].SetValue(fmt.Sprintf("%.2f", msg.fieldData.TotalOvertime.Float64))
+		model.statsDetails.yearSumFields[idxAvgOT].SetValue(fmt.Sprintf("%.2f", msg.fieldData.AvgOvertime.Float64))
+		return model, nil
+	case statsMonthAvgDataMsg:
+		model.statsDetails.monthAvgFields[0].SetValue(msg.fieldData.AvgStart)
+		model.statsDetails.monthAvgFields[1].SetValue(msg.fieldData.AvgEnd)
 		if msg.fieldData.AvgLunch > 0 {
-			model.statsDetails.monthSumFields[2].SetValue(fmt.Sprintf("%.2f", msg.fieldData.AvgLunch))
+			model.statsDetails.monthAvgFields[2].SetValue(fmt.Sprintf("%.2f", msg.fieldData.AvgLunch))
 		} else {
-			model.statsDetails.monthSumFields[2].SetValue("")
+			model.statsDetails.monthAvgFields[2].SetValue("")
 		}
 		if msg.fieldData.AvgOvertime.Float64 > 0 {
-			model.statsDetails.monthSumFields[3].SetValue(fmt.Sprintf("%.2f", msg.fieldData.AvgOvertime.Float64))
+			model.statsDetails.monthAvgFields[3].SetValue(fmt.Sprintf("%.2f", msg.fieldData.AvgOvertime.Float64))
 		} else {
-			model.statsDetails.monthSumFields[3].SetValue("")
+			model.statsDetails.monthAvgFields[3].SetValue("")
 		}
 
 		return model, nil
@@ -97,10 +108,11 @@ func (model *Model) updateStats(msg tea.Msg) (tea.Model, tea.Cmd) {
 			switch model.statsDetails.displayType {
 			case graphDisplay:
 				cmds = append(cmds, model.generateStatsGraph())
-				cmds = append(cmds, model.fetchAllSumData())
+			  cmds = append(cmds, model.fetchYearSumData())
 			case tableDisplay:
 				cmds = append(cmds, model.fetchStatsTableData())
-				cmds = append(cmds, model.fetchMonthSumData("January"))
+				cmds = append(cmds, model.fetchAllSumData())
+				cmds = append(cmds, model.fetchMonthAvgData("January"))
 			}
 			return model, tea.Batch(cmds...)
 		case "j", "k":
@@ -114,7 +126,7 @@ func (model *Model) updateStats(msg tea.Msg) (tea.Model, tea.Cmd) {
 				model.statsDetails.table, cmd = model.statsDetails.table.Update(tea.KeyMsg{Type: tea.KeyDown})
 				cmds = append(cmds, cmd)
 			}
-			cmds = append(cmds, model.fetchMonthSumData(model.statsDetails.table.SelectedRow()[0]))
+			cmds = append(cmds, model.fetchMonthAvgData(model.statsDetails.table.SelectedRow()[0]))
 			return model, tea.Batch(cmds...)
 		case "n", "h", "p", "l":
 			selectedYear, _ := strconv.Atoi(model.statsDetails.yearSelection.Value())
@@ -139,9 +151,11 @@ func (model *Model) updateStats(msg tea.Msg) (tea.Model, tea.Cmd) {
 			switch model.statsDetails.displayType {
 			case graphDisplay:
 				cmds = append(cmds, model.generateStatsGraph())
+			  cmds = append(cmds, model.fetchYearSumData())
 			case tableDisplay:
 				cmds = append(cmds, model.fetchStatsTableData())
-				cmds = append(cmds, model.fetchMonthSumData("January"))
+				cmds = append(cmds, model.fetchAllSumData())
+				cmds = append(cmds, model.fetchMonthAvgData("January"))
 			}
 			return model, tea.Batch(cmds...)
 		case "b":
@@ -170,7 +184,7 @@ func (model *Model) updateStats(msg tea.Msg) (tea.Model, tea.Cmd) {
 			var cmd tea.Cmd
 			model.statsDetails.table, cmd = model.statsDetails.table.Update(msg)
 			cmds = append(cmds, cmd)
-			cmds = append(cmds, model.fetchMonthSumData(model.statsDetails.table.SelectedRow()[0]))
+			cmds = append(cmds, model.fetchMonthAvgData(model.statsDetails.table.SelectedRow()[0]))
 			return model, tea.Batch(cmds...)
 		case tea.KeyLeft, tea.KeyRight, tea.KeyTab:
 			var cmds []tea.Cmd
@@ -197,7 +211,7 @@ func (model *Model) updateStats(msg tea.Msg) (tea.Model, tea.Cmd) {
 				cmds = append(cmds, model.generateStatsGraph())
 			case tableDisplay:
 				cmds = append(cmds, model.fetchStatsTableData())
-				cmds = append(cmds, model.fetchMonthSumData("January"))
+				cmds = append(cmds, model.fetchMonthAvgData("January"))
 			}
 			return model, tea.Batch(cmds...)
 		case tea.KeyEnter:

@@ -3,6 +3,7 @@ package tui
 import (
 	"fmt"
 
+	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/charmbracelet/lipgloss"
 )
 
@@ -29,33 +30,40 @@ func (model *Model) statsYearSelectionView() string {
 	)
 }
 
-func (model *Model) statsAllSumView() string {
-	allSumOne := lipgloss.JoinVertical(
+func (model *Model) statsSumView() string {
+	var fieldData []textinput.Model
+	switch model.statsDetails.displayType {
+	case graphDisplay:
+		fieldData = model.statsDetails.yearSumFields
+	case tableDisplay:
+		fieldData = model.statsDetails.allSumFields
+	}
+	sumOne := lipgloss.JoinVertical(
 		lipgloss.Center,
-		lipgloss.JoinHorizontal(lipgloss.Left, fmt.Sprintf("%25s", "Worked Days: "), model.statsDetails.allSumFields[idxWorkedDays].View()),
-		lipgloss.JoinHorizontal(lipgloss.Left, fmt.Sprintf("%25s", "Weekdays: "), model.statsDetails.allSumFields[idxWeekdays].View()),
-		lipgloss.JoinHorizontal(lipgloss.Left, fmt.Sprintf("%25s", "Worked Time: "), model.statsDetails.allSumFields[idxWorkedTime].View()),
-		lipgloss.JoinHorizontal(lipgloss.Left, fmt.Sprintf("%25s", "Total OT: "), model.statsDetails.allSumFields[idxTotalOT].View()),
+		lipgloss.JoinHorizontal(lipgloss.Left, fmt.Sprintf("%25s", "Worked Days: "), fieldData[idxWorkedDays].View()),
+		lipgloss.JoinHorizontal(lipgloss.Left, fmt.Sprintf("%25s", "Weekdays: "), fieldData[idxWeekdays].View()),
+		lipgloss.JoinHorizontal(lipgloss.Left, fmt.Sprintf("%25s", "Worked Time: "), fieldData[idxWorkedTime].View()),
+		lipgloss.JoinHorizontal(lipgloss.Left, fmt.Sprintf("%25s", "Total OT: "), fieldData[idxTotalOT].View()),
 	)
-	allSumTwo := lipgloss.JoinVertical(
+	sumTwo := lipgloss.JoinVertical(
 		lipgloss.Center,
-		lipgloss.JoinHorizontal(lipgloss.Left, fmt.Sprintf("%10s", "Avg Start: "), model.statsDetails.allSumFields[idxAvgStart].View()),
-		lipgloss.JoinHorizontal(lipgloss.Left, fmt.Sprintf("%10s", "Avg End: "), model.statsDetails.allSumFields[idxAvgEnd].View()),
-		lipgloss.JoinHorizontal(lipgloss.Left, fmt.Sprintf("%10s", "Avg Lunch: "), model.statsDetails.allSumFields[idxAvgLunch].View()),
-		lipgloss.JoinHorizontal(lipgloss.Left, fmt.Sprintf("%10s", "Avg OT: "), model.statsDetails.allSumFields[idxAvgOT].View()),
+		lipgloss.JoinHorizontal(lipgloss.Left, fmt.Sprintf("%10s", "Avg Start: "), fieldData[idxAvgStart].View()),
+		lipgloss.JoinHorizontal(lipgloss.Left, fmt.Sprintf("%10s", "Avg End: "), fieldData[idxAvgEnd].View()),
+		lipgloss.JoinHorizontal(lipgloss.Left, fmt.Sprintf("%10s", "Avg Lunch: "), fieldData[idxAvgLunch].View()),
+		lipgloss.JoinHorizontal(lipgloss.Left, fmt.Sprintf("%10s", "Avg OT: "), fieldData[idxAvgOT].View()),
 	)
-	allSumThree := lipgloss.JoinVertical(
+	sumThree := lipgloss.JoinVertical(
 		lipgloss.Center,
-		lipgloss.JoinHorizontal(lipgloss.Left, fmt.Sprintf("%10s", "Sic Days: "), model.statsDetails.allSumFields[idxSickDays].View()),
-		lipgloss.JoinHorizontal(lipgloss.Left, fmt.Sprintf("%10s", "Vac Days: "), model.statsDetails.allSumFields[idxVacDays].View()),
+		lipgloss.JoinHorizontal(lipgloss.Left, fmt.Sprintf("%10s", "Sic Days: "), fieldData[idxSickDays].View()),
+		lipgloss.JoinHorizontal(lipgloss.Left, fmt.Sprintf("%10s", "Vac Days: "), fieldData[idxVacDays].View()),
 		"",
-		lipgloss.JoinHorizontal(lipgloss.Left, fmt.Sprintf("%10s", "OT Days: "), model.statsDetails.allSumFields[idxOTDays].View()),
+		lipgloss.JoinHorizontal(lipgloss.Left, fmt.Sprintf("%10s", "OT Days: "), fieldData[idxOTDays].View()),
 	)
 	return lipgloss.JoinHorizontal(
 		lipgloss.Left,
-		allSumOne,
-		allSumTwo,
-		allSumThree,
+		sumOne,
+		sumTwo,
+		sumThree,
 		"      ",
 	)
 }
@@ -65,18 +73,18 @@ func (model *Model) statsGraphView() string {
 			lipgloss.Center,
 			model.statsDetails.graphArea.View(),
 			"\n",
-			lipgloss.NewStyle().Bold(true).Underline(true).Render("All time"),
-			model.statsAllSumView(),
+			lipgloss.NewStyle().Bold(true).Underline(true).Render("Selected Year"),
+			model.statsSumView(),
 		)
 }
 
-func (model *Model) statsMonthSumView() string {
+func (model *Model) statsMonthAvgView() string {
 	return lipgloss.JoinHorizontal(
 		lipgloss.Left,
-		lipgloss.JoinVertical(lipgloss.Left, lipgloss.NewStyle().Bold(true).Render(fmt.Sprintf("%-12s", "Avg Start")), model.statsDetails.monthSumFields[0].View()),
-		lipgloss.JoinVertical(lipgloss.Left, lipgloss.NewStyle().Bold(true).Render(fmt.Sprintf("%-12s", "Avg End")), model.statsDetails.monthSumFields[1].View()),
-		lipgloss.JoinVertical(lipgloss.Left, lipgloss.NewStyle().Bold(true).Render(fmt.Sprintf("%-12s", "Avg Lunch")), model.statsDetails.monthSumFields[2].View()),
-		lipgloss.JoinVertical(lipgloss.Left, lipgloss.NewStyle().Bold(true).Render(fmt.Sprintf("%-12s", "Avg OT")), model.statsDetails.monthSumFields[3].View()),
+		lipgloss.JoinVertical(lipgloss.Left, lipgloss.NewStyle().Bold(true).Render(fmt.Sprintf("%-12s", "Avg Start")), model.statsDetails.monthAvgFields[0].View()),
+		lipgloss.JoinVertical(lipgloss.Left, lipgloss.NewStyle().Bold(true).Render(fmt.Sprintf("%-12s", "Avg End")), model.statsDetails.monthAvgFields[1].View()),
+		lipgloss.JoinVertical(lipgloss.Left, lipgloss.NewStyle().Bold(true).Render(fmt.Sprintf("%-12s", "Avg Lunch")), model.statsDetails.monthAvgFields[2].View()),
+		lipgloss.JoinVertical(lipgloss.Left, lipgloss.NewStyle().Bold(true).Render(fmt.Sprintf("%-12s", "Avg OT")), model.statsDetails.monthAvgFields[3].View()),
 	)
 }
 
@@ -84,10 +92,13 @@ func (model *Model) statsTableView() string {
 		return lipgloss.JoinVertical(
 			lipgloss.Center,
 			model.statsDetails.table.View(),
-			"\n\n\n\n\n\n\n\n\n",
+		  "",
 			lipgloss.NewStyle().Bold(true).Underline(true).Render("Selected Month"),
-			model.statsMonthSumView(),
-			"\n",
+			model.statsMonthAvgView(),
+		  "",
+		  lipgloss.NewStyle().Bold(true).Underline(true).Render("All Time"),
+			model.statsSumView(),
+			"",
 		)
 }
 

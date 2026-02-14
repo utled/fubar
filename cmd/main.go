@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"fubar"
 	"fubar/cli"
 	"fubar/helpers"
 	"fubar/tui"
@@ -34,7 +33,7 @@ func main() {
 			helpers.InitClearFunctions()
 			cli.Launch()
 		case "test":
-			fubar.Test()
+			//fubar.Test()
 		default:
 			fmt.Println("invalid argument")
 		}
