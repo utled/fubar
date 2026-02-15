@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/charmbracelet/lipgloss"
 )
 
@@ -32,13 +31,7 @@ func (model *Model) statsYearSelectionView() string {
 }
 
 func (model *Model) statsSumView() string {
-	var fieldData []textinput.Model
-	switch model.statsDetails.displayType {
-	case graphDisplay:
-		fieldData = model.statsDetails.yearSumFields
-	case tableDisplay:
-		fieldData = model.statsDetails.allSumFields
-	}
+	fieldData := model.statsDetails.yearSumFields
 	sumOne := lipgloss.JoinVertical(
 		lipgloss.Center,
 		lipgloss.JoinHorizontal(lipgloss.Left, fmt.Sprintf("%25s", "Worked Days: "), fieldData[idxWorkedDays].View()),
@@ -73,9 +66,6 @@ func (model *Model) statsGraphView() string {
 		return lipgloss.JoinVertical(
 			lipgloss.Center,
 			model.statsDetails.graphArea.View(),
-			"",
-			lipgloss.NewStyle().Bold(true).Underline(true).Render("Selected Year"),
-			model.statsSumView(),
 		)
 }
 
@@ -96,10 +86,10 @@ func (model *Model) statsTableView() string {
 		  "",
 			lipgloss.NewStyle().Bold(true).Underline(true).Render("Selected Month"),
 			model.statsMonthAvgView(),
-			strings.Repeat("\n", 3),
-		  lipgloss.NewStyle().Bold(true).Underline(true).Render("All Time"),
+			strings.Repeat("\n", 2),
+		  lipgloss.NewStyle().Bold(true).Underline(true).Render("Selected Year"),
 			model.statsSumView(),
-			strings.Repeat("\n", 5),
+			"",
 		)
 }
 
@@ -127,8 +117,8 @@ func (model *Model) renderStatisticsView() string {
 			model.statsYearSelectionView(),
 			"",
 			mainDisplay,
-			"",
 			lipgloss.NewStyle().Height(2).Render(model.statusLabel),
+			"",
 			lipgloss.NewStyle().Foreground(lipgloss.Color("238")).Render(footer),
 		),
 	)

@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"fubar/helpers"
 	"strconv"
-	"strings"
-
 	"github.com/charmbracelet/lipgloss"
 )
 
@@ -119,9 +117,9 @@ func (model *Model) renderDailyView() string {
 			model.dailyInputsView(),
 			"",
 			model.dateTable.View(),
-			" ",
+			"",
 			model.statusLabel,
-			strings.Repeat("\n", 6),
+			"",
 			lipgloss.NewStyle().Foreground(lipgloss.Color("238")).Render(footer),
 		),
 	)

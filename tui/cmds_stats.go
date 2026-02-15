@@ -140,22 +140,6 @@ func (model *Model) fetchStatsTableData() tea.Cmd {
 	}
 }
 
-type statsAllSumDataMsg struct {
-	fieldData *data.FullStats
-}
-
-func (model *Model) fetchAllSumData() tea.Cmd {
-	return func() tea.Msg {
-		minDate := "2000-01-01"
-		maxDate := model.dateState.MaxDate
-		fullStatistics, err := data.GetFullStatistics(minDate, maxDate)
-		if err != nil {
-			return err
-		}
-		return statsAllSumDataMsg{fieldData: fullStatistics}
-	}
-}
-
 type statsYearSumDataMsg struct {
 	fieldData *data.FullStats
 }
