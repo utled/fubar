@@ -104,6 +104,7 @@ func (model *Model) updateStats(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return model, nil
 		case "v":
 			model.statsDetails.displayType = (model.statsDetails.displayType + 1) % 2
+			model.statsDetails.tableTotals = data.MonthStats{}
 			var cmds []tea.Cmd
 			switch model.statsDetails.displayType {
 			case graphDisplay:
