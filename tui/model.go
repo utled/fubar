@@ -34,6 +34,77 @@ type Model struct {
 	otherInputFocus      int
 }
 
+type statsDetails struct {
+	displayType    statsSelection
+	minYear        int
+	maxYear        int
+	yearSelection  textinput.Model
+	graphArea      viewport.Model
+	allSumFields   []textinput.Model
+	yearSumFields  []textinput.Model
+	monthAvgFields []textinput.Model
+	table          table.Model
+	tableTotals    data.MonthStats
+}
+
+
+const (
+	idxStart int = iota
+	idxLunch
+	idxEnd
+	idxAdditional
+	idxDayType
+	idxOvertime
+	idxDayTotal
+	idxDayBalance
+)
+
+type sessionState int
+
+const (
+	stateDaily sessionState = iota
+	stateBackflush
+	stateStatistics
+	stateSchedule
+	stateConfig
+	stateConfirm
+)
+
+
+type confirmationType int
+
+const (
+	deleteDate confirmationType = iota
+	deleteSchedule
+)
+
+type confirmationDetails struct {
+	confirmationType confirmationType
+	confirmationMsg  string
+}
+
+type statsSelection int
+
+const (
+	graphDisplay statsSelection = iota
+	tableDisplay
+)
+
+const (
+	idxWorkedDays int = iota
+	idxWeekdays
+	idxWorkedTime
+	idxAvgStart
+	idxAvgEnd
+	idxAvgLunch
+	idxSickDays
+	idxVacDays
+	idxOTDays
+	idxTotalOT
+	idxAvgOT
+)
+
+
 type styles struct {
 	BorderColor lipgloss.Color
 	InputField  lipgloss.Style

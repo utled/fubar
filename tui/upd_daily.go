@@ -100,7 +100,7 @@ func (model *Model) updateDaily(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "t", "o":
 			switch msg.String() {
 			case "t":
-				nextDayType := ParseDayType(model.dailyInputFields[idxDayType].Value()).Next().String()
+				nextDayType := helpers.ParseDayType(model.dailyInputFields[idxDayType].Value()).Next().String()
 				model.dailyInputFields[idxDayType].SetValue(nextDayType)
 				return model, nil
 			case "o":

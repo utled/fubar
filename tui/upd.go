@@ -3,8 +3,20 @@ package tui
 import (
 	//"time"
 
+	"time"
+
 	tea "github.com/charmbracelet/bubbletea"
 )
+
+type errMsg error
+
+type clearStatusMsg struct{}
+
+func clearStatusTimer() tea.Cmd {
+	return tea.Tick(time.Second*4, func(t time.Time) tea.Msg {
+		return clearStatusMsg{}
+	})
+}
 
 func (model *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmds []tea.Cmd
@@ -17,9 +29,6 @@ func (model *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		model.statusLabel = msg.Error()
 		model.dateTable.GotoTop()
 		cmds = append(cmds, model.fetchDateState(model.dateTable.SelectedRow()[0]))
-		cmds = append(cmds, clearStatusTimer())
-		return model, tea.Batch(cmds...)
-	case statusMsg:
 		cmds = append(cmds, clearStatusTimer())
 		return model, tea.Batch(cmds...)
 	case clearStatusMsg:

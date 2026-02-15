@@ -2,6 +2,7 @@ package tui
 
 import (
 	"fmt"
+	"fubar/helpers"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -11,7 +12,7 @@ func (model *Model) updateSchedule(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "t":
-			nextDayType := ParseDayType(model.scheduleInputFields[2].Value()).Next().String()
+			nextDayType := helpers.ParseDayType(model.scheduleInputFields[2].Value()).Next().String()
 			model.scheduleInputFields[2].SetValue(nextDayType)
 			return model, nil
 		case "ctrl+c", "q":

@@ -119,9 +119,9 @@ func (model *Model) renderDailyView() string {
 			model.dailyInputsView(),
 			"",
 			model.dateTable.View(),
-			"\n ",
+			" ",
 			model.statusLabel,
-			strings.Repeat("\n", 7),
+			strings.Repeat("\n", 6),
 			lipgloss.NewStyle().Foreground(lipgloss.Color("238")).Render(footer),
 		),
 	)

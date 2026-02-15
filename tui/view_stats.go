@@ -125,7 +125,7 @@ func (model *Model) renderStatisticsView() string {
 			model.statsHeaderView(),
 			"",
 			model.statsYearSelectionView(),
-			"\n\n",
+			"",
 			mainDisplay,
 			"",
 			lipgloss.NewStyle().Height(2).Render(model.statusLabel),
